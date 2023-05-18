@@ -1,0 +1,1876 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.EmployeeMapper">
+    <resultMap id="employeePojo" type="com.gerp.usermgmt.pojo.organization.employee.EmployeePojo">
+        <result column="pis_code" property="pisCode"/>
+        <result column="employee_code" property="employeeCode"/>
+        <result column="contact_id" property="contactId"/>
+        <result column="name_np" property="nameNp"/>
+        <result column="name_en" property="nameEn"/>
+
+        <result column="first_name_en" property="firstNameEn"/>
+        <result column="middle_name_en" property="middleNameEn"/>
+        <result column="last_name_en" property="lastNameEn"/>
+
+
+        <result column="first_name_np" property="firstNameNp"/>
+        <result column="middle_name_np" property="middleNameNp"/>
+        <result column="last_name_np" property="lastNameNp"/>
+
+        <result column="pan" property="pan"/>
+
+        <result column="employee_profile_pic" property="profilePic"/>
+
+        <result column="father_f_name_en" property="fatherFnameEn"/>
+        <result column="father_f_name_np" property="fatherFnameNp"/>
+        <result column="father_m_name_en" property="fatherMnameEn"/>
+        <result column="father_m_name_np" property="fatherMnameNp"/>
+        <result column="father_l_name_en" property="fatherLnameEn"/>
+        <result column="father_l_name_np" property="fatherLnameNp"/>
+
+        <result column="mother_f_name_en" property="motherFnameEn"/>
+        <result column="mother_f_name_np" property="motherFnameNp"/>
+        <result column="mother_m_name_en" property="motherMnameEn"/>
+        <result column="mother_m_name_np" property="motherMnameNp"/>
+        <result column="mother_l_name_en" property="motherLnameEn"/>
+        <result column="mother_l_name_np" property="motherLnameNp"/>
+
+        <result column="grand_father_f_name_en" property="grandFatherFnameEn"/>
+        <result column="grand_father_f_name_np" property="grandFatherFnameNp"/>
+        <result column="grand_father_m_name_en" property="grandFatherMnameEn"/>
+        <result column="grand_father_m_name_np" property="grandFatherMnameNp"/>
+        <result column="grand_father_l_name_en" property="grandFatherLnameEn"/>
+        <result column="grand_father_l_name_np" property="grandFatherLnameNp"/>
+
+        <result column="spouse_f_name_en" property="spouseFnameEn"/>
+        <result column="spouse_f_name_np" property="spouseFnameNp"/>
+        <result column="spouse_m_name_en" property="spouseMnameEn"/>
+        <result column="spouse_m_name_np" property="spouseFnameNp"/>
+        <result column="spouse_l_name_en" property="spouseLnameEn"/>
+        <result column="spouse_l_name_np" property="spouseLnameNp"/>
+
+
+        <result column="temporary_house_no" property="temporaryHouseNo"/>
+        <result column="permanent_house_no" property="permanentHouseNo"/>
+
+        <result column="temporary_ward_no" property="temporaryWardNo"/>
+        <result column="permanent_ward_no" property="permanentWardNo"/>
+
+        <result column="fax" property="fax"/>
+        <result column="birth_date_ad" property="birthDateAd"/>
+        <result column="birth_date_bs" property="birthDateBs"/>
+        <result column="current_position_app_date_ad" property="currentPositionAppDateAd"/>
+        <result column="current_position_app_date_bs" property="currentPositionAppDateBs"/>
+
+        <result column="cur_office_join_dt_en" property="curOfficeJoinDtEn"/>
+        <result column="cur_office_join_dt_np" property="curOfficeJoinDtNp"/>
+
+
+        <result column="gender" property="gender"/>
+        <result column="is_favourite" property="isFavourite"/>
+        <result column="citizenship_number" property="citizenshipNumber"/>
+        <result column="email_address" property="emailAddress"/>
+        <result column="mobile_number" property="mobileNumber"/>
+        <result column="extension_no" property="extensionNo"/>
+        <result column="telephone_no" property="telephoneNo"/>
+        <result column="blood_group" property="bloodGroup"/>
+        <result column="marital_status" property="maritalStatus"/>
+        <result column="functional_designation_code" property="functionalDesignationCode"/>
+        <!--        <result column="office_code" property="officeCode"/>-->
+        <result column="position_code" property="positionCode"/>
+        <result column="section_id" property="sectionId"/>
+        <result column="user_already_exists" property="userAlreadyExists"/>
+
+
+        <result column="shift_name_en" property="shiftNameEn"></result>
+        <result column="shift_name_np" property="shiftNameNp"></result>
+        <result column="shift_checkin_time" property="shiftCheckInTime"></result>
+        <result column="shift_checkout_time" property="shiftCheckOutTime"></result>
+
+        <result column="user_id" property="userId"/>
+
+        <result column="admin_role_created_date" property="adminRoleCreatedDate"/>
+        <result column="admin_role_updated_date" property="adminRoleUpdatedDate"/>
+
+
+        <collection property="religionPojo"
+                    ofType="com.gerp.usermgmt.pojo.organization.employee.ReligionPojo">
+            <result column="religion_code" property="code"/>
+            <result column="religion_name_np" property="nameNp"/>
+            <result column="religion_name_en" property="nameEn"/>
+        </collection>
+        <collection property="office"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+
+            <result column="office_code" property="code"/>
+            <result column="office_name_en" property="name"/>
+            <result column="office_name_np" property="nameN"/>
+            <result column="mobile_number" property="mobileNumber"/>
+            <result column="office_address" property="officeAddress"/>
+            <result column="office_address_en" property="officeAddressEn"/>
+            <result column="office_district_code" property="officeDistrictCode"/>
+        </collection>
+
+        <collection property="service"
+                    ofType="com.gerp.usermgmt.pojo.organization.office.ServicePojo">
+            <result column="service_code" property="code"/>
+            <result column="service_name_en" property="nameEn"/>
+            <result column="service_name_np" property="nameNp"/>
+        </collection>
+        <collection property="serviceStatus"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="service_status_code" property="code"/>
+            <result column="service_status_name_en" property="name"/>
+            <result column="service_status_name_np" property="nameN"/>
+        </collection>
+
+        <collection property="coreDesignation"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="position_code" property="code"/>
+            <result column="position_name_en" property="name"/>
+            <result column="position_name_np" property="nameN"/>
+        </collection>
+
+        <collection property="functionalDesignation"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="functional_designation_id" property="code"/>
+            <result column="functional_designation_name_en" property="name"/>
+            <result column="functional_designation_name_np" property="nameN"/>
+            <result column="functional_designation_type" property="designationType"></result>
+
+        </collection>
+
+        <collection property="section"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="section_id" property="id"/>
+            <result column="section_code" property="code"/>
+            <result column="section_name_en" property="name"/>
+            <result column="section_name_np" property="nameN"/>
+        </collection>
+
+        <collection property="employeeEducations"
+                    ofType="com.gerp.usermgmt.pojo.organization.employee.EmployeeEducationPojo">
+            <result column="employee_educations_id" property="id"/>
+            <result column="admission_date_en" property="admissionDateEn"/>
+            <result column="admission_date_np" property="admissionDateNp"/>
+            <result column="completion_date_en" property="completionDateEn"/>
+
+            <result column="education_country_code" property="countryCode"/>
+            <result column="education_country_name_en" property="countryNameEn"/>
+            <result column="education_country_name_np" property="countryCameNp"/>
+
+            <result column="education_level_code" property="educationLevelCode"/>
+            <result column="education_level_en" property="educationLevelEn"/>
+            <result column="education_level_np" property="educationLevelNp"/>
+            <result column="faculty_code" property="facultyCode"/>
+            <result column="faculty_name_en" property="facultyNameEn"/>
+            <result column="faculty_name_np" property="facultyNameNp"/>
+            <result column="completion_date_np" property="completionDateNp"/>
+            <result column="grade" property="grade"/>
+            <result column="institute" property="institute"/>
+            <result column="percentage" property="percentage"/>
+            <result column="remarks" property="remarks"/>
+        </collection>
+
+
+        <!--        <collection property="sectionSubsection"-->
+        <!--                    ofType="com.gerp.shared.pojo.IdNamePojo">-->
+        <!--            <result column="section_id" property="id"/>-->
+        <!--            <result column="section_code" property="code"/>-->
+        <!--            <result column="section_name_en" property="name"/>-->
+        <!--            <result column="section_name_np" property="nameN"/>-->
+        <!--        </collection>-->
+
+        <collection property="permanentDistrict"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="per_district_code" property="code"/>
+            <result column="per_district_name_en" property="name"/>
+            <result column="per_district_name_np" property="nameN"/>
+        </collection>
+        <collection property="temporaryDistrict"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="temp_district_code" property="code"/>
+            <result column="temp_district_name_en" property="name"/>
+            <result column="temp_district_name_np" property="nameN"/>
+        </collection>
+        <collection property="permanentMunicipalityVdc"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="per_municipality_vdc_code" property="code"/>
+            <result column="per_municipality_vdc_name_en" property="name"/>
+            <result column="per_municipality_vdc_name_np" property="nameN"/>
+        </collection>
+        <collection property="temporaryMunicipalityVdc"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="temp_municipality_vdc_code" property="code"/>
+            <result column="temp_municipality_vdc_name_en" property="name"/>
+            <result column="temp_municipality_vdc_name_np" property="nameN"/>
+        </collection>
+        <collection property="employeeJoiningDates"
+                    ofType="com.gerp.usermgmt.pojo.organization.employee.EmployeeJoiningDatePojo">
+            <result column="employee_joining_date_id" property="id"/>
+            <result column="employee_join_date_en" property="joinDateEn"/>
+            <result column="employee_join_date_np" property="joinDateNp"/>
+            <result column="employee_end_date_en" property="endDateEn"/>
+            <result column="employee_end_date_np" property="endDateNp"/>
+            <result column="is_active_employee_joining" property="isActive"/>
+        </collection>
+
+        <collection property="roleList" ofType="com.gerp.usermgmt.pojo.RoleDetailPojo"
+                    select="selectPisCodeRole" column="pisCode=pis_code">
+        </collection>
+
+
+    </resultMap>
+
+    <resultMap id="sectionEmployee"
+               type="com.gerp.shared.pojo.employee.EmployeeSectionPojo">
+        <result column="ss_id" property="sectionCode"/>
+        <result column="ss_name_en" property="sectionNameEn"/>
+        <result column="ss_name_np" property="sectionNameNp"/>
+        <collection property="employeeList"
+                    ofType="com.gerp.shared.pojo.employee.EmployeeMinimalPojo">
+            <id property="pisCode" column="pis_code"/>
+            <result column="e_name_en" property="employeeNameEn"/>
+            <result column="employee_code" property="employeeCode"/>
+            <result column="e_name_np" property="employeeNameNp"/>
+            <collection property="coreDesignation" column="cd_id"
+                        ofType="com.gerp.shared.pojo.IdNamePojo">
+                <id property="id" column="cd_id"/>
+                <result column="cd_name_en" property="name"/>
+                <result column="cd_name_np" property="nameN"/>
+            </collection>
+            <collection property="functionalDesignation" column="fd_id"
+                        ofType="com.gerp.shared.pojo.IdNamePojo">
+                <id property="code" column="fd_id"/>
+                <result column="fd_name_en" property="name"/>
+                <result column="fd_name_np" property="nameN"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <resultMap id="employeePojoMinimal"
+               type="com.gerp.shared.pojo.employee.EmployeeMinimalPojo">
+        <id property="pisCode" column="pis_code"/>
+        <result property="employeeCode" column="employee_code"/>
+        <result property="employeeServiceStatusCode" column="employee_service_status_code"/>
+        <result column="e_name_en" property="employeeNameEn"/>
+        <result column="e_name_np" property="employeeNameNp"/>
+        <result column="section_code" property="sectionCode"/>
+        <result column="section_id" property="sectionId"/>
+        <result column="office_code" property="officeCode"/>
+        <result column="citizenship_number" property="citizenshipNumber"/>
+        <!--add employee joining date-->
+        <result column="expiring_day" property="days"/>
+        <result column="joining_date_en" property="joiningDate"/>
+        <result column="cur_office_join_dt_en" property="curOfficeJoinDtEn"/>
+        <result column="cur_office_join_dt_np" property="curOfficeJoinDtNp"/>
+        <collection property="position" column="position_code"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="id" column="position_code"/>
+            <result column="position_name_en" property="name"/>
+            <result column="position_name_np" property="nameN"/>
+        </collection>
+        <collection property="functionalDesignation" column="fd_id"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="fd_id"/>
+            <result column="fd_name_en" property="name"/>
+            <result column="fd_name_np" property="nameN"/>
+            <result column="fd_designation_type" property="designationType"/>
+        </collection>
+        <collection property="section" column="section_id"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="id" column="section_id"/>
+            <result column="section_name_en" property="name"/>
+            <result column="section_name_np" property="nameN"/>
+        </collection>
+
+    </resultMap>
+
+    <resultMap id="employeePojoDetail"
+               type="com.gerp.usermgmt.pojo.organization.employee.EmployeePojo">
+        <result property="pisCode" column="pis_code"/>
+        <result property="employeeCode" column="employee_code"/>
+        <result property="sectionDesignationId" column="section_designation_id"/>
+        <result column="e_name_en" property="nameEn"/>
+        <result column="e_name_np" property="nameNp"/>
+        <result column="section_code" property="sectionId"/>
+        <result column="office_code" property="officeCode"/>
+        <result column="citizenship_number" property="citizenshipNumber"/>
+        <collection property="position" column="position_code"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="id" column="position_code"/>
+            <result column="position_name_en" property="name"/>
+            <result column="position_name_np" property="nameN"/>
+        </collection>
+        <collection property="functionalDesignation" column="fd_id"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="fd_id"/>
+            <result column="fd_name_en" property="name"/>
+            <result column="fd_name_np" property="nameN"/>
+            <result column="functional_designation_type" property="designationType"/>
+        </collection>
+        <collection property="section" column="section_id"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="id" column="section_id"/>
+            <result column="section_name_en" property="name"/>
+            <result column="section_name_np" property="nameN"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="employeePojoMinimalUserType"
+               type="com.gerp.shared.pojo.employee.EmployeeMinimalPojo">
+        <id property="pisCode" column="pis_code"/>
+        <result property="employeeCode" column="employee_code"/>
+        <result column="e_name_en" property="employeeNameEn"/>
+        <result column="e_name_np" property="employeeNameNp"/>
+        <result column="section_code" property="sectionCode"/>
+        <result column="office_code" property="officeCode"/>
+        <collection property="userType" ofType="String">
+            <result column="user_type"/>
+        </collection>
+        <collection property="position" column="position_code"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="id" column="position_code"/>
+            <result column="position_name_en" property="name"/>
+            <result column="position_name_np" property="nameN"/>
+        </collection>
+        <collection property="functionalDesignation" column="fd_id"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="fd_id"/>
+            <id property="code" column="fd_code"/>
+            <result column="fd_name_en" property="name"/>
+            <result column="designation_salutation" property="salutation"/>
+            <result column="fd_name_np" property="nameN"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="selectPisCodeRole" resultType="com.gerp.usermgmt.pojo.RoleDetailPojo">
+        select rg.role_group_name as roleName
+        from users u
+                 inner join users_roles ur on u.id = ur.user_id
+                 inner join role_group rg on rg.id = ur.role_id
+        where u.pis_employee_code = #{pisCode}
+          and rg.role_group_key in
+              ('OFFICE_ADMINISTRATOR', 'ORGANIZATIONADMIN')
+    </select>
+    <select id="getKararEmployeeList" resultMap="employeePojoMinimal">
+        select e.pis_code,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en)
+                   end                                                             as e_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np)
+                   end                                                             as e_name_np,
+               fd.name_en                                                          as fd_name_en,
+               fd.name_np                                                          as fd_name_np,
+               ejd.join_date_en                                                    as joining_date_en,
+               ejd.end_date_en                                                     as end_date_en,
+               (DATE_PART('day', ejd.end_date_en ::timestamp - now() ::timestamp)) as expiring_day
+        from employee_joining_date ejd
+                 inner join employee e on e.pis_code = ejd.employee_pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+        where e.office_code = '20768'
+          and e.pis_code like '%KR_%'
+          and ejd.is_active = true
+          and (((DATE_PART('day', ejd.end_date_en ::timestamp - now() ::timestamp)) <![CDATA[<=]]> #{days})
+            and ((DATE_PART('day', ejd.end_date_en ::timestamp - now() ::timestamp)) >= 0))
+    </select>
+    <select id="getByCode" resultMap="employeePojo">
+        select e.pis_code,
+               e.employee_code,
+               e.first_name_en,
+               e.middle_name_en,
+               e.last_name_en,
+               e.blood_group,
+
+
+               e.first_name_np,
+               e.middle_name_np,
+               e.last_name_np,
+
+               e.telephone_no,
+
+               e.father_fname_en                                         as father_f_name_en,
+               e.father_fname_en                                         as father_f_name_np,
+               e.father_mname_en                                         as father_m_name_en,
+               e.father_mname_np                                         as father_m_name_np,
+               e.father_lname_en                                         as father_l_name_en,
+               e.father_lname_np                                         as father_l_name_np,
+
+               e.mother_fname_en                                         as mother_f_name_en,
+               e.mother_fname_en                                         as mother_f_name_np,
+               e.mother_mname_en                                         as mother_m_name_en,
+               e.mother_mname_np                                         as mother_m_name_np,
+               e.mother_lname_en                                         as mother_l_name_en,
+               e.mother_lname_np                                         as mother_l_name_np,
+
+               e.grand_father_fname_en                                   as grand_father_f_name_en,
+               e.grand_father_fname_en                                   as grand_father_f_name_np,
+               e.grand_father_mname_en                                   as grand_father_m_name_en,
+               e.grand_father_mname_np                                   as grand_father_m_name_np,
+               e.grand_father_lname_en                                   as grand_father_l_name_en,
+               e.grand_father_lname_np                                   as grand_father_l_name_np,
+
+               e.spouse_fname_en                                         as spouse_f_name_en,
+               e.spouse_fname_en                                         as spouse_f_name_np,
+               e.spouse_mname_en                                         as spouse_m_name_en,
+               e.spouse_mname_np                                         as spouse_m_name_np,
+               e.spouse_lname_en                                         as spouse_l_name_en,
+               e.spouse_lname_np                                         as spouse_l_name_np,
+
+               e.temporary_house_no                                      as temporary_house_no,
+               e.permanent_house_no                                      as permanent_house_no,
+
+               e.temporary_ward_no                                       as temporary_ward_no,
+               e.permanent_ward_no                                       as permanent_ward_no,
+
+               e.birth_date_ad,
+               e.birth_date_bs,
+               e.current_position_app_date_ad,
+               e.current_position_app_date_bs,
+               e.cur_office_join_dt_en,
+               e.cur_office_join_dt_np,
+
+               e.fax                                                     as fax,
+
+               e.marital_status                                          as marital_status,
+
+               e.pan,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as name_en,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as name_np,
+               e.citizenship_number,
+               e.profile_pic                                             as employee_profile_pic,
+               o.code                                                    as office_code,
+               o.name_en                                                 as office_name_en,
+               o.name_np                                                 as office_name_np,
+               o.district_code                                           as office_district_code,
+               o.address_en                                              as office_address_en,
+               o.address_np                                              as office_address,
+               s.code                                                    as service_code,
+               s.name_en                                                 as service_name_en,
+               s.name_np                                                 as service_name_np,
+               p.code                                                    as position_code,
+               p.name_en                                                 as position_name_en,
+               p.name_np                                                 as position_name_np,
+               ss.id                                                     as section_id,
+               ss.name_en                                                as section_name_en,
+               ss.name_np                                                as section_name_np,
+               case when u.id is null then false else true end           as user_already_exists,
+               e.gender                                                  as gender,
+               e.email_address                                           as email_address,
+               e.mobile_number                                           as mobile_number,
+               fd.name_en                                                as functional_designation_name_en,
+               fd.name_np                                                as functional_designation_name_np,
+               fd.code                                                   as functional_designation_code,
+               fd.designation_type                                       as functional_designation_type,
+
+
+               pDistr.code                                               as per_district_code,
+               pDistr.name_en                                            as per_district_name_en,
+               pDistr.name_np                                            as per_district_name_np,
+
+               ess.code                                                  as service_status_code,
+               ess.name_en                                               as service_status_name_en,
+               ess.name_np                                               as service_status_name_np,
+
+               tDistr.code                                               as temp_district_code,
+               tDistr.name_en                                            as temp_district_name_en,
+               tDistr.name_np                                            as temp_district_name_np,
+
+               pMun.code                                                 as per_municipality_vdc_code,
+               pMun.name_en                                              as per_municipality_vdc_name_en,
+               pMun.name_np                                              as per_municipality_vdc_name_np,
+
+               tMun.code                                                 as temp_municipality_vdc_code,
+               tMun.name_en                                              as temp_municipality_vdc_name_en,
+               tMun.name_np                                              as temp_municipality_vdc_name_np,
+               r.code                                                    as religion_code,
+               r.name_en                                                 as religion_name_en,
+               r.name_np                                                 as religion_name_np,
+
+               ee.id                                                     as employee_educations_id,
+               ee.admission_date_en,
+               ee.admission_date_np,
+               ee.completion_date_en,
+               ee.completion_date_np,
+               ee.grade,
+               ee.institute,
+               ee.percentage,
+               ee.remarks,
+
+               c.code                                                    as education_country_code,
+               c.name_en                                                 as education_country_name_en,
+               c.name_np                                                 as education_country_name_np,
+
+               fc.code                                                   as faculty_code,
+               fc.name_en                                                as faculty_name_en,
+               fc.name_np                                                as faculty_name_np,
+
+               el.code                                                   as education_level_code,
+               el.name_en                                                as education_level_en,
+               el.name_np                                                as education_level_np,
+
+               ej.id                                                     as employee_joining_date_id,
+               ej.join_date_en                                           as employee_join_date_en,
+               ej.join_date_np                                           as employee_join_date_np,
+               ej.is_active                                              as is_active_employee_joining,
+               ej.end_date_en                                            as employee_end_date_en,
+               ej.end_date_np                                            as employee_end_date_np,
+               o.district_code                                           as office_district_code
+        from employee e
+                 left join position p on e.position_code = p.code
+                 left join office o on e.office_code = o.code
+                 left join service s on e.service_code = s.code
+                 left join section_designation sd on e.pis_code = sd.employee_pis_code
+            and sd.is_active = true
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+                 left join users u on e.pis_code = u.pis_employee_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join district tDistr on e.temp_district_code = tDistr.code
+                 left join district pDistr on e.per_district_code = pDistr.code
+                 left join district officeDistrict on officeDistrict.code = o.code
+
+                 left join municipality_vdc tMun on e.temp_municipality_vdc = tMun.code
+                 left join municipality_vdc pMun on e.per_municipality_vdc = pMun.code
+                 left join employee_service_status ess on e.employee_service_status_code = ess.code
+                 left join employee_education ee on e.pis_code = ee.employee_pis_code
+                 left join country c on c.code = ee.country_code
+                 left join faculty fc on fc.code = ee.faculty_code
+                 left join education_level el on el.code = ee.education_level_code
+                 left join employee_joining_date ej on ej.employee_pis_code = e.pis_code
+
+                 left join religion r on e.religion_code = r.code
+
+        where upper(e.pis_code) = upper(#{code}) or upper(e.employee_code) = upper(#{code}) limit 1
+    </select>
+
+    <select id="getByCodeMinimal" resultMap="employeePojoMinimal">
+        select e.pis_code,
+               e.employee_service_status_code,
+               e.employee_code,
+               concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en) as e_name_en,
+               concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np) as e_name_np,
+               p.code                                                              as position_code,
+               p.name_en                                                           as position_name_en,
+               p.name_np                                                           as position_name_en,
+               fd.code                                                             as fd_id,
+               fd.name_en                                                          as fd_name_en,
+               fd.name_np                                                          as fd_name_np,
+               fd.designation_type                                                 as fd_designation_type,
+               ss.chalani_code                                                     as section_code,
+               ss.id                                                               as section_id,
+               e.office_code
+
+        from employee e
+                 left join position p on e.position_code = p.code
+                 left join section_designation sd on sd.employee_pis_code = e.pis_code
+            and sd.is_active = true
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+                 left join functional_designation fd on e.designation_code = fd.code
+        where e.pis_code = #{pisCode}
+    </select>
+
+    <select id="getEmployeeListByOfficeCode"
+            resultMap="employeePojoDetail">
+        select e.pis_code,
+               e.employee_code,
+               concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en) as e_name_en,
+               concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np) as e_name_np,
+               e.position_code,
+               e.citizenship_number,
+               e.designation_code,
+               e.service_code,
+               p.code                                                              as position_code,
+               p.name_en                                                           as position_name_en,
+               p.name_np                                                           as position_name_np,
+               e.gender,
+               fd.name_en                                                          as functional_designation_name,
+               fd.name_np                                                          as functional_designation_name_n,
+               ss.id                                                               as section_id,
+               ss.name_en                                                          as section_name_en,
+               ss.name_np                                                          as section_name_np,
+
+               fd.name_en                                                          as fd_name_en,EmployeeMapp
+               sd.id                                                               as section_designation_id,
+               fd.name_np                                                          as fd_name_np,
+               fd.code                                                             as fd_id,
+
+
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4
+                   else 0
+                   end                                                             as e_order
+        from employee e
+                 inner join users u
+                            on e.pis_code = u.pis_employee_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join position p on e.position_code = p.code
+                 left join position pp on p.code = pp.parent_position_code
+                 left join section_designation sd on sd.employee_pis_code = e.pis_code
+                 left join section_subsection ss on ss.id = sd.section_subsection_id
+        where e.office_code = #{officeCode}
+        order by e_order, p.order_no, e.current_position_app_date_bs, e_name_en
+    </select>
+
+    <select id="getEmployeeListByOfficeCodeWihDesignation"
+            resultMap="employeePojoMinimal">
+        select e.pis_code,
+               e.employee_code,
+               concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en) as e_name_en,
+               concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np) as e_name_np,
+               fd.code                                                             as fd_id,
+               fd.name_en                                                          as fd_name_en,
+               fd.name_np                                                          as fd_name_np,
+               p.code                                                              as position_code,
+               p.name_en                                                           as position_name_en,
+               p.name_np                                                           as position_name_np,
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4
+                   else 0
+                   end                                                             as e_order
+        from employee e
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join position p on e.position_code = p.code
+        where e.office_code = #{officeCode}
+        order by e_order, p.order_no, e.current_position_app_date_bs, e_name_en
+    </select>
+    <select id="getEmployeeAllListByOfficeCodeWihDesignation"
+            resultMap="employeePojo">
+        select e.pis_code,
+               e.employee_code,
+               concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en) as name_en,
+               concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np) as name_np,
+               fd.code                                                             as functional_designation_id,
+               fd.name_en                                                          as functional_designation_name_en,
+               fd.name_np                                                          as functional_designation_name_np,
+               fd.designation_type                                                 as functional_designation_type,
+               p.code                                                              as position_code,
+               case
+                   when fd.designation_type = 'SPECIAL_DESIGNATION' then 0
+                   else 1
+                   end                                                             as designation_order,
+               p.name_en                                                           as position_name_en,
+               p.name_np                                                           as position_name_np,
+               ss.id                                                               as section_id,
+               ss.name_en                                                          as section_name_en,
+               ss.name_np                                                          as section_name_np,
+               ss.darta_code                                                       as section_code,
+               s.code                                                              as service_code,
+               s.name_en                                                           as service_name_en,
+               s.name_np                                                           as service_name_np,
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4
+                   else 0
+                   end                                                             as e_order,
+               ess.code as service_status_code,
+               ess.name_np as service_status_name_en,
+                ess.name_en as service_status_name_np,
+                u.id as user_id
+        from employee e
+                 left join functional_designation fd on e.designation_code = fd.code
+                 inner join users u on e.pis_code = u.pis_employee_code and u.is_active = true
+                 left join users_roles ur on u.id = ur.user_id
+                 left join role_group rg on ur.role_id = rg.id
+                 left join section_designation sd on e.pis_code = sd.employee_pis_code
+            and sd.is_active = true
+                 left join section_subsection ss on ss.id = sd.section_subsection_id
+                 left join position p on e.position_code = p.code
+                 left join service s on e.service_code = s.code
+                 left join employee_service_status ess on ess.code = e.employee_service_status_code
+        where e.office_code = #{officeCode}
+--           and fd.designation_type = 'NORMAL_DESIGNATION'
+        <if test="designationMap!=null ">
+          <if test="designationMap.NORMAL_DESIGNATION !=null and designationMap.NORMAL_DESIGNATION !='' ">
+              and fd.designation_type = #{designationMap.NORMAL_DESIGNATION}
+          </if>
+            <if test=" designationMap.SPECIAL_DESIGNATION !=null and designationMap.SPECIAL_DESIGNATION !='' ">
+                and fd.designation_type = #{designationMap.SPECIAL_DESIGNATION}
+            </if>
+
+        </if>
+        order by designation_order, p.order_no, e_order, e.current_position_app_date_bs, name_en
+    </select>
+
+    <select id="getOfficeSectionEmployeeList" resultMap="sectionEmployee">
+        select ss.code                                                             as ss_id,
+               ss.name_en                                                          as ss_name_en,
+               ss.name_np                                                          as ss_name_np,
+               e.pis_code,
+               e.employee_code,
+               concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en) as e_name_en,
+               concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np) as e_name_np,
+               p.code                                                              as cd_id,
+               p.name_en                                                           as cd_name_en,
+               p.name_np                                                           as cd_name_np,
+               fd.code                                                             as fd_id,
+               fd.name_en                                                          as fd_name_en,
+               fd.name_np                                                          as fd_name_np,
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4
+                   else 0
+                   end                                                             as e_order
+        from section_designation s
+                 inner join employee e on e.pis_code = s.employee_pis_code
+                 inner join section_subsection ss on s.section_subsection_id = ss.code
+                 left join office o on ss.office_code = o.code
+                 left join position p on e.position_code = p.code
+                 left join functional_designation fd on s.functional_designation_code = fd.code
+        where s.is_active = true
+          and e.office_code = #{officeCode}
+        order by e_order, p.order_no, e.current_position_app_date_bs, e_name_en
+
+    </select>
+    <select id="getSectionEmployeeList" resultMap="sectionEmployee">
+        select ss.code                                                   as ss_id,
+               ss.name_en                                                as ss_name_en,
+               ss.name_np                                                as ss_name_np,
+               e.pis_code,
+               e.employee_code,
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4
+                   else 0
+                   end                                                   as e_order,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as e_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as e_name_np,
+               p.code                                                    as cd_id,
+               p.name_en                                                 as cd_name_en,
+               p.name_np                                                 as cd_name_np,
+               fd.code                                                   as fd_id,
+               fd.name_en                                                as fd_name_en,
+               fd.name_np                                                as fd_name_np
+        from section_designation sd
+                 inner join employee e on e.pis_code = sd.employee_pis_code
+                 inner join section_subsection ss on sd.section_subsection_id = ss.id
+                 left join office o on ss.office_code = o.code
+                 left join position p on e.position_code = p.code
+                 inner join users u on e.pis_code = u.pis_employee_code
+                 left join functional_designation fd on sd.functional_designation_code = fd.code
+        where ss.id = #{id}
+          and e.office_code = #{officeCode}
+        order by e_order, p.order_no, e.current_position_app_date_bs, e_name_en
+    </select>
+    <select id="getOfficeHeadEmployee" resultType="com.gerp.shared.pojo.employee.EmployeeMinimalPojo">
+        select e.pis_code,
+               e.employee_code,
+               concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en) as employee_name_en,
+               concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np) as employee_name_np
+        from employee e
+                 inner join office_head oh on e.employee_code = oh.pis_code
+        where oh.office_code = #{officeCode}
+    </select>
+    <select id="getEmployeeByFilterParam"
+            resultMap="employeePojo">
+        select e.pis_code,
+        e.employee_code,
+        concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en) as name_en,
+        concat(e.first_name_np, ' ',e.middle_name_np, ' ',e.last_name_np) as name_np,
+        concat(o.address_np,', ',d.name_np,', ',mv.name_np) as office_address,
+        concat(d.name_en,', ',mv.name_en) as office_address_en,
+        e.extension_no as extension_no,
+        e.mobile_number as mobile_number,
+        o.code as office_code,
+        o.name_en as office_name_en,
+        o.name_np as office_name_np,
+        o.phone_number as telephone_no,
+        fd.code as functional_designation_id,
+        fd.name_en as functional_designation_name_en,
+        fd.name_np as functional_designation_name_np,
+        ss.code as section_code,
+        ss.name_en as section_name_en,
+        ss.name_np as section_name_np,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 1
+        when (e.employee_service_status_code = '08') then 2
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order
+        from employee e
+        <if test="map.isActive!=null  and map.isActive!=''">
+            left join users u on e.pis_code = u.pis_employee_code
+        </if>
+        left join office o on e.office_code = o.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_subsection ss on o.code = ss.office_code
+        left join district d on o.district_code= d.code
+        left join municipality_vdc mv on o.municipality_vdc_code=mv.code
+        left join position p on e.position_code = p.code
+        <if test="map!=null">
+            <where>
+                <if test="map.serviceCode!=null and map.serviceCode!=''">
+                    e.service_code = #{map.serviceCode}
+                </if>
+                <if test="map.designationCode!=null and map.designationCode!=''">
+                    and e.designation_code = #{map.designationCode}
+                </if>
+                <if test="map.positionCode!=null and map.positionCode!=''">
+                    and e.position_code = #{map.positionCode}
+                </if>
+                <if test="map.officeCode!=null and map.officeCode!=''">
+                    and e.office_code = #{map.officeCode}
+                </if>
+                <if test="map.isActive!=null and map.isActive!=''">
+                    and u.is_active = #{map.isActive}
+                </if>
+            </where>
+        </if>
+        order by e_order ,p.order_no,e.current_position_app_date_bs,name_en
+    </select>
+    <select id="searchCurrentOfficeContact"
+            resultMap="employeePojo">
+        select e.pis_code,
+        e.employee_code,
+        e.email_address as email_address,
+        case
+        when ((select count(*) from favourites_contact fc where fc.employee_pis_code = e.pis_code and fc.user_id =
+        #{userId})) > 0
+        then true else false end as is_favourite,
+        e.telephone_no,
+        e.extension_no,
+        e.telephone_no,
+        e.mobile_number,
+        o.code as office_code,
+        o.name_en as office_name_en,
+        o.name_np as office_name_np,
+        concat(e.first_name_en,' ', e.middle_name_en,' ', e.last_name_en) as name_en,
+        concat(e.first_name_np,' ', e.middle_name_np,' ', e.last_name_np) as name_np,
+        fd.code as functional_designation_id,
+        fd.name_en as functional_designation_name_en,
+        fd.name_np as functional_designation_name_np
+        from employee e
+        left join functional_designation fd on e.designation_code = fd.code
+        left join office o on e.office_code = o.code
+        left join section_designation sd on e.pis_code = sd.employee_pis_code
+        and sd.is_active = true
+        where e.office_code = #{officeCode}
+        <if test="searchField != null">
+            <if test="searchField.nameEn!=null and searchField.nameEn!=''">
+                <bind name="pattern_en" value="searchField.nameEn + '%'"/>
+                and (upper(concat(e.first_name_en , ' ' , e.last_name_en)) like upper(#{pattern_en}) OR
+                e.pis_code like #{pattern_en})
+            </if>
+            <if test="searchField.nameNp!=null and searchField.nameNp!=''">
+                <bind name="pattern_np" value="searchField.nameNp + '%'"/>
+                and e.first_name_np like #{pattern_np}
+            </if>
+            <if test="searchField.sectionId!=null and searchField.sectionId!=''">
+                and sd.section_subsection_id = #{searchField.sectionId}
+            </if>
+            <if test="searchField.designationCode!=null and searchField.designationCode!=''">
+                and sd.functional_designation_code = #{searchField.designationCode}
+            </if>
+        </if>
+        order by e.first_name_en
+    </select>
+    <select id="searchAllOfficeContact" resultMap="employeePojo">
+        select
+        e.pis_code,
+        e.employee_code,
+        e.email_address as email_address,
+        case
+        when ((select count(*) from favourites_contact fc where fc.employee_pis_code = e.pis_code and fc.user_id =
+        #{userId})) > 0
+        then true else false end as is_favourite,
+        e.telephone_no,
+        e.extension_no,
+        e.telephone_no,
+        e.mobile_number,
+        o.code as office_code,
+        o.name_en as office_name_en,
+        o.name_np as office_name_np,
+        s.code as section_code,
+        s.name_en as section_name_en,
+        s.name_np as section_name_np,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as name_np,
+        fd.code as functional_designation_id,
+        fd.name_en as functional_designation_name_en,
+        fd.name_np as functional_designation_name_np,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 1
+        when (e.employee_service_status_code = '08') then 2
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order
+        from employee e
+        left join functional_designation fd on e.designation_code = fd.code
+        left join office o on e.office_code = o.code
+        left join section_designation sd on e.pis_code = sd.employee_pis_code
+        and sd.is_active = true
+        left join section_subsection s on s.id=sd.section_subsection_id
+        left join position p on e.position_code = p.code
+        <where>
+            <if test="searchField.officeCode!=null and searchField.officeCode!=''">
+                o.code = #{searchField.officeCode}
+            </if>
+            <if test="searchField.nameEn!=null and searchField.nameEn!=''">
+                <bind name="pattern_en" value="'%' + searchField.nameEn + '%'"/>
+                and
+                case
+                when e.middle_name_np IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+                e.last_name_en)
+                else concat(e.first_name_en, ' ', e.last_name_en) end like upper(#{pattern_en})
+                OR
+                case when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+                e.last_name_np)
+                else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en}
+            </if>
+            <if test="searchField.nameNp!=null and searchField.nameNp!=''">
+                <bind name="pattern_np" value="searchField.nameNp + '%'"/>
+                and e.first_name_np like #{pattern_np}
+            </if>
+            <if test="searchField.officeName!=null and searchField.officeName!=''">
+                <bind name="pattern_np" value="searchField.officeName + '%'"/>
+                and upper(o.name_en) like upper(#{pattern_np})
+            </if>
+            <if test="searchField.sectionId!=null and searchField.sectionId!=''">
+                and sd.section_subsection_id = #{searchField.sectionId}
+            </if>
+            <if test="searchField.designationCode!=null and searchField.designationCode!=''">
+                and sd.functional_designation_code = #{searchField.designationCode}
+            </if>
+            <if test="searchField.districtCode!=null and searchField.districtCode!=''">
+                and o.district_code = #{searchField.districtCode}
+            </if>
+        </where>
+        order by e_order ,p.order_no,e.current_position_app_date_bs,name_en
+
+    </select>
+    <select id="getActiveContact" resultMap="employeePojo">
+        select e.pis_code,
+               e.employee_code,
+               e.telephone_no,
+               e.extension_no,
+               f.id                                                                as contact_id,
+               e.email_address                                                     as email_address,
+               e.telephone_no,
+               e.mobile_number,
+               o.code                                                              as office_code,
+               o.name_en                                                           as office_name_en,
+               o.name_np                                                           as office_name_np,
+               concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en) as name_en,
+               concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np) as name_np,
+               fd.code                                                             as functional_designation_id,
+               fd.name_en                                                          as functional_designation_name_en,
+               fd.name_np                                                          as functional_designation_name_np
+        from favourites_contact f
+                 join
+             employee e on e.pis_code = f.employee_pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join office o on e.office_code = o.code
+        where f.user_id = #{userId}
+        order by e.first_name_en
+    </select>
+
+    <select id="officeHierarchyEmployeeList"
+            resultMap="employeePojoMinimalUserType">
+        select
+        e.pis_code,
+        rg.role_group_key as user_type,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 1
+        when (e.employee_service_status_code = '08') then 2
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as e_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as e_name_np,
+
+        fd.name_en as fd_name_en,
+        fd.name_np as fd_name_np,
+        fd.code as fd_code
+
+        from employee e
+        inner join users u on e.pis_code = u.pis_employee_code and u.is_active = true
+        inner join users_roles ur on u.id = ur.user_id
+        inner join role_group rg on ur.role_id = rg.id
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        <where>
+            e.office_code = #{officeCode} and rg.role_group_key in ('REVIEWER', 'APPROVER') and e.position_code in
+            <foreach item="id" index="index" collection="positionIds" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+        order by e_order ,p.order_no,e.current_position_app_date_bs,e_name_en
+    </select>
+
+    <select id="officeHierarchyEmployeeListWithoutRole"
+            resultMap="employeePojoMinimalUserType">
+        select
+        e.pis_code,
+        e.employee_code,
+        rg.role_group_key as user_type,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 1
+        when (e.employee_service_status_code = '08') then 2
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as e_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as e_name_np
+        from employee e
+        inner join users u on e.pis_code = u.pis_employee_code and u.is_active is true
+        left join users_roles ur on u.id = ur.user_id
+        left join role_group rg on ur.role_id = rg.id
+        left join position p on e.position_code = p.code
+        where e.office_code = #{officeCode} and e.position_code in
+        <foreach item="id" index="index" collection="positionIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        order by e_order ,p.order_no,e.current_position_app_date_bs,e_name_en
+    </select>
+
+    <select id="getEmployeeByPisCode"
+            resultMap="employeePojoMinimalUserType">
+        select e.pis_code,
+               e.employee_code,
+               rg.role_group_key                                         as user_type,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as e_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as e_name_np
+        from employee e
+                 inner join users u on e.pis_code = u.pis_employee_code
+                 inner join users_roles ur on u.id = ur.user_id
+                 inner join role_group rg on ur.role_id = rg.id
+        where upper(e.pis_code) = upper(#{pisCode})
+          and rg.role_group_key in ('REVIEWER', 'APPROVER')
+    </select>
+
+    <select id="sectionHierarchyEmployeeList"
+            resultMap="employeePojoMinimal">
+        select
+        e.pis_code,
+        e.employee_code,
+        concat(e.first_name_en, ' ', e.middle_name_en , ' ', e.last_name_en) as e_name_en,
+        concat(e.first_name_np, ' ',e.middle_name_np,' ', e.last_name_np) as e_name_np,
+        fd.name_en as fd_name_en,
+        fd.name_np as fd_name_np,
+        p.code as position_code,
+        p.name_en as position_name_en,
+        p.name_np as position_name_np,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 1
+        when (e.employee_service_status_code = '08') then 2
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order
+        from employee e
+        left join position p on e.position_code = p.code
+        left join office o on o.code = e.office_code
+        inner join section_subsection ss on ss.office_code = o.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on e.pis_code = sd.employee_pis_code
+        where p.code in
+        <foreach item="id" index="index" collection="positionIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and sd.section_subsection_id = #{sectionId}
+        order by e_order ,p.order_no,e.current_position_app_date_bs,e_name_en
+    </select>
+    <select id="searchEmployeesPaginated"
+            resultMap="employeePojo">
+        select e.pis_code,
+        e.employee_code,
+        e.email_address as email_address,
+        e.telephone_no,
+        e.extension_no,
+        e.telephone_no,
+        e.mobile_number,
+        e.citizenship_number,
+        o.code as office_code,
+        o.name_en as office_name_en,
+        o.name_np as office_name_np,
+        p.name_en as position_name_en,
+        p.name_np as position_name_np,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end
+        as name_en,
+        case when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as name_np,
+        fd.code as functional_designation_id,
+        fd.name_en as functional_designation_name_en,
+        fd.name_np as functional_designation_name_np,
+        case when fd.designation_type = 'SPECIAL_DESIGNATION' then 0
+        else 1
+        end as designation_order,
+        s.code as service_code,
+        s.name_en as service_name_en,
+        s.name_np as functional_name_np
+        from employee e
+        left join functional_designation fd on e.designation_code = fd.code
+        left join office o on e.office_code = o.code
+        left join section_designation sd on e.pis_code = sd.employee_pis_code
+        and sd.is_active = true
+        left join position p on e.position_code = p.code
+        left join service s on s.code = e.service_code
+        <where>
+            <if test="searchField.officeCode!=null and searchField.officeCode!=''">
+                o.code = #{searchField.officeCode}
+            </if>
+
+            <if test="searchField.nameEn!=null and searchField.nameEn!=''">
+                <bind name="pattern_en" value="'%' + searchField.nameEn + '%'"/>
+                and
+                (case
+                when e.middle_name_np IS NOT NULL then upper(concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+                e.last_name_en))
+                else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+
+                OR
+                case when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+                e.last_name_np)
+                else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+            </if>
+            <if test="searchField.nameNp!=null and searchField.nameNp!=''">
+                <bind name="pattern_np" value="searchField.nameNp + '%'"/>
+                and e.first_name_np like #{pattern_np}
+            </if>
+            <if test="searchField.officeName!=null and searchField.officeName!=''">
+                <bind name="pattern_np" value="searchField.officeName + '%'"/>
+                and upper(o.name_en) like upper(#{pattern_np})
+            </if>
+            <if test="searchField.sectionId!=null and searchField.sectionId!=''">
+                and sd.section_subsection_id = #{searchField.sectionId}
+            </if>
+            <if test="searchField.designationCode!=null and searchField.designationCode!=''">
+                and sd.functional_designation_code = #{searchField.designationCode}
+            </if>
+            <if test="searchField.districtCode!=null and searchField.districtCode!=''">
+                and o.district_code = #{searchField.districtCode}
+            </if>
+            <if test="searchField.serviceStatusCode!=null and searchField.serviceStatusCode!=''">
+                and e.employee_service_status_code = #{searchField.serviceStatusCode}
+            </if>
+        </where>
+        order by designation_order, name_en , name_np
+
+    </select>
+
+    <select id="searchEmployeesAdminPaginated"
+            resultMap="employeePojo">
+        select distinct e.pis_code,
+        e.employee_code,
+        e.email_address as email_address,
+        e.telephone_no,
+        e.extension_no,
+        e.telephone_no,
+        e.mobile_number,
+        e.citizenship_number,
+        o.code as office_code,
+        o.name_en as office_name_en,
+        o.name_np as office_name_np,
+        p.name_en as position_name_en,
+        p.code as position_code,
+        p.name_np as position_name_np,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end
+        as name_en,
+        case when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as name_np,
+        fd.code as functional_designation_id,
+        fd.name_en as functional_designation_name_en,
+        fd.name_np as functional_designation_name_np,
+        s.code as service_code,
+        s.name_en as service_name_en,
+        s.name_np as functional_name_np,
+
+        case when u.admin_role_updated_date IS NULL THEN  u.last_modified_date
+        else u.admin_role_updated_date end  as admin_role_updated_date,
+        case WHEN u.admin_role_created_date IS NULL THEN  u.last_modified_date
+        else u.admin_role_created_date end as admin_role_created_date
+
+        from employee e
+        left join functional_designation fd on e.designation_code = fd.code
+        left join office o on e.office_code = o.code
+        left join section_designation sd on e.pis_code = sd.employee_pis_code
+        and sd.is_active = true
+        left join position p on e.position_code = p.code
+        left join service s on s.code = e.service_code
+        inner join users u on u.pis_employee_code = e.pis_code
+        inner join users_roles ur on u.id=ur.user_id
+        inner join role_group rg on rg.id =ur.role_id
+        where u.created_by in
+        (
+        select u.id from users u
+        inner join users_roles ur on u.id=ur.user_id
+        inner join role_group rg on rg.id =ur.role_id
+        where rg.role_group_key in ('ORGANIZATIONADMIN','SUPER_ADMIN')
+        )
+        and o.is_gioms_active =true
+        and rg.role_group_key in
+        <foreach item="rList" index="index" collection="RoleList" open="(" separator="," close=")">
+            #{rList}
+        </foreach>
+
+        <if test="searchField.officeCode!=null and searchField.officeCode!=''">
+            and o.code = #{searchField.officeCode}
+        </if>
+
+        <if test="searchField.nameEn!=null and searchField.nameEn!=''">
+            <bind name="pattern_en" value="'%' + searchField.nameEn + '%'"/>
+            and
+            (case
+            when e.middle_name_np IS NOT NULL then upper(concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+            e.last_name_en))
+            else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+
+            OR
+            case when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+            e.last_name_np)
+            else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+        </if>
+        <if test="searchField.nameNp!=null and searchField.nameNp!=''">
+            <bind name="pattern_np" value="searchField.nameNp + '%'"/>
+            and e.first_name_np like #{pattern_np}
+        </if>
+        <if test="searchField.officeName!=null and searchField.officeName!=''">
+            <bind name="pattern_np" value="searchField.officeName + '%'"/>
+            and upper(o.name_en) like upper(#{pattern_np})
+        </if>
+        <if test="searchField.sectionId!=null and searchField.sectionId!=''">
+            and sd.section_subsection_id = #{searchField.sectionId}
+        </if>
+        <if test="searchField.adminCreatedStartDate!=null and searchField.adminCreatedEndDate!=null   and searchField.adminCreatedStartDate!='' and searchField.adminCreatedEndDate!=''">
+            and
+            (case when u.admin_role_created_date IS NULL then u.last_modified_date
+            else u.admin_role_created_date end between  to_timestamp( #{searchField.adminCreatedStartDate}, 'YYYY-MM-DD HH24:MI:SS')
+                and to_timestamp( #{searchField.adminCreatedEndDate} ,'YYYY-MM-DD HH24:MI:SS')  )
+
+        </if>
+        <if test="searchField.adminUpdatedStartDate!=null and searchField.adminUpdatedEndDate!=null   and searchField.adminUpdatedStartDate!='' and searchField.adminUpdatedEndDate!=''">
+            and
+            (case when u.admin_role_updated_date IS NULL then u.last_modified_date
+            else u.admin_role_updated_date end between  to_timestamp( #{searchField.adminUpdatedStartDate}, 'YYYY-MM-DD HH24:MI:SS')
+            and to_timestamp( #{searchField.adminUpdatedEndDate} ,'YYYY-MM-DD HH24:MI:SS')  )
+
+        </if>
+        <if test="searchField.designationCode!=null and searchField.designationCode!=''">
+            and sd.functional_designation_code = #{searchField.designationCode}
+        </if>
+        <if test="searchField.districtCode!=null and searchField.districtCode!=''">
+            and o.district_code = #{searchField.districtCode}
+        </if>
+        <if test="searchField.serviceStatusCode!=null and searchField.serviceStatusCode!=''">
+            and e.employee_service_status_code = #{searchField.serviceStatusCode}
+        </if>
+        order by name_en , name_np
+
+    </select>
+
+    <select id="employeesAdminPrint"  resultMap="employeePojo">
+        select distinct e.pis_code,
+        e.employee_code,
+        e.email_address as email_address,
+        o.code as office_code,
+        o.name_en as office_name_en,
+        o.name_np as office_name_np,
+        p.name_en as position_name_en,
+        p.code as position_code,
+        p.name_np as position_name_np,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end
+        as name_en,
+        case when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as name_np,
+        fd.code as functional_designation_id,
+        fd.name_en as functional_designation_name_en,
+        fd.name_np as functional_designation_name_np,
+        s.code as service_code,
+        s.name_en as service_name_en,
+        s.name_np as functional_name_np,
+
+        case when u.admin_role_updated_date IS NULL THEN  u.last_modified_date
+        else u.admin_role_updated_date end  as admin_role_updated_date,
+        case WHEN u.admin_role_created_date IS NULL THEN  u.last_modified_date
+        else u.admin_role_created_date end as admin_role_created_date
+
+        from employee e
+        left join functional_designation fd on e.designation_code = fd.code
+        left join office o on e.office_code = o.code
+        left join section_designation sd on e.pis_code = sd.employee_pis_code
+        and sd.is_active = true
+        left join position p on e.position_code = p.code
+        left join service s on s.code = e.service_code
+        inner join users u on u.pis_employee_code = e.pis_code
+        inner join users_roles ur on u.id=ur.user_id
+        inner join role_group rg on rg.id =ur.role_id
+        where u.created_by in (
+        select u.id from users u
+        inner join users_roles ur on u.id=ur.user_id
+        inner join role_group rg on rg.id =ur.role_id
+        where rg.role_group_key in ('ORGANIZATIONADMIN','SUPER_ADMIN')
+        )
+        and  o.is_gioms_active =true
+        and  rg.role_group_key in
+        <foreach item="rList" index="index" collection="RoleList" open="(" separator="," close=")">
+            #{rList}
+        </foreach>
+
+        and
+
+        (case when u.admin_role_created_date IS NULL then u.last_modified_date
+        else u.admin_role_created_date end between  #{fromDate}  and  #{toDate}
+        )
+        order by name_en , name_np
+    </select>
+
+    <select id="getOfficeHeadsFromOfficeCodes"
+            resultMap="employeePojoMinimal">
+
+        select
+        e.pis_code,
+        e.employee_code,
+        rg.role_group_key as user_type,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as e_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as e_name_np,
+
+        fd.name_en as fd_name_en,
+        fd.name_np as fd_name_np,
+        fd.code as fd_code
+
+        from employee e
+        inner join users u on e.pis_code = u.pis_employee_code and u.is_active is true
+        inner join users_roles ur on u.id = ur.user_id
+        inner join role_group rg on ur.role_id = rg.id
+        left join functional_designation fd on e.designation_code = fd.code
+        left join position p on e.position_code = p.code
+        inner join office_head oh
+        on e.pis_code = oh.pis_code
+        where  e.office_code in
+        <foreach item="id" index="index" collection="officeCodes" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <select id="getEmployeeMatchingOrders"
+            resultType="com.gerp.usermgmt.pojo.organization.employee.EmployeePojo">
+        select
+        e.pis_code,
+        e.employee_code,
+        concat(e.first_name_en, ' ', e.middle_name_en , ' ', e.last_name_en) as e_name_en,
+        concat(e.first_name_np, ' ',e.middle_name_np,' ', e.last_name_np) as e_name_np,
+        fd.name_en as fd_name_en,
+        fd.name_np as fd_name_np,
+        p.code as position_code,
+        p.name_en as position_name_en,
+        p.name_np as position_name_np,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 1
+        when (e.employee_service_status_code = '08') then 2
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order
+        from employee e
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on e.pis_code = sd.employee_pis_code
+        <where>
+            <if test="positionCode !=null and positionCode !=''">
+                p.code = #{positionCode}
+            </if>
+            <if test="joinDate !=null and joinDate !=''">
+                e.current_position_app_date_bs = #{joinDate}
+            </if>
+        </where>
+        order by e_order ,p.order_no,e.current_position_app_date_bs,e_name_en
+    </select>
+    <select id="getDistinctEmployeeListByOfficeCode"
+            resultMap="employeePojoDetail">
+        select e.pis_code,
+               e.employee_code,
+               concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en) as e_name_en,
+               concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np) as e_name_np,
+               e.position_code,
+               e.citizenship_number,
+               e.designation_code,
+               e.service_code,
+               p.code                                                              as position_code,
+               p.name_en                                                           as position_name_en,
+               p.name_np                                                           as position_name_np,
+               e.gender,
+               fd.name_en                                                          as functional_designation_name,
+               fd.name_np                                                          as functional_designation_name_n,
+               fd.designation_type                                                 as functional_designation_type,
+               ss.id                                                               as section_id,
+               ss.name_en                                                          as section_name_en,
+               ss.name_np                                                          as section_name_np,
+
+               fd.name_en                                                          as fd_name_en,
+               sd.id                                                               as section_designation_id,
+               fd.name_np                                                          as fd_name_np,
+               fd.code                                                             as fd_id,
+
+
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4
+                   else 0
+                   end                                                             as e_order
+        from employee e
+                 inner join users u
+                            on e.pis_code = u.pis_employee_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join position p on e.position_code = p.code
+                 left join position pp on p.code = pp.parent_position_code
+                 left join section_designation sd on sd.employee_pis_code = e.pis_code and sd.is_active is true
+                 left join section_subsection ss on ss.id = sd.section_subsection_id
+        where e.office_code = #{officeCode}
+          and u.is_active = true
+        order by e_order, p.order_no, e.current_position_app_date_bs, e_name_en
+    </select>
+    <select id="getEmployeesBySectionId"
+            resultMap="employeePojoDetail">
+        select e.pis_code,
+               e.employee_code,
+               concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en) as e_name_en,
+               concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np) as e_name_np
+        from employee e
+                 inner join section_designation sd on sd.employee_pis_code = e.pis_code
+        where sd.section_subsection_id = #{id}
+    </select>
+    <select id="hasEmployeeJoinDate" resultType="java.lang.Integer">
+        select count(*) from employee_joining_date ej
+        inner join (
+        select max(end_date_en) as ed, employee_pis_code from employee_joining_date group by employee_pis_code
+        ) ej1 on ej1.employee_pis_code = ej.employee_pis_code
+        where ej.employee_pis_code = #{pisEmployeeCode} and ed > #{endDate}
+        <if test="id !=null">
+            and ej.id != #{id}
+        </if>
+
+    </select>
+    <select id="maxEndDate" resultType="java.time.LocalDate">
+        select max(end_date_en) from employee_joining_date where employee_pis_code = #{pisEmployeeCode}
+        <if test="id !=null">
+            and id != #{id}
+        </if>
+    </select>
+    <select id="maxJoinDate" resultType="java.time.LocalDate">
+        select max(join_date_en) from employee_joining_date where employee_pis_code = #{pisEmployeeCode}
+        <if test="id !=null">
+            and id != #{id}
+        </if>
+    </select>
+
+    <select id="getEmployeeByDesignationType"
+            resultMap="employeePojoMinimalUserType">
+        select e.pis_code,
+               e.employee_code,
+               rg.role_group_key                                         as user_type,
+               fd.order_no,
+               fd.name_en                                                as fd_name_en,
+               fd.name_np                                                as fd_name_np,
+               fd.code                                                   as fd_code,
+               fd.salutation                                             as designation_salutation,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as e_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as e_name_np
+        from employee e
+                 inner join users u on e.pis_code = u.pis_employee_code
+                 inner join functional_designation fd on e.designation_code = fd.code
+                 inner join users_roles ur on u.id = ur.user_id
+                 inner join role_group rg on ur.role_id = rg.id
+        where fd.designation_type = #{type}
+          and e.office_code = #{officeCode}
+        order by fd.order_no
+    </select>
+
+    <select id="getEmployeeShift" resultMap="employeePojo">
+
+        select e.pis_code,
+               sdc.day,
+               s.name_en         as shift_name_en,
+               s.name_np         as shift_name_np,
+               stc.checkin_time  as shift_checkin_time,
+               stc.checkout_time as shift_checkout_time
+        from employee e
+                 left join shift s on e.office_code = s.office_code
+                 left join shift_day_config sdc on s.id = sdc.shift_id
+                 left join shift_time_config stc on sdc.id = stc.shift_day_config_id
+        where (s.id = #{shiftId} and sdc.day = #{day}) limit 1
+    </select>
+
+    <resultMap id="tmsEmployeePojo" type="com.gerp.usermgmt.pojo.external.TMSEmployeePojo">
+        <result property="userid" column="user_id"></result>
+        <result property="empCode" column="user_id"></result>
+        <result property="employeeName" column="employee_name_en"></result>
+        <result property="employeeNameNp" column="employee_name_np"></result>
+        <result property="email" column="employee_email_address"></result>
+        <result property="username" column="employee_username"></result>
+        <result property="pisCode" column="employee_pis_code"></result>
+        <result property="officeCode" column="employee_office_code"></result>
+        <result property="contact" column="employee_mobile_number"></result>
+    </resultMap>
+    <select id="getAllEmployeeByOfficeCode" resultMap="tmsEmployeePojo">
+
+        select e.pis_code                                                as employee_pis_code,
+               case
+                   when e.middle_name_en is not null
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+               case
+                   when e.middle_name_np is not null
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+               e.email_address                                           as employee_email_address,
+               e.office_code                                             as employee_office_code,
+               e.mobile_number                                           as employee_mobile_number,
+               u.user_name                                               as employee_username,
+               u.id                                                      as user_id
+
+        from employee e
+                 join users u on e.pis_code = u.pis_employee_code
+        where e.office_code = #{officeCode}
+    </select>
+    <select id="getAllEmployee" resultMap="tmsEmployeePojo">
+        select e.pis_code                                                as employee_pis_code,
+               case
+                   when e.middle_name_en is not null
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+               case
+                   when e.middle_name_np is not null
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+               e.email_address                                           as employee_email_address,
+               e.office_code                                             as employee_office_code,
+               e.mobile_number                                           as employee_mobile_number,
+               u.user_name                                               as employee_username,
+               u.id                                                      as user_id
+
+        from employee e
+                 full outer join users u on e.pis_code = u.pis_employee_code;
+
+    </select>
+    <select id="getAllEmployeeByIds" resultMap="tmsEmployeePojo">
+        select e.pis_code as employee_pis_code,
+        case when e.middle_name_en is not null then concat(e.first_name_en,' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+        case when e.middle_name_np is not null then concat(e.first_name_np,' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+        e.email_address as employee_email_address,
+        e.office_code as employee_office_code,
+        e.mobile_number as employee_mobile_number,
+        u.user_name as employee_username,
+        u.id as user_id
+
+        from employee e join users u on e.pis_code = u.pis_employee_code
+        where u.id in
+        <foreach collection="userIds" item="userId" open=" (" separator="," close=") ">
+            #{userId}
+        </foreach>
+    </select>
+
+    <select id="getTMSEmployeeByPisCode" resultMap="tmsEmployeePojo">
+        select e.pis_code                                                as employee_pis_code,
+               case
+                   when e.middle_name_en is not null
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+               case
+                   when e.middle_name_np is not null
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+               e.email_address                                           as employee_email_address,
+               e.office_code                                             as employee_office_code,
+               e.mobile_number                                           as employee_mobile_number,
+               u.user_name                                               as employee_username,
+               u.id                                                      as user_id
+        from employee e
+                 join users u on e.pis_code = u.pis_employee_code
+        where e.pis_code = #{pisCode}
+    </select>
+
+    <select id="getByEmployeeCode" resultMap="employeePojo">
+        select e.pis_code,
+               e.employee_code,
+               e.first_name_en,
+               e.middle_name_en,
+               e.last_name_en,
+               e.blood_group,
+
+
+               e.first_name_np,
+               e.middle_name_np,
+               e.last_name_np,
+
+               e.telephone_no,
+
+               e.father_fname_en                                         as father_f_name_en,
+               e.father_fname_en                                         as father_f_name_np,
+               e.father_mname_en                                         as father_m_name_en,
+               e.father_mname_np                                         as father_m_name_np,
+               e.father_lname_en                                         as father_l_name_en,
+               e.father_lname_np                                         as father_l_name_np,
+
+               e.mother_fname_en                                         as mother_f_name_en,
+               e.mother_fname_en                                         as mother_f_name_np,
+               e.mother_mname_en                                         as mother_m_name_en,
+               e.mother_mname_np                                         as mother_m_name_np,
+               e.mother_lname_en                                         as mother_l_name_en,
+               e.mother_lname_np                                         as mother_l_name_np,
+
+               e.grand_father_fname_en                                   as grand_father_f_name_en,
+               e.grand_father_fname_en                                   as grand_father_f_name_np,
+               e.grand_father_mname_en                                   as grand_father_m_name_en,
+               e.grand_father_mname_np                                   as grand_father_m_name_np,
+               e.grand_father_lname_en                                   as grand_father_l_name_en,
+               e.grand_father_lname_np                                   as grand_father_l_name_np,
+
+               e.spouse_fname_en                                         as spouse_f_name_en,
+               e.spouse_fname_en                                         as spouse_f_name_np,
+               e.spouse_mname_en                                         as spouse_m_name_en,
+               e.spouse_mname_np                                         as spouse_m_name_np,
+               e.spouse_lname_en                                         as spouse_l_name_en,
+               e.spouse_lname_np                                         as spouse_l_name_np,
+
+               e.temporary_house_no                                      as temporary_house_no,
+               e.permanent_house_no                                      as permanent_house_no,
+
+               e.temporary_ward_no                                       as temporary_ward_no,
+               e.permanent_ward_no                                       as permanent_ward_no,
+
+               e.birth_date_ad,
+               e.birth_date_bs,
+               e.current_position_app_date_ad,
+               e.current_position_app_date_bs,
+               e.cur_office_join_dt_en,
+               e.cur_office_join_dt_np,
+
+               e.fax                                                     as fax,
+
+               e.marital_status                                          as marital_status,
+
+               e.pan,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as name_en,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as name_np,
+               e.citizenship_number,
+               e.profile_pic                                             as employee_profile_pic,
+               o.code                                                    as office_code,
+               o.name_en                                                 as office_name_en,
+               o.name_np                                                 as office_name_np,
+               o.district_code                                           as office_district_code,
+               o.address_en                                              as office_address_en,
+               o.address_np                                              as office_address,
+               s.code                                                    as service_code,
+               s.name_en                                                 as service_name_en,
+               s.name_np                                                 as service_name_np,
+               p.code                                                    as position_code,
+               p.name_en                                                 as position_name_en,
+               p.name_np                                                 as position_name_np,
+               ss.id                                                     as section_id,
+               ss.name_en                                                as section_name_en,
+               ss.name_np                                                as section_name_np,
+               case when u.id is null then false else true end           as user_already_exists,
+               e.gender                                                  as gender,
+               e.email_address                                           as email_address,
+               e.mobile_number                                           as mobile_number,
+               fd.name_en                                                as functional_designation_name_en,
+               fd.name_np                                                as functional_designation_name_np,
+               fd.code                                                   as functional_designation_code,
+               fd.designation_type                                       as functional_designation_type,
+
+
+               pDistr.code                                               as per_district_code,
+               pDistr.name_en                                            as per_district_name_en,
+               pDistr.name_np                                            as per_district_name_np,
+
+               ess.code                                                  as service_status_code,
+               ess.name_en                                               as service_status_name_en,
+               ess.name_np                                               as service_status_name_np,
+
+               tDistr.code                                               as temp_district_code,
+               tDistr.name_en                                            as temp_district_name_en,
+               tDistr.name_np                                            as temp_district_name_np,
+
+               pMun.code                                                 as per_municipality_vdc_code,
+               pMun.name_en                                              as per_municipality_vdc_name_en,
+               pMun.name_np                                              as per_municipality_vdc_name_np,
+
+               tMun.code                                                 as temp_municipality_vdc_code,
+               tMun.name_en                                              as temp_municipality_vdc_name_en,
+               tMun.name_np                                              as temp_municipality_vdc_name_np,
+               r.code                                                    as religion_code,
+               r.name_en                                                 as religion_name_en,
+               r.name_np                                                 as religion_name_np,
+
+               ee.id                                                     as employee_educations_id,
+               ee.admission_date_en,
+               ee.admission_date_np,
+               ee.completion_date_en,
+               ee.completion_date_np,
+               ee.grade,
+               ee.institute,
+               ee.percentage,
+               ee.remarks,
+
+               c.code                                                    as education_country_code,
+               c.name_en                                                 as education_country_name_en,
+               c.name_np                                                 as education_country_name_np,
+
+               fc.code                                                   as faculty_code,
+               fc.name_en                                                as faculty_name_en,
+               fc.name_np                                                as faculty_name_np,
+
+               el.code                                                   as education_level_code,
+               el.name_en                                                as education_level_en,
+               el.name_np                                                as education_level_np,
+
+               ej.id                                                     as employee_joining_date_id,
+               ej.join_date_en                                           as employee_join_date_en,
+               ej.join_date_np                                           as employee_join_date_np,
+               ej.is_active                                              as is_active_employee_joining,
+               ej.end_date_en                                            as employee_end_date_en,
+               ej.end_date_np                                            as employee_end_date_np,
+               o.district_code                                           as office_district_code
+        from employee e
+                 left join position p on e.position_code = p.code
+                 left join office o on e.office_code = o.code
+                 left join service s on e.service_code = s.code
+                 left join section_designation sd on e.pis_code = sd.employee_pis_code
+            and sd.is_active = true
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+                 left join users u on e.pis_code = u.pis_employee_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join district tDistr on e.temp_district_code = tDistr.code
+                 left join district pDistr on e.per_district_code = pDistr.code
+                 left join district officeDistrict on officeDistrict.code = o.code
+
+                 left join municipality_vdc tMun on e.temp_municipality_vdc = tMun.code
+                 left join municipality_vdc pMun on e.per_municipality_vdc = pMun.code
+                 left join employee_service_status ess on e.employee_service_status_code = ess.code
+                 left join employee_education ee on e.pis_code = ee.employee_pis_code
+                 left join country c on c.code = ee.country_code
+                 left join faculty fc on fc.code = ee.faculty_code
+                 left join education_level el on el.code = ee.education_level_code
+                 left join employee_joining_date ej on ej.employee_pis_code = e.pis_code
+
+                 left join religion r on e.religion_code = r.code
+
+        where upper(e.employee_code) = upper(#{code}) limit 1
+    </select>
+    <select id="getEmployeeBasedOnModulePrivilege"
+            resultMap="employeePojoMinimalUserType">
+
+
+        select
+            distinct
+        e.pis_code,
+        e.employee_code,
+        rg.role_group_key as user_type,
+        ps.order_no,
+      e.current_position_app_date_bs,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 1
+        when (e.employee_service_status_code = '08') then 2
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as e_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as e_name_np,
+
+        fd.name_en as fd_name_en,
+        fd.name_np as fd_name_np,
+        fd.code as fd_code
+
+        from employee e inner join users u on u.pis_employee_code = e.pis_code and u.is_active is true
+        inner join users_roles ur on u.id = ur.user_id
+        inner join role_group rg on ur.role_id = rg.id
+        inner join role_group_screen_module_privilege rgsmp on rg.id = rgsmp.role_group_id
+        inner join module m on rgsmp.module_id = m.id
+        inner join privilege p on rgsmp.privilege_id = p.id
+        inner join functional_designation fd on fd.code = e.designation_code
+        inner join position ps on e.position_code = ps.code
+        where
+                 p.privilege_key in
+             <foreach item="id" index="index" collection="privileges" open="(" separator="," close=")">
+                   #{id}
+             </foreach>
+                and m.module_key in
+            <foreach item="id" index="index" collection="moduleKeys" open="(" separator="," close=")">
+                    #{id}
+            </foreach>
+           and  e.office_code = #{officeCode}
+        order by e_order ,ps.order_no,e.current_position_app_date_bs,e_name_en
+
+
+    </select>
+
+
+</mapper>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gerp.attendance.mapper.ValidationMapper">
+
+    <select id="validateLeave" resultType="String">
+        select
+        case when (g.gayal !=0) then
+        'gayal'
+        when (k.kaaj !=0) then
+        'kaaj'
+        when (l.leave !=0) then
+        'leave'
+        else 'success' end as status
+        from
+        (select count(*) as gayal from gayal_katti where
+        pis_code=#{pisCode}and office_code=#{officeCode}
+        and (from_date_en between #{fromDate} and #{toDate}
+        or to_date_en between #{fromDate} and #{toDate}))g,
+        (select count(*) as kaaj from kaaj_request kr
+        left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active=true
+        where 1=1
+        and (krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode})
+        and kr.office_code=#{officeCode} and kr.status in ('P','A')
+        and case when (kr.applied_for_others) then
+        ((krob.from_date_en between #{fromDate} and #{toDate}
+        or krob.to_date_en between #{fromDate} and #{toDate})
+        or (#{fromDate} between krob.from_date_en and krob.to_date_en
+        or #{toDate} between krob.from_date_en and krob.to_date_en))
+        else
+        ((kr.from_date_en between #{fromDate} and #{toDate}
+        or kr.to_date_en between #{fromDate} and #{toDate})
+        or (#{fromDate} between kr.from_date_en and kr.to_date_en
+        or #{toDate} between kr.from_date_en and kr.to_date_en)) end)k,
+        (select count(*) as leave from leave_request lr
+        left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        where case  when lr.applied_for_others then    lrd.pis_code=#{pisCode}
+        else lr.emp_pis_code=#{pisCode}
+        end
+        and office_code=#{officeCode} and status in ('P','A')
+        and lr.is_active=true and lrd.is_active=true
+        and lrd.year=#{year}
+        <if test="leaveId !=null">
+            and lrd.id not in (#{leaveId})
+        </if>
+        and ((from_date_en between #{fromDate} and #{toDate} or
+        to_date_en between #{fromDate} and #{toDate})
+        or (#{fromDate} between from_date_en and to_date_en or
+        #{toDate} between from_date_en and to_date_en)))l;
+    </select>
+
+    <select id="validateSpecificHoliday" resultType="String">
+        select case
+        when (l.leave !=0) then
+        'leave'
+        when (k.kaaj !=0) then
+        'kaaj'
+        else 'success' end as status
+        from (select count(*) as leave
+        from leave_request_detail lrd
+        left join leave_request lr on lr.id = lrd.leave_request_id
+        where case  when lr.applied_for_others then    lrd.pis_code=#{pisCode}
+        else lr.emp_pis_code=#{pisCode}
+        end
+        and lr.office_code = #{officeCode}
+        and lrd.status in ('A', 'P')
+        and ((from_date_en between #{fromDate} and #{toDate}
+        or to_date_en between #{fromDate} and #{toDate})
+        or (#{fromDate} between from_date_en and to_date_en
+        or #{toDate} between from_date_en and to_date_en))) l,
+        (select count(*) as kaaj
+        from kaaj_request kr
+        left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+
+        where 1 = 1
+        and (krob.pis_code = #{pisCode} or kr.pis_code = #{pisCode})
+        and kr.office_code = #{officeCode}
+        and kr.status in ('P', 'A')
+        and case
+        when (kr.applied_for_others) then
+        ((krob.from_date_en between #{fromDate} and #{toDate}
+        or krob.to_date_en between #{fromDate} and #{toDate})
+        or (#{fromDate} between krob.from_date_en and krob.to_date_en
+        or #{toDate} between krob.from_date_en and krob.to_date_en))
+        else
+        ((kr.from_date_en between #{fromDate} and #{toDate}
+        or kr.to_date_en between #{fromDate} and #{toDate})
+        or (#{fromDate} between kr.from_date_en and kr.to_date_en
+        or #{toDate} between kr.from_date_en and kr.to_date_en)) end) k;
+    </select>
+
+    <select id="validateKaaj" resultType="String">
+        select
+        case when (g.gayal !=0) then
+        'gayal'
+        when (l.leave !=0) then
+        'leave'
+        when (k.kaaj !=0) then
+        'kaaj'
+        else 'success' end as status
+        from
+        (select count(*) as gayal from gayal_katti where
+        pis_code=#{pisCode} and office_code=#{officeCode}
+        and ((from_date_en between #{fromDate} and #{toDate}
+        or to_date_en between #{fromDate} and #{toDate})
+        or (#{fromDate} between from_date_en and to_date_en
+        or #{toDate} between from_date_en and to_date_en)))g,
+        (select count(*) as leave from leave_request_detail lrd
+        left join leave_request lr on lr.id=lrd.leave_request_id where
+<!--        lr.emp_pis_code=#{pisCode}-->
+        case  when lr.applied_for_others then lrd.pis_code=#{pisCode}
+            else lr.emp_pis_code=#{pisCode}
+        end
+        and lr.office_code=#{officeCode} and lrd.status in('P','A')
+        and lrd.year=#{year}
+        and ((from_date_en between #{fromDate} and #{toDate}
+        or to_date_en between #{fromDate} and #{toDate})
+        or (#{fromDate} between from_date_en and to_date_en
+        or #{toDate} between from_date_en and to_date_en)))l,
+        (select count(*) as kaaj from kaaj_request kr
+        left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active=true
+
+        where 1=1
+        and (krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode})
+        and kr.office_code=#{officeCode} and kr.status in ('P','A')
+        <if test="kaajId !=null">
+            and kr.id not in (#{kaajId})
+        </if>
+        and case when (kr.applied_for_others) then
+        ((krob.from_date_en between #{fromDate} and #{toDate}
+        or krob.to_date_en between #{fromDate} and #{toDate})
+        or (#{fromDate} between krob.from_date_en and krob.to_date_en
+        or #{toDate} between krob.from_date_en and krob.to_date_en)) else
+        ((kr.from_date_en between #{fromDate} and #{toDate}
+        or kr.to_date_en between #{fromDate} and #{toDate})
+        or (#{fromDate} between kr.from_date_en and kr.to_date_en
+        or #{toDate} between kr.from_date_en and kr.to_date_en) ) end)k;
+    </select>
+
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gerp.usermgmt.mapper.organization.PositionMapper">
+    <select id="getParentPositions" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select p.name_en as name, p.name_np as nameN,p.code from position p where p.parent_position_code is null
+        <if test="orgTypeId != null">
+            and p.organisation_type_id = #{orgTypeId}
+        </if>
+    </select>
+    <select id="getPositionFiltered" resultType="com.gerp.usermgmt.pojo.organization.employee.PositionPojo">
+
+        select p.name_np, p.name_en , p.code, p.order_no , p.position_type
+        from position p
+
+        <if test="search!=null">
+            <where>
+                <if test="search.name!=null and search.name!=''">
+                    (upper(p.name_en) like CONCAT('%', upper(#{search.name}),'%')
+                    or p.name_np like CONCAT('%', #{search.name},'%'))
+                </if>
+                <if test="search.positionType!=null and search.positionType!=''">
+                    and p.position_type = #{search.positionType}
+                </if>
+                <if test="search.organisationTypeId !=null and search.organisationTypeId !=''">
+                    and p.organisation_type_id = #{search.organisationTypeId}
+                </if>
+            </where>
+        </if>
+        order by p.order_no
+    </select>
+
+    <select id="getOfficePosition" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select distinct p.code as id , p.name_en as name,p.name_np as nameN from position p
+        inner join employee e on p.code = e.position_code where e.office_code =#{officeCode}
+        <if test="orgTypeId != null">
+            and p.organisation_type_id = #{orgTypeId}
+        </if>
+    </select>
+</mapper>

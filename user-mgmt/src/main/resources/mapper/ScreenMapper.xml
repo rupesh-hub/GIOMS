@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.gerp.usermgmt.mapper.usermgmt.ScreenGroupMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.usermgmt.model.ScreenGroup">
+        <id column="id" property="id"/>
+        <result column="screen_group_name" property="name"/>
+    </resultMap>
+
+    <select id="selectPageMap" resultMap="baseResultMap">
+        select * from screen_group
+        <if test="map!=null">
+            <where>
+                <if test="map.name!=null and map.name!=''">
+                    screen_group_name like #{map.name}
+                </if>
+            </where>
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.AttendanceDeviceMapper">
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.AttendanceDevicePojo">
+    </resultMap>
+
+    <select id="getAttendanceDevice" resultMap="baseResultMap" >
+
+     select  distinct ad."id" id,ad.device_name,ad.device_model ,ad.device_no ,ad.device_serial_no ,ad.effect_date ,ad.port ,ad.ip ,ad.serial_port ,b.ALIAS from
+               attendance_device ad,( select ad2.device_name ,ad2.device_model,string_agg(adt.attendance_device_type_en,',')ALIAS from attendance_device ad2
+                                                              left join attendance_device_device_type addt  on addt.attendance_device_id =ad2.id
+                                                              left join attendance_device_type adt  on addt.attendance_device_type_id =adt.id
+                                                    group by ad2.device_name ,ad2.device_model)b
+            where ad.device_name=b.device_name order by id asc
+
+
+    </select>
+
+<!--    <select id="getAttendanceDeviceById" resultMap="baseResultMap"  parameterType="Integer">-->
+<!--    select  distinct ad."id" id,ad.device_name,ad.device_model ,ad.device_no ,ad.device_serial_no ,ad.effect_date ,ad.port ,ad.ip ,ad.serial_port ,b.ALIAS from-->
+<!--    attendance_device ad,( select ad2.device_name ,ad2.device_model,string_agg(adt.attendance_device_type_en,',')ALIAS from attendance_device ad2-->
+<!--    left join attendance_device_device_type addt  on addt.attendance_device_id =ad2.id-->
+<!--    left join attendance_device_type adt  on addt.attendance_device_type_id =adt.id-->
+<!--    group by ad2.device_name ,ad2.device_model)b-->
+<!--    where ad.device_name=b.device_name and id=#{id}-->
+
+<!--    </select>-->
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.kasamu.mapper.KasamuNonGazettedMapper">
+
+<!--    typeHandler="com.gerp.kasamu.converter.AESTypeHandler"-->
+    <resultMap id="kasamuDetails" type="com.gerp.kasamu.pojo.request.KasamuForNoGazettedPojo">
+        <id property="id" column="id"/>
+        <result property="kasamuNonGazettedEn" column="kasamu_non_gazetted_en" typeHandler="com.gerp.kasamu.converter.AESTypeHandler"/>
+<!--        <result property="taskType" column="task_type"  />-->
+<!--        <result property="description" column="description" />-->
+<!--        <result property="cost" column="cost" />-->
+<!--        <result property="timeTaken" column="time_taken" />-->
+<!--        <result property="quality" column="quality" />-->
+<!--        <result property="quantity" column="quantity" />-->
+<!--        <result property="remarks" column="remarks" />-->
+    </resultMap>
+
+    <select id="getNonGazettedList" resultMap="kasamuDetails">
+        select *
+        from kasamu_for_non_gazetted
+        where kasamu_master_id is null and
+              created_by = #{employeeCode}::INTEGER
+        <if test="id != null">
+            and id =#{id}
+        </if>
+    </select>
+
+
+</mapper>

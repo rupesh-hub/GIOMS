@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.transfer.TransferAuthorityMapper">
+
+    <resultMap id="transferRequest" type="com.gerp.usermgmt.pojo.transfer.TransferAuthorityResponsePojo">
+        <id column="id" property="id"/>
+        <association property="service" resultMap="Service"/>
+        <association property="district" resultMap="officeDistrict"/>
+        <collection property="group" resultMap="group"/>
+        <collection resultMap="sendTOOffice" property="offices"/>
+        <collection resultMap="position" property="positions"/>
+        <collection resultMap="type" property="type"/>
+    </resultMap>
+
+    <resultMap id="officeList" type="com.gerp.usermgmt.pojo.transfer.MergeOfficeListPojo">
+        <id column="tc_id" property="id"/>
+        <collection property="detailPojoSet1" resultMap="office"/>
+        <collection property="detailPojoSet2" resultMap="ministry"/>
+    </resultMap>
+
+    <resultMap id="sendTOOffice" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="o_code" property="code"/>
+        <result column="o_name_en" property="nameEn"/>
+        <result column="o_name_np" property="nameNp"/>
+        <collection property="codes" ofType="java.lang.String" javaType="list">
+            <result column="g_codes" />
+        </collection>
+    </resultMap>
+
+    <resultMap id="transferAuthorityPositionAndService" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="s_code" property="code"/>
+        <collection property="positionCodes" ofType="java.lang.String" javaType="list">
+            <result column="positionCode" />
+        </collection>
+        <collection property="codes" ofType="java.lang.String" javaType="list">
+            <result column="g_codes" />
+        </collection>
+        <collection property="types" ofType="java.lang.String" javaType="list">
+            <result column="t_types" />
+        </collection>
+    </resultMap>
+<!--    <resultMap id="positionCode" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">-->
+<!--        <id column="p_code" property="code"/>-->
+<!--    </resultMap>-->
+<!--    <resultMap id="groupCode" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">-->
+<!--        <id column="g_code" property="code"/>-->
+<!--    </resultMap>-->
+    <resultMap id="office" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="oo_code" property="code"/>
+        <result column="oo_name_en" property="nameEn"/>
+        <result column="oo_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="ministry" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="m_code" property="code"/>
+        <result column="m_name_en" property="nameEn"/>
+        <result column="m_name_np" property="nameNp"/>
+    </resultMap>
+
+
+    <resultMap id="Service" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="s_code" property="code"/>
+        <result column="s_name_en" property="nameEn"/>
+        <result column="s_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="employee" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="pis_code" property="code"/>
+        <result column="first_name_en" property="nameEn"/>
+        <result column="first_name_np" property="nameNp"/>
+        <result column="middle_name_en" property="middleNameEn"/>
+        <result column="middle_name_np" property="middleNameNp"/>
+        <result column="last_name_np" property="lastNameNp"/>
+        <result column="last_name_en" property="lastNameEn"/>
+    </resultMap>
+
+    <resultMap id="group" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="g_code" property="code"/>
+        <result column="g_name_en" property="nameEn"/>
+        <result column="g_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="position" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="p_code" property="code"/>
+        <result column="p_name_en" property="nameEn"/>
+        <result column="p_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="type" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="tat_id" property="code"/>
+        <result column="tat_type" property="nameEn"/>
+    </resultMap>
+    <resultMap id="officeDistrict" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="do_code" property="code"/>
+        <result column="do_name_en" property="nameEn"/>
+        <result column="do_name_np" property="nameNp"/>
+    </resultMap>
+
+    <select id="getTransferConfig" resultMap="transferRequest">
+        select
+        ta.id ,
+
+        oNew.code as o_code,
+        oNew.name_np as o_name_np,
+        oNew.name_en as o_name_en,
+
+           od.code as do_code,
+            od.name_np as do_name_np,
+         od.name_en as do_name_en ,
+        so.code as s_code,
+        so.name_np as s_name_np,
+        so.name_en as s_name_en ,
+
+        p.code as p_code,
+        p.name_np as p_name_np,
+        p.name_en as p_name_en ,
+
+        tat.id as tat_id,
+        tat.type as tat_type,
+
+        g.code as g_code,
+        g.name_np as g_name_np,
+        g.name_en as g_name_en,
+        g.code as g_codes
+
+        from transfer_authority ta
+                 left join service so on so.code = ta.service_code
+                 left join transfer_authority_position tap on tap.transfer_authority_id = ta.id
+                 left join transfer_authority_type tat on tat.transfer_authority_id = ta.id
+                 inner join position p on p.code = tap.position_code
+                 left join  transfer_authority_group tag on tag.transfer_authority_id  = ta.id
+                 inner join service g on g.code = tag.group_code
+                 left join transfer_authority_office tao on tao.transfer_authority_id = ta.id
+                 left join office oNew on oNew.code = tao.office_code
+                  left join district od on od.code = oNew.district_code
+                 where
+                ta.created_by = #{userId} and
+                ta.is_active = true
+    </select>
+
+
+    <select id="getTransferAuthorityOffices" resultMap="sendTOOffice">
+   select distinct
+    oNew.code as o_code,
+    oNew.name_np as o_name_np,
+    oNew.name_en as o_name_en,
+    tag.group_code as g_codes
+    from transfer_authority ta
+    inner join transfer_authority_office tao on ta.id = tao.transfer_authority_id
+    left join transfer_authority_group tag on ta.id =  tag.transfer_authority_id
+          left join office oNew on oNew.code = tao.office_code
+    where ta.service_code = #{serviceCode}
+    </select>
+
+    <select id="findUpperLevelOffices" resultMap="sendTOOffice">
+        WITH RECURSIVE offices AS (
+    select code         ,
+           name_en      ,
+           name_np     ,
+           parent_code
+    from office
+    where code = #{ministryCode}
+    union
+    select   o.code         ,
+             o.name_en     ,
+             o.name_np    ,
+             o.parent_code  from office o inner join offices po on po.code = o.parent_code
+            where o.code != #{officeCode})
+             select ss.code as o_code,
+        ss.name_np as o_name_np,
+        ss.name_en as o_name_en, ss.code as g_codes from offices ss
+    </select>
+
+<!--    <select id="findUpperLevelOffices" resultMap="sendTOOffice">-->
+<!--        WITH RECURSIVE offices AS (-->
+<!--    select code         ,-->
+<!--           name_en      ,-->
+<!--           name_np     ,-->
+<!--           parent_code-->
+<!--    from office-->
+<!--    where code = #{ministryCode}-->
+<!--    union-->
+<!--    select   o.code         ,-->
+<!--             o.name_en     ,-->
+<!--             o.name_np    ,-->
+<!--             o.parent_code  from office o inner join offices po on po.code = o.parent_code-->
+<!--            where o.code != #{officeCode})-->
+<!--             select ss.code as o_code,-->
+<!--        ss.name_np as o_name_np,-->
+<!--        ss.name_en as o_name_en, ss.code as g_codes from offices ss-->
+<!--    </select>-->
+
+    <select id="getConfiguredMinistryOffice" resultMap="sendTOOffice">
+        select o.code as o_code,
+        o.name_np as o_name_np,
+        o.name_en as o_name_en,
+        o.code as g_codes
+        from  transfer_config tc inner join office o on tc.minister_code = o.code
+       <if test="officeCode != null">
+           where tc.minister_code = #{officeCode}
+       </if>
+    </select>
+<select id="getEmployeeToBeTransfered" resultMap="employee">
+    select distinct e.pis_code,e.first_name_en,e.first_name_np,e.middle_name_en,e.middle_name_np,e.last_name_en,e.last_name_np from employee e
+    inner join transfer_authority_position tap on tap.position_code = e.position_code
+    inner join transfer_authority ta on tap.transfer_authority_id = ta.id
+    inner join transfer_authority_office tao on ta.id = tao.transfer_authority_id
+    where tao.office_code =#{officeCode} and e.office_code = #{employeeOfficeCode}
+</select>
+    <select id="getEmployeeToBeTransferedByOffice" resultMap="employee">
+   select e.pis_code,e.first_name_en,e.first_name_np,e.middle_name_en,e.middle_name_np,e.last_name_en,e.last_name_np, e.office_code
+    from office o
+    inner join office ob on ob.parent_code = o.code
+    inner join employee e on ob.code = e.office_code
+    inner join position p on e.position_code = p.code
+    where
+    e.office_code = #{selectedOffice} and (e.employee_service_status_code != '04' or e.employee_service_status_code is null) and
+   ( o.code = #{officeCode}
+    or e.office_code = #{officeCode})
+    <if test="serviceCodes != null and serviceCodes.size() >0">
+        and
+        <foreach item="serviceValue" index="serviceKey" collection="serviceCodes"  separator=" and "  >
+            e.service_code != #{serviceValue}
+        </foreach>
+    </if>
+        order by p.order_no asc
+    </select>
+
+    <select id="getEmployeeToBeTransferedWithOffice" resultMap="employee">
+   select distinct e.pis_code,e.first_name_en,e.first_name_np,e.middle_name_en,e.middle_name_np,e.last_name_en,e.last_name_np, e.office_code  from employee e
+    where e.office_code = #{officeCode}
+    <if test="employeeName != null">
+        <bind name="pattern_en" value="employeeName + '%'"/>
+       and upper (concat_ws(' ',e.first_name_en,e.middle_name_en,e.last_name_en)) like upper(#{pattern_en})
+    </if>
+</select>
+
+
+<select id="getEmployeeToBeTransferInternalOffices" resultMap="employee">
+    WITH RECURSIVE servicess AS (
+    select code,name_en,parent_code from service
+    where
+    <foreach item="serviceValue" index="serviceKey" collection="serviceCode"  separator=" or "  >
+        code = #{serviceValue}
+    </foreach>
+    union
+    select  s.code,s.name_en,s.parent_code from service s inner join servicess ss on ss.code = s.parent_code)
+    select  * from servicess ss
+    inner join employee e on e.service_code = ss.code
+    inner join position p on e.position_code = p.code
+    where e.office_code = #{officeCode}
+    <if test="searchKey != null">
+        <bind name="pattern_en" value="searchKey + '%'"/>
+        and upper (concat_ws(' ',e.first_name_en,e.middle_name_en,e.last_name_en)) like upper(#{pattern_en})
+    </if>
+    <if test="position != null and position.size > 0 ">
+    and (
+        <foreach item="value" index="key" collection="position" separator=" or ">
+            e.position_code = #{value}
+        </foreach>
+        )
+    </if>
+    order by p.order_no asc
+</select>
+
+    <select id="findByOfficeCode" resultMap="transferAuthorityPositionAndService">
+        select ta.service_code as s_code,tap.position_code as positionCode,t.group_code as g_codes, tat.type as t_types from transfer_authority ta
+        inner join transfer_authority_position tap on ta.id = tap.transfer_authority_id
+            inner join transfer_authority_office tao  on tao.transfer_authority_id = ta.id
+            left join transfer_authority_group t on ta.id = t.transfer_authority_id
+            left join transfer_authority_type tat on ta.id = tat.transfer_authority_id
+            where  ta.is_active = true
+            <if test="officeCode != null">
+               and tao.office_code =#{officeCode}
+            </if>
+    </select>
+
+    <select id="findTransferOffices" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+    WITH RECURSIVE offices AS (
+        select code         ,
+               name_en      as name_en,
+               name_np      as name_np,
+               email      ,
+               address_en,
+               address_np,
+               phone_number,
+               district_code,
+               parent_code  as parent_code
+             from office
+        where
+        <if test="officeCode != null and ministryCode ==null">
+            code = #{officeCode}
+        </if>
+         <if test=" ministryCode!=null">
+             code = #{ministryCode}
+        </if>
+        union
+        select   o.code         ,
+       o.name_en      as name_en,
+        o.name_np      as name_np,
+        o.email      ,
+        o.address_en,
+        o.address_np,
+        o.phone_number,
+        o.district_code,
+        o.parent_code  as parent_code from office o inner join offices po on po.code = o.parent_code
+    ) select * from offices ss
+        <if test="districtCode !=null">
+            where district_code= #{districtCode}
+        </if>
+    </select>
+
+    <select id="getTransferFromOffice" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        WITH RECURSIVE offices AS (
+        select code         ,
+        name_en      as name_en,
+        name_np      as name_np,
+        email      ,
+        address_en,
+        address_np,
+        phone_number,
+        district_code,
+        parent_code  as parent_code
+
+        from office
+        where
+            code = #{officeCode}
+        union
+        select   o.code         ,
+        o.name_en      as name_en,
+        o.name_np      as name_np,
+        o.email      ,
+        o.address_en,
+        o.address_np,
+        o.phone_number,
+        o.district_code,
+        o.parent_code  as parent_code from office o inner join offices po on po.code = o.parent_code
+        ) select * from offices ss
+        where  ss.district_code = #{districtCode}
+        <if test="officeName != null">
+            <bind name="pattern_en" value="officeName + '%'"/>
+        and ss.name_en like #{pattern_en} or ss.name_np like #{pattern_en}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.ShiftEmployeeGroupMapper">
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.shift.group.ShiftEmployeeGroupPojo">
+        <id property="id" column="id" />
+        <result property="nameEn" column="name_en" />
+        <result property="nameNp" column="name_np" />
+        <result property="employeeCount" column="employee_count" />
+        <result property="shiftId" column="shift_id" />
+        <collection property="employees" column="segm_id" ofType="com.gerp.shared.pojo.employee.EmployeeMinimalPojo" >
+            <result property="pisCode" column="segm_pis_code" />
+        </collection>
+    </resultMap>
+
+    <select id="findById" resultMap="baseResultMap" >
+        select seg.id, name_en, name_np, employee_count, segm.id as segm_id, segm.pis_code as segm_pis_code
+        from shift_employee_group seg
+                 left join shift_employee_group_mapping segm on seg.id = segm.shift_employee_group_id
+        where seg.id = #{id}
+    </select>
+
+    <select id="findAllByFiscalYearPaginated" resultMap="baseResultMap" >
+        select id, name_en, name_np, employee_count from shift_employee_group
+            <where>
+                <if test="fiscalYear!=null">
+                    and fiscal_year = #{fiscalYear}
+                </if>
+                <if test="map!= null">
+                    <if test="map.name_en != null and map.name_en != ''">
+                        <bind name="name_en_p" value="'%' + map.name_en + '%'" />
+                        and name_en like #{name_en_p}
+                    </if>
+                </if>
+            </where>
+    </select>
+
+    <select id="findByIds" resultMap="baseResultMap" >
+        select id, name_en, name_np, employee_count from shift_employee_group where id in
+        <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>
+         #{item}
+        </foreach>
+    </select>
+
+    <select id="findByGroupIds" resultMap="baseResultMap" >
+        select segc.shift_id,seg.id,seg.name_en,seg.name_np from shift_employee_group_config segc left join shift_employee_group seg on segc.shift_employee_group_id = seg.id where segc.shift_employee_group_id in
+        <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="getMappedPisCodeByOfficeWithCheckedFilter" resultType="String" >
+        select segm.pis_code from shift_employee_group seg inner join shift_employee_group_mapping segm on seg.id = segm.shift_employee_group_id
+        where seg.office_code = #{officeCode} and segm.pis_code not in
+        <foreach item='item' index='index' collection='pisCodes' open='(' separator=',' close=')'>
+         #{item}
+        </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.ContactMapper">
+
+
+    <select id="getFavouritesContact" resultType="com.gerp.usermgmt.pojo.organization.FavouriteContactPojo">
+        select e.first_name_en, e.first_name_np, e.mobile_number, e.email_address
+        from favourites_contact
+                 join employee e on e.pis_code = favourites_contact.employee_pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join office o on e.office_code = o.code
+        where e.pis_code = #{pisCode}
+    </select>
+</mapper>

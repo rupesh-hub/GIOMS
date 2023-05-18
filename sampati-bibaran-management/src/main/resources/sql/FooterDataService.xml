@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.sbm.mapper.ValuableItemsMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.sbm.pojo.ResponsePojo.CashAndGoldResponsePojo">
+        <id property="id" column="id"/>
+        <result property="quantity" column="quantity"/>
+        <result property="receivedDate" column="received_date"/>
+        <result property="costPrice" column="cost_price"/>
+        <result property="source" column="source"/>
+        <result property="remarks" column="remarks"/>
+        <result property="createdBy" column="created_by"/>
+    </resultMap>
+
+
+    <select id="getValuableItems" resultMap="baseResultMap">
+        select *
+        from valuable_items
+        where id =  CASE WHEN #{id} IS null OR #{id}='' THEN id ELSE #{id} END and
+        order BY id  #{sortBy} ;
+    </select>
+
+</mapper>

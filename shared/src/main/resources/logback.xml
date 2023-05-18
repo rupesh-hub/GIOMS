@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <property name="OnStart" value="OnStart"/>
+    <property name="LOGS" value="./logs"/>
+    <if condition='isDefined("springAppName")'>
+        <then>
+            <appender name="Console"
+                      class="ch.qos.logback.core.ConsoleAppender">
+                <!--<filter class="ch.qos.logback.classic.filter.LevelFilter">-->
+                <!--<level>TRACE</level>-->
+                <!--<onMatch>ACCEPT</onMatch>-->
+                <!--<onMismatch>DENY</onMismatch>-->
+                <!--</filter>-->
+                <layout class="ch.qos.logback.classic.PatternLayout">
+                    <Pattern>
+                        %black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable
+                    </Pattern>
+                </layout>
+            </appender>
+
+
+            <!--INFO-->
+            <appender name="RollingFileInfo"
+                      class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--one day of history. Adjust accordingly-->
+                <!--<param name="MaxBackupIndex" value="30"/>-->
+                <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                    <level>INFO</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+                <file>${LOGS}/${springAppName}/oag_INFO.log</file>
+                <encoder
+                        class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <!--<Pattern>%d %p %C{1.} [%t] %m%n</Pattern>-->
+                    <Pattern>
+                        %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+                    </Pattern>
+                </encoder>
+
+                <rollingPolicy
+                        class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <!-- rollover daily and when the file reaches 10 MegaBytes -->
+                    <fileNamePattern>
+                        ${LOGS}/archived/${springAppName}/info/oag_INFO-%d{yyyy-MM-dd}.%i.log.gz
+                    </fileNamePattern>
+                    <timeBasedFileNamingAndTriggeringPolicy
+                            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <maxFileSize>200KB</maxFileSize>
+                    </timeBasedFileNamingAndTriggeringPolicy>
+                    <!--one day of history. Adjust accordingly-->
+                    <maxHistory>1</maxHistory>
+                </rollingPolicy>
+            </appender>
+
+            <!--ERROR-->
+            <appender name="RollingFileError"
+                      class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--one day of history. Adjust accordingly-->
+                <!--<param name="MaxBackupIndex" value="30"/>-->
+                <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                    <level>ERROR</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+                <file>${LOGS}/${springAppName}/oag_ERROR.log</file>
+                <encoder
+                        class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <!--<Pattern>%d %p %C{1.} [%t] %m%n</Pattern>-->
+                    <Pattern>
+                        %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+                    </Pattern>
+                </encoder>
+
+                <rollingPolicy
+                        class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <!-- rollover daily and when the file reaches 10 MegaBytes -->
+                    <fileNamePattern>
+                        ${LOGS}/archived/${springAppName}/error/oag_ERROR-%d{yyyy-MM-dd}.%i.log.gz
+                    </fileNamePattern>
+                    <timeBasedFileNamingAndTriggeringPolicy
+                            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <maxFileSize>1000KB</maxFileSize>
+                    </timeBasedFileNamingAndTriggeringPolicy>
+                    <!--one day of history. Adjust accordingly-->
+                    <maxHistory>1</maxHistory>
+                </rollingPolicy>
+            </appender>
+
+
+            <!--WARN-->
+            <appender name="RollingFileWarn"
+                      class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--one day of history. Adjust accordingly-->
+                <!--<param name="MaxBackupIndex" value="30"/>-->
+                <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                    <level>WARN</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+                <file>${LOGS}/${springAppName}/oag_WARN.log</file>
+                <encoder
+                        class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <!--<Pattern>%d %p %C{1.} [%t] %m%n</Pattern>-->
+                    <Pattern>
+                        %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+                    </Pattern>
+                </encoder>
+
+                <rollingPolicy
+                        class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <!-- rollover daily and when the file reaches 10 MegaBytes -->
+                    <fileNamePattern>
+                        ${LOGS}/archived/${springAppName}/warn/oag_WARN-%d{yyyy-MM-dd}.%i.log.gz
+                    </fileNamePattern>
+                    <timeBasedFileNamingAndTriggeringPolicy
+                            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <maxFileSize>1KB</maxFileSize>
+                    </timeBasedFileNamingAndTriggeringPolicy>
+                    <!--one day of history. Adjust accordingly-->
+                    <maxHistory>1</maxHistory>
+                </rollingPolicy>
+            </appender>
+
+            <!--DEBUG-->
+            <appender name="RollingFileDebug"
+                      class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--one day of history. Adjust accordingly-->
+                <!--<param name="MaxBackupIndex" value="30"/>-->
+                <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                    <level>DEBUG</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+                <file>${LOGS}/${springAppName}/oag_DEBUG.log</file>
+                <encoder
+                        class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <!--<Pattern>%d %p %C{1.} [%t] %m%n</Pattern>-->
+                    <Pattern>
+                        %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+                    </Pattern>
+                </encoder>
+
+                <rollingPolicy
+                        class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <!-- rollover daily and when the file reaches 10 MegaBytes -->
+                    <fileNamePattern>
+                        ${LOGS}/archived/${springAppName}/debug/oag_DEBUG-%d{yyyy-MM-dd}.%i.log.gz
+                    </fileNamePattern>
+                    <timeBasedFileNamingAndTriggeringPolicy
+                            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <maxFileSize>1KB</maxFileSize>
+                    </timeBasedFileNamingAndTriggeringPolicy>
+                    <!--one day of history. Adjust accordingly-->
+                    <maxHistory>1</maxHistory>
+                </rollingPolicy>
+            </appender>
+            <!-- LOG everything at INFO level -->
+            <root level="info">
+                <appender-ref ref="RollingFileInfo"/>
+                <appender-ref ref="RollingFileError"/>
+                <appender-ref ref="RollingFileWarn"/>
+                <appender-ref ref="RollingFileDebug"/>
+                <appender-ref ref="Console"/>
+            </root>
+
+            <!-- LOG "com.info*" at TRACE level -->
+            <logger name="com.info" level="info" additivity="false">
+                <appender-ref ref="RollingFileInfo"/>
+                <appender-ref ref="RollingFileError"/>
+                <appender-ref ref="RollingFileWarn"/>
+                <appender-ref ref="RollingFileDebug"/>
+                <appender-ref ref="Console"/>
+            </logger>
+        </then>
+    </if>
+
+
+    <!--//for graylog
+
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+     <appender name="GELF" class="de.siegmar.logbackgelf.GelfUdpAppender">
+         <param name="extractStacktrace" value="true"/>
+         <param name="addExtendedInformation" value="true"/>
+         <param name="facility" value="log4j"/>
+         <param name="additionalFields" value="{'environment': 'DEV', 'application': 'GraylogDemoApplication'}"/>
+         <graylogHost>localhost</graylogHost>
+         <graylogPort>12201</graylogPort>
+         <maxChunkSize>508</maxChunkSize>
+         <useCompression>true</useCompression>
+         <layout class="de.siegmar.logbackgelf.GelfLayout">
+             <originHost>localhost</originHost>
+             <includeRawMessage>false</includeRawMessage>
+             <includeMarker>true</includeMarker>
+             <includeMdcData>true</includeMdcData>
+             <includeCallerData>false</includeCallerData>
+             <includeRootCauseData>false</includeRootCauseData>
+             <includeLevelName>false</includeLevelName>
+             <shortPatternLayout class="ch.qos.logback.classic.PatternLayout">
+                 <pattern>%m%nopex</pattern>
+             </shortPatternLayout>
+             <fullPatternLayout class="ch.qos.logback.classic.PatternLayout">
+                 <pattern>%m</pattern>
+             </fullPatternLayout>
+             <staticField>app_name:backend</staticField>
+             <staticField>os_arch:${os.arch}</staticField>
+             <staticField>os_name:${os.name}</staticField>
+             <staticField>os_version:${os.version}</staticField>
+         </layout>
+     </appender>
+
+     <root level="debug">
+         <appender-ref ref="GELF" />
+         <appender-ref ref="CONSOLE" />
+     </root>-->
+
+</configuration>

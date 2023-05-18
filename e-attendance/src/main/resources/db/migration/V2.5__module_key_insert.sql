@@ -1,0 +1,13 @@
+--
+-- DROP function if exists insert_module();
+-- create function insert_module()
+--     RETURNS void
+--     language plpgsql as
+-- $BODY$
+-- declare
+-- begin
+-- insert into module_key(id, created_date, last_modified_date, created_by, last_modified_by, module_key, module_name)
+--     (select m.id, m.created_date, m.last_modified_date, m.created_by, m.last_modified_by, m.module_key,module_name from module m order by m.id asc);
+-- END
+-- $BODY$;
+-- select insert_module();

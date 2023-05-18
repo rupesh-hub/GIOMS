@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+<head>
+    <title>Request Saruwa Letter</title>
+    <style type="text/css">
+
+        .header{
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .container{
+            /*height:3508px;*/
+            margin-left: 250px;
+            width: 2480px;
+            height: 1750px;
+        }
+        .letter-row{
+            padding-left: 30px;
+            word-spacing: 10px;
+        }
+        .column{
+            float: left;
+            width:50%;
+        }
+
+        .checkoboxCheck{
+            height: 30px;
+            width: 40px;
+            float: right;
+        }
+
+        .letter-submit{
+            padding-left: 80%;
+            margin-top: 20px;
+        }
+
+        .letter-detail{
+            padding-left: 100px;
+        }
+
+        .col-days{
+            height: 30px;
+            width: 30px;
+            border-radius: 3px;
+            float: right;
+        }
+
+        footer{
+            border-top: 4px solid  black;
+            color:black;
+            padding-top: 10px;
+            font-size: 40px;
+            margin-top: 17cm;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h3><u>निजामती सेवा नियमावली , २०५० (बाह्रौ संशोधन,२०७२ सहित)</u></h3>
+        <br />
+        <u><span>सरुवा निवेदन विश्लेषण सूची </span></u><span style="font-size: 20px">(Checklist)</span><br />
+        <br />
+        <br />
+    </div>
+
+    <div class="letter_info">
+        <div class="column">
+            <span>१.</span>
+            <span class="letter-row">निजामती सेवा ऐन, नियमावली एवं सरुवा नीति बमोजिम</span><br />&nbsp;&nbsp;
+            <span class="letter-row">भौगोलिक क्षेत्रमा/कार्यालयमा काम गर्नु पर्ने अवधि</span><br />
+            <br />
+
+            <span>२.</span>
+            <span class="letter-row">पहिले सो कार्यालयमा कार्य गरिसकेको</span><br />
+            <br />
+
+            <span>३.</span>
+            <span class="letter-row">घर पायक</span><br />
+            <br />
+
+            <span>४.</span>
+            <span class="letter-row">पति पत्नी दुवै सरकारी सेवामा</span><br />
+            <br />
+
+            <span>५.</span>
+            <span class="letter-row">कर्मचारीको उमेर</span><br />
+            <br />
+
+            <span>६.</span>
+            <span class="letter-row">फाजिलमा रहे नरहेको</span><br />
+            <br />
+
+            <span>७.</span>
+            <span class="letter-row">अध्ययन वा तालीम काज/अन्तर्राष्ट्रिय संस्थामा काम गरेको</span><br />&nbsp;&nbsp;&nbsp;
+            <span class="letter-row"> विकास समिति तथा आयोजना काजमा गएको अवस्था</span><br />
+            <br />
+
+            <span>८.</span>
+            <span class="letter-row">मन्त्रालय/विभागको सहमतिपत्र</span><br />
+            <br />
+
+            <span>९.</span>
+            <span class="letter-row">सरुवा हुन चाहेको निकायमा तत्काल दरवन्दी रिक्तको</span><br />&nbsp;&nbsp;&nbsp;
+            <span class="letter-row">अवस्था</span><br />
+            <br />
+
+            <span>१०.</span>
+            <span class="letter-row">मिति २०६४।४।१ पश्चात् राजपत्र अनङ्कित पदमा नियुक्ति</span>
+            <br />&nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="letter-row">हुनेको हकमा सम्बन्धित अञ्चलमा</span><br />
+            <br />
+
+            <span>११.</span>
+            <span class="letter-row">अनिवार्य अवकाश हुने अवधि</span><br />
+            <br />
+
+            <span>१२.</span>
+            <span class="letter-row">हाल कार्यरत निकायमा रुजु हाजिर दिन</span><br />
+            <br />
+
+        </div>
+
+        <div class="column">
+            <div class="column info">
+
+                <span class="letter-detail">पूरा भएका</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.durationComplete}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">पूरा नभएको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.durationInComplete}"><br />
+                <br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">प्रथमपटक</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.workFirstTime}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">दोहोर्‍याई </span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.workRepetition}"><br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">पर्ने</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.nearHome}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">नपर्ने </span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.farHome}"><br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">भएको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.coupleInPublicService}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">नभएको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.coupleNotInPublicService}"><br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">५० वर्ष नपुगेको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.employeeBelowFifty}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">५० वर्ष पुगेको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.employeeAboveFifty}"><br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">रहेको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.hasFazil}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">नरहेको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.hasNotfazil}"><br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">पदाधिकार सार्ने</span><br />
+                <span class="letter-detail">भएको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.hasStudyLetter}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">पदाधिकार सार्ने</span><br />
+                <span class="letter-detail"> नभएको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.hasNotStudyLetter}"><br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">भएको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.hasMinistryLetter}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">नभएको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.hasNotMinistryLetter}"><br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">रिक्त रहेको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.hasPostVacant}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">रिक्त नरहेको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.hasNotPostVacant}"><br />
+                <br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">दश वर्ष पुगेको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.experienceAboveTenYears}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">दश वर्ष नपुगेको</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.experienceBelowTenYears}"><br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">एक वर्ष भन्दा</span><br />
+                <span class="letter-detail">कम</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.holidayBelowOneYear}">
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">एक वर्ष भन्दा</span><br />
+                <span class="letter-detail">बढी</span>
+                <input type="checkbox" class="checkoboxCheck" th:checked="${saruwaRequest.holidayForOneYear}"><br />
+                <br />
+            </div>
+
+            <div class="column info">
+                <span class="letter-detail">दिन</span>
+                <input type="text" class="col-days" th:value="${saruwaRequest.attendanceDays}" readonly><br />
+                <br />
+            </div>
+
+        </div>
+        <br />
+        <span>यसमा लेखिएको व्यहोरा साँचो हो, झुट्टा ठहरे कानून बमोजिम सजाय भोग्न तयार छु । </span>
+
+
+        <div class="letter-submit" >
+            <u><span>आज्ञाकारी</span></u><br />
+            <span>नाम थर:- </span><span th:text="${saruwaRequest.employeeDetail.employeeName}"></span><br />
+            <span>पद:- </span><span th:text="${saruwaRequest.employeeDesignation}"></span><br />
+            <span>क.सङ्केत नं.:- </span><span th:text="${saruwaRequest.employeeDetail.employeeCode}"></span><br />
+            <span>कार्यालय:- </span><span th:text="${saruwaRequest.employeeDetail.organizationName}"></span><br />
+        </div>
+    </div>
+
+    <footer class="d-flex justify-content-left">
+        <span>७८</span>
+    </footer>
+</div>
+</body>
+</html>

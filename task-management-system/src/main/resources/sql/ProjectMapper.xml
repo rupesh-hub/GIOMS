@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.tms.mapper.ProjectMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.tms.pojo.response.ProjectResponsePojo">
+
+        <id property="id" column="id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="code" column="code"/>
+        <result property="priority" column="priority"/>
+        <result property="isCommittee" column="is_Committee"/>
+        <result property="description" column="description"/>
+        <result property="startDate" column="start_Date"/>
+        <result property="endDate" column="end_Date"/>
+        <result property="startDateNp" column="start_Date_Np"/>
+        <result property="endDateNp" column="end_Date_Np"/>
+        <result property="isResponded" column="is_responded"/>
+        <result property="responseBy" column="response_by"/>
+        <result property="status" column="status"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="isCompleted" column="is_completed"/>
+        <result property="isBookedMarked" column="is_booked_marked"/>
+        <result property="completedDate" column="completed_date"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="colorSchema" column="color_schema"/>
+        <result property="active" column="is_active"/>
+        <result property="activityCode" column="activity_id"/>
+
+
+        <association property="committee"  resultMap="committeeResponsePojo" />
+        <collection property="phaseList" resultMap="projectPhaseResponse"/>
+        <collection property="documents" resultMap="documentResponsePojo"/>
+        <collection property="taskProgressStatusList" resultMap="taskProgressStatus"/>
+    </resultMap>
+
+    <resultMap id="projectPhaseResponse" type="com.gerp.tms.pojo.response.ProjectPhaseResponsePojo">
+         <id property="id" column="pp_id"/>
+        <result property="phaseDescription" column="phase_description"/>
+        <result property="startDate" column="ph_start_date"/>
+        <result property="endDate" column="ph_end_date"/>
+        <result property="startDateNp" column="ph_start_date_np"/>
+        <result property="endDateNp" column="ph_end_date_np"/>
+        <result property="active" column="active"/>
+        <association property="phaseDetails"  resultMap="phaseResponsePojo" />
+    </resultMap>
+
+    <resultMap id="phaseResponsePojo" type="com.gerp.tms.pojo.response.PhaseResponsePojo">
+        <result property="id" column="ph_id"/>
+        <result property="phaseName" column="phase_name"/>
+        <result property="phaseNameNp" column="phase_name_np"/>
+    </resultMap>
+
+    <resultMap id="documentResponsePojo" type="com.gerp.tms.pojo.document.DocumentResponsePojo">
+        <result property="id" column="pdd_id"/>
+        <result property="name" column="document_name"/>
+    </resultMap>
+
+
+    <resultMap id="committeeResponsePojo" type="com.gerp.tms.pojo.response.CommitteeResponsePojo">
+        <result property="id" column="c_id"/>
+        <result property="committeeName" column="committee_name"/>
+        <result property="committeeNameNp" column="committee_name_np"/>
+    </resultMap>
+
+
+    <resultMap id="taskProgressStatus" type="com.gerp.tms.pojo.response.TaskProgressStatusResponsePojo">
+        <id property="id" column="tps_id"/>
+        <result property="statusName" column="status_name"/>
+        <result property="statusNameNp" column="status_name_np"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="isDeletable" column="delete_status"/>
+    </resultMap>
+
+
+    <resultMap id="officeWiseProject" type="com.gerp.tms.pojo.response.OfficeWiseProjectResponsePojo">
+        <id property="officeId" column="p_office_id"/>
+        <collection property="completedProject" resultMap="projectCompleted"/>
+        <collection property="incompleteProject" resultMap="incompleteProject"/>
+    </resultMap>
+
+    <resultMap id="projectCompleted" type="com.gerp.tms.pojo.response.ProjectResponsePojo">
+        <id property="id" column="c_id"/>
+        <result property="projectName" column="c_name"/>
+        <result property="code" column="c_code"/>
+        <result property="priority" column="c_priority"/>
+        <result property="isCommittee" column="c_is_Committee"/>
+        <result property="description" column="c_description"/>
+        <result property="startDate" column="c_start_Date"/>
+        <result property="endDate" column="c_end_Date"/>
+        <result property="startDateNp" column="c_start_Date_Np"/>
+        <result property="endDateNp" column="c_end_Date_Np"/>
+        <result property="isResponded" column="c_is_responded"/>
+        <result property="responseBy" column="c_response_by"/>
+        <result property="status" column="c_status"/>
+        <result property="createdDate" column="c_created_date"/>
+        <result property="isCompleted" column="c_is_completed"/>
+        <result property="completedDate" column="c_completed_date"/>
+        <result property="active" column="c_active"/>
+    </resultMap>
+
+    <resultMap id="incompleteProject" type="com.gerp.tms.pojo.response.ProjectResponsePojo">
+        <id property="id" column="in_id"/>
+        <result property="projectName" column="in_name"/>
+        <result property="code" column="in_code"/>
+        <result property="priority" column="in_priority"/>
+        <result property="isCommittee" column="in_is_Committee"/>
+        <result property="description" column="in_description"/>
+        <result property="startDate" column="in_start_Date"/>
+        <result property="endDate" column="in_end_Date"/>
+        <result property="startDateNp" column="in_start_Date_Np"/>
+        <result property="endDateNp" column="in_end_Date_Np"/>
+        <result property="isResponded" column="in_is_responded"/>
+        <result property="responseBy" column="in_response_by"/>
+        <result property="status" column="in_status"/>
+        <result property="createdDate" column="in_created_date"/>
+        <result property="isCompleted" column="in_is_completed"/>
+        <result property="active" column="i_active"/>
+    </resultMap>
+
+
+    <resultMap id="projectTask" type="com.gerp.tms.pojo.response.TaskResponsePojo">
+
+        <id property="id" column="id"/>
+        <result property="taskName" column="task_name"/>
+        <result property="projectId" column="project_id"/>
+
+    </resultMap>
+
+
+    <select id="getAllProject" resultMap="baseResultMap">
+        select *, ph.id as ph_id , c.id as c_id, pdd.id as pdd_id, tps.id as tps_id,pp.id as pp_id, pp.start_date as  ph_start_date, pp.end_date as ph_end_date, pp.start_date_np as  ph_start_date_np, pp.end_date_np as ph_end_date_np
+        from project p
+        left join project_phase pp on p.id = pp.project_id
+        left join phase ph on ph.id = pp.phase_id
+        left join committee c on p.committee_id = c.id
+        left join project_document_details pdd on p.id = pdd.project_id
+        left join dynamic_progress_status dps on dps.project_id = p.id
+        left join task_progress_status tps on tps.id = dps.task_progress_status_id
+        where
+        p.is_active = #{isActive}::BOOLEAN and
+        p.is_completed = #{isCompleted}::BOOLEAN
+        <if test="status != null">
+            and  p.status =  #{status}
+        </if>
+        order BY p.id desc ;
+    </select>
+
+    <select id="getProjectDetail" resultMap="baseResultMap">
+        select *, ph.id as ph_id , c.id as c_id, pdd.id as pdd_id, tps.id as tps_id ,pp.id as pp_id, pp.start_date as  ph_start_date, pp.end_date as ph_end_date, pp.start_date_np as  ph_start_date_np, pp.end_date_np as ph_end_date_np
+        from project p
+        left join project_phase pp on p.id = pp.project_id
+        left join phase ph on ph.id = pp.phase_id
+        left join committee c on p.committee_id = c.id
+        left join project_document_details pdd on p.id = pdd.project_id
+        left join dynamic_progress_status dps on dps.project_id = p.id
+        left join task_progress_status tps on tps.id = dps.task_progress_status_id
+        where p.id = #{id}::INTEGER
+    </select>
+
+    <select id="getBookedMarkedProjects" resultMap="baseResultMap">
+        select *, ph.id as ph_id , c.id as c_id, pdd.id as pdd_id, tps.id as tps_id, pp.start_date as  ph_start_date, pp.end_date as ph_end_date, pp.start_date_np as  ph_start_date_np, pp.end_date_np as ph_end_date_np
+        from project p
+                inner join book_mark_project bmp on bmp.project_id = p.id
+                 left join project_phase pp on p.id = pp.project_id
+                 left join phase ph on ph.id = pp.phase_id
+                 left join committee c on p.committee_id = c.id
+                 left join project_document_details pdd on p.id = pdd.project_id
+                 left join dynamic_progress_status dps on dps.project_id = p.id
+                 left join task_progress_status tps on tps.id = dps.task_progress_status_id
+        where
+            p.is_active = true and
+            p.is_completed = false and
+            bmp.is_booked_marked = true and
+            bmp.member_id = #{loginEmployeeCode}::VARCHAR
+        order BY p.id desc ;
+    </select>
+
+    <select id="getOfficeWiseProject" resultMap="officeWiseProject">
+
+        select   p.office_id as p_office_id,
+                 completed.id as c_id,
+                 completed.project_name as c_name,
+                 completed.start_date as c_start_date,
+                 completed.end_date as c_end_date,
+                 completed.start_date_np as c_start_date_np,
+                 completed.end_date_np as c_end_date_np,
+                 completed.description as c_description,
+                 completed.is_completed as c_is_completed,
+                 completed.completed_date as c_completed_date,
+                 completed.code as c_code,
+                 completed.is_active as c_active,
+                 inCompleted.id as in_id,
+                 inCompleted.project_name as in_name,
+                 inCompleted.start_date as in_start_date,
+                 inCompleted.end_date as in_end_date,
+                 inCompleted.start_date_np as in_start_np,
+                 inCompleted.end_date_np as in_end_np,
+                 inCompleted.description as in_description,
+                 inCompleted.code as in_code,
+                 inCompleted.is_active as i_active,
+                 inCompleted.is_completed as in_is_completed
+        from project p
+                 left outer join (select * from project ps where ps.is_completed = true  )  completed on completed.id = p.id
+                 left outer join  (select * from project pi where pi.is_completed = false)  inCompleted on inCompleted.id = p.id
+                 <if test="officeId != null">
+                     where p.office_id =  #{officeId}
+                 </if>
+        group by
+            inCompleted.project_name,
+            inCompleted.start_date,
+            inCompleted.end_date,
+            inCompleted.start_date_np,
+            inCompleted.end_date_np,
+            inCompleted.description,
+            inCompleted.is_completed,
+            inCompleted.code,
+            completed.code,
+            p.office_id,
+             completed.is_active,
+              inCompleted.is_active,
+            completed.id,
+            completed.project_name,
+            completed.start_date,
+            completed.end_date,
+            completed.start_date_np,
+            completed.end_date_np,
+            completed.description ,
+            completed.is_completed,
+            completed.completed_date,
+            inCompleted.id;
+
+    </select>
+
+    <select id="getProjectTask" resultMap="projectTask">
+        select * from task t inner join task_progress_status tps on tps.id = t.progress_status_id where t.project_id = #{projectId}::INTEGER and tps.status_name != 'COMPLETED';
+    </select>
+
+
+    <select id="getPhaseTask" resultMap="projectTask">
+        select * from task where phase_id = #{phaseId} and project_id = #{projectId}::INTEGER and task_status != 'COMPLETED';
+    </select>
+
+
+    <select id="getMemberWiseProject" resultMap="baseResultMap">
+        select distinct p.id, p.project_name, p.end_date_np, p.start_date_np, p.start_date,p.description, p.priority, p.is_completed,bmp.is_booked_marked,p.color_schema,p.completed_date,p.is_active
+        from project p
+        left join task t on t.project_id = p.id
+        left join task_member tm on tm.task_id = t.id
+        left join project_phase pp on pp.project_id = p.id
+        left join phase_member pm on pm.project_phase_id = pp.id
+        left join book_mark_project bmp on bmp.project_id = p.id
+        where
+            p.is_active = #{isActive}::BOOLEAN and
+            p.is_completed = #{isCompleted}::BOOLEAN and
+            <if test="status != null">
+                p.status = #{status} and
+            </if>
+            tm.member_id = #{memberId}::VARCHAR or
+            pm.member_id = #{memberId}::VARCHAR or
+            p.created_by = #{memberId}::VARCHAR
+        order BY p.id desc ;
+    </select>
+
+    <select id="getReportProject" resultMap="baseResultMap">
+        select distinct p.id, p.project_name, p.end_date_np, p.start_date_np, p.start_date,p.description, p.priority, p.is_completed,p.color_schema,p.completed_date,p.is_active,p.activity_id
+        from project p
+        left join task t on t.project_id = p.id
+        left join task_member tm on tm.task_id = t.id
+        left join project_phase pp on pp.project_id = p.id
+        left join phase_member pm on pm.project_phase_id = pp.id
+        where
+        p.is_active = #{isActive}::BOOLEAN and
+        p.is_completed = #{isCompleted}::BOOLEAN and
+        ( tm.member_id = #{memberId}::VARCHAR or
+        pm.member_id = #{memberId}::VARCHAR or
+        p.created_by = #{memberId}::VARCHAR )
+
+        <if test="status != null ">
+          and  p.status = #{status}
+        </if>
+        <if test="programActivity != null">
+            <choose>
+                <when test="programActivity == true ">
+                  and   p.activity_id is not null
+                </when>
+                <otherwise>
+                    and  p.activity_id is null
+                </otherwise>
+            </choose>
+        </if>
+
+        order BY p.id desc
+    </select>
+
+
+</mapper>

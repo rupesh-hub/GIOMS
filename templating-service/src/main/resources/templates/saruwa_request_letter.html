@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+<head>
+    <title>Request Saruwa Letter</title>
+    <style type="text/css">
+
+        body{
+            font-size: 12px;
+        }
+        .header{
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .container{
+            /*height:3508px;*/
+            margin-left: 250px;
+            margin-right: 300px;
+            width: 2480px;
+            height: 3508px;
+        }
+        .letter-body{
+            padding-right: 200px;
+            word-spacing: 10px;
+        }
+        .letter-row{
+            padding-left: 30px;
+        }
+        .letter-submit{
+            padding-left: 700px;
+        }
+        .dottedUnderline{
+            border-bottom: 1px dotted;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-align: center;
+        }
+        td{
+            border: 1px solid black;
+            text-align: left;
+        }
+        table, th,tr{
+            border: 1px solid black;
+            border-collapse: collapse;
+            border-spacing: 10px;
+            padding-left: 30px;
+            padding-right: 30px;
+            height:80px;
+        }
+
+        .letter-ending{
+            border-top: 2px solid  black;
+            margin-top: 7cm;
+            padding-top: 5px;
+            color:black;
+            width:500px;
+        }
+        .letter-submit{
+            padding-left: 70%;
+            margin-top: 20px;
+        }
+        .footer{
+            border-top: 4px solid  black;
+            color:black;
+            padding-top: 10px;
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h3><u>निजामती सेवा नियमावली , २०५० (बाह्रौ संशोधन,२०७२ सहित)</u></h3>
+        <br />
+        <span>अनुसूची–११क.</span><br />
+        <span>(नियम ३८ को उपनियम (२) को खण्ड (ख) सँग  सम्बन्धित)</span><br />
+        <br />
+        <span><u>सरुवापत्रको नमूना</u></span><br />
+        <br />
+
+
+    </div>
+
+    <div class="row">
+        <span style="padding-left: 800px">मिति :- </span><span th:text="${saruwaLetter.date}"></span>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <span id="department">विषय: सरुवा हुन पाउँ ।</span>
+    </div>
+
+    <div class="letter-salutation">
+        <span>श्रीमान् </span><span class="dottedUnderline" th:text="${saruwaLetter.employeeDetail.employeeName}"></span><span> ज्यू,</span><br />
+        <span style="padding-left: 50px"></span>
+        <span class="dottedUnderline" th:text="${saruwaLetter.employeeDetail.organizationName}"></span>
+        <br />
+    </div>
+
+    <div class="letter-body">
+        <span>महोदय,</span><br />
+        <span style="padding-left: 60px">तल उल्लिखित निकायमा सरुवा भई राष्ट्र सेवा गर्ने अवसर पाउन मेरो भएको सत्य तथ्य विवरणहरु सहित सम्बद्ध</span><br />
+        <span>कागजात यसै साथ संलग्न राखी यो निवेदन गरेको/गरेकी छु ।</span><br />
+        <div class="d-flex justify-content-center">
+            <u><span>कर्मचारीको विवरण :-</span></u>
+        </div>
+
+        <table style="width:100%">
+            <tr style="height: 80px">
+                <th> कार्यालयको नाम </th>
+                <th> पद </th>
+                <th> सेवा/समूह/उपसमूह </th>
+                <th> श्रेणी </th>
+                <th> जन्म मिति </th>
+                <th> सो कार्यालयमा हाजिर भएको मिति </th>
+                <th> घर ठेगाना र ना.प्र.पत्र नं.,मिति (जिल्ला) </th>
+            </tr>
+
+            <tr>
+                <td th:text="${saruwaLetter.employeeDetail.organizationName}"></td>
+                <td th:text="${saruwaLetter.designationDetail.designation}"></td>
+                <td><span th:text="${saruwaLetter.designationDetail.service}+'/'"></span><br />
+                    <span th:text="${saruwaLetter.designationDetail.group}+'/'"></span><br />
+                    <span th:text="${saruwaLetter.designationDetail.subGroup}"></span><br />
+                </td>
+                <td th:text="${saruwaLetter.designationDetail.category}"></td>
+                <td th:text="${saruwaLetter.employeeDetail.birthDate}"></td>
+                <td th:text="${saruwaLetter.employeeDetail.joinDate}"></td>
+                <td th:text="${saruwaLetter.employeeDetail.district}"></td>
+
+            </tr>
+
+        </table>
+
+        <div class="d-flex justify-content-center">
+            <u><span>यसभन्दा अगाडि कार्य गरेको विवरण (क्रमागत पछिल्लो आधारमा)</span></u>
+        </div>
+
+        <table style="width:100%">
+            <tr>
+                <th> कार्यालयको नाम </th>
+                <th> पद </th>
+                <th> सेवा/समूह/उपसमूह </th>
+                <th> श्रेणी </th>
+                <th> ...देखि.....सम्म </th>
+                <th> वर्ष/महिना </th>
+                <th> भौगोलिक क्षेत्र </th>
+            </tr>
+
+            <tr th:each="experienceDetails : ${saruwaLetter.experienceDetail}">
+                <td>
+                    <span th:text="${experienceDetails.sn}"></span>
+                    <span th:text="${experienceDetails.organizationName}"></span><br />
+                </td>
+                <td>
+                    <span th:text="${experienceDetails.designation}"></span><br />
+                </td>
+                <td>
+                    <span th:text="${experienceDetails.service}+'/'"></span><br />
+                    <span th:text="${experienceDetails.group}+'/'"></span><br />
+                    <span th:text="${experienceDetails.subGroup}+'/'"></span><br />
+                </td>
+                <td>
+                    <span th:text="${experienceDetails.category}"></span><br />
+                </td>
+                <td>
+                    <span th:text="${experienceDetails.fromDate}"></span><span> - </span>
+                    <span th:text="${experienceDetails.toDate}"></span>
+                    <br />
+                </td>
+                <td>
+                    <span th:text="${experienceDetails.year}"></span><span> / </span>
+                    <span th:text="${experienceDetails.month}"></span>
+                    <br />
+                </td>
+                <td>
+                    <span th:text="${experienceDetails.location}"></span>
+                </td>
+            </tr>
+
+
+
+        </table>
+
+        <div class="d-flex justify-content-center">
+            <u><span>सरुवा हुन चाहेको जिल्ला र कार्यालय (प्राथमिकताक्रमको आधारमा)</span></u>
+        </div>
+        <div th:each="saruwaPriorities : ${saruwaLetter.saruwaPriority}">
+            <span th:text="${saruwaPriorities.sn}"></span>
+            <span th:text="${saruwaPriorities.organizationName}+','"></span>
+            <span th:text="${saruwaPriorities.district}"></span>
+            <br />
+        </div>
+
+        <br />
+
+
+        <u><span>संलग्न कागजातहरु</span></u><br />
+        <span>१.</span><span class="letter-row">सम्बन्धित कार्यालयमा कामकाज गरेको पुष्ट्याई हुने कागज</span><br />
+        <span>२.</span><span class="letter-row">सरुवा हुन चाहेको कारण र प्रमाण</span><br />
+        <br />
+        <span>यसमा लेखिएको व्यहोरा साँचो हो, झुट्टा ठहरे कानून बमोजिम सजाय भोग्न तयार छु ।</span><br />
+        <br />
+
+
+        <div class="letter-submit" >
+            <u><span>निवेदक</span></u><br />
+            <span>नाम थर:- </span><span th:text="${saruwaLetter.employeeDetail.employeeName}"></span><br />
+            <span>पद:- </span><span th:text="${saruwaLetter.designationDetail.designation}"></span><br />
+            <span>क.सङ्केत नं.:- </span><span th:text="${saruwaLetter.employeeDetail.employeeCode}"></span><br />
+            <span>कार्यालय:- </span><span th:text="${saruwaLetter.employeeDetail.organizationName}"></span><br />
+        </div>
+    </div>
+
+
+    <div class="letter-ending">
+        <span>सातौं संशोधनद्वारा संशोधित ।</span><br />
+        <br />
+    </div>
+    <div class="footer">
+        <span>७७ </span>
+    </div>
+</div>
+
+</body>
+</html>

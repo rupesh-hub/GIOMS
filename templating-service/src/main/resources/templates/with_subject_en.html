@@ -1,0 +1,12 @@
+<div style="display: flex; justify-content: center; margin-bottom: 2rem">
+    <div style="text-decoration: underline">
+        Subject: <span th:text="${entity.subject}"></span>
+    </div>
+</div>
+<div style="display: flex; margin-bottom: 1rem">
+    <div>
+        <span style="display: block;" th:if="${is_section_name}" th:text="${section_name}"></span>
+        <span style="display: block;" th:unless="${is_section_name}" th:text="${entity.request_to_office}"></span>
+        <span style="display: block;" th:unless="${is_section_name or is_group_name}" th:text="${entity.request_to_office_address}"></span>
+    </div>
+</div>

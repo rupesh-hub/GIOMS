@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.kasamu.mapper.KasamuDetailMapper">
+
+<!--    typeHandler="com.gerp.kasamu.converter.AESTypeHandler"-->
+    <resultMap id="kasamuDetails" type="com.gerp.kasamu.pojo.response.KasamuDetailResponsePojo">
+        <id property="id" column="id"/>
+        <result property="kasamuDetailEn" column="kasamu_detail_en" typeHandler="com.gerp.kasamu.converter.AESTypeHandler"/>
+<!--        <result property="taskType" column="task_type"  />-->
+<!--        <result property="task" column="task" />-->
+<!--        <result property="estimation" column="estimation" />-->
+<!--        <result property="semiannualTarget" column="semiannual_target" />-->
+<!--        <result property="annualTarget" column="annual_target" />-->
+<!--        <result property="achievement" column="achievement" />-->
+<!--        <result property="remarks" column="remarks" />-->
+    </resultMap>
+
+    <select id="getKasamuDetails" resultMap="kasamuDetails">
+        select *
+        from kasamu_detail
+        where kasamu_master_id is null and
+              created_by = #{employeeCode}::INTEGER
+              <if test="id != null">
+                  and id =#{id}
+              </if>
+    </select>
+
+
+</mapper>

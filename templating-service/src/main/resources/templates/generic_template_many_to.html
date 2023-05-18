@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- CSS only -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+	integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<style>
+		.section_two{
+			margin-top: 29px;
+		}
+		.header{
+			color: red;
+		}
+
+		.body_content{
+			margin-left: 37px;
+		}
+
+
+		.approved_by{
+			border-top: 2px dotted  black;
+		}
+
+		.container{
+			/*height:3508px*/
+		}
+		footer{
+			border-top: 2px solid  red;
+			margin-top: 15%;
+			color:red;
+		}
+
+		.message{
+			text-align: justify;
+		}
+		img{
+			vertical-align: middle;
+			border-style: none;
+			width: 118px;
+		}
+	</style>
+</head>
+
+<body>
+<div class="container">
+
+	<div class="main-logo" style="position: absolute; margin-top: 16px">
+		<img th:src="${entity.logo_url}" style="width: 64px"/>
+	</div>
+	<div contenteditable="false">
+		<div class="header ">
+
+			<div class="d-flex justify-content-center">
+				<span id=addMoreElements"" th:text="${entity.organization}"></span>
+			</div>
+			<div class="d-flex justify-content-center">
+				<span id="department" th:text="${entity.department}"></span>
+			</div>
+			<div class="d-flex justify-content-center">
+				<span id="department" th:text="${entity.ministry}"></span>
+			</div>
+
+			<div class="d-flex justify-content-center">
+				<span id="department" th:text="${entity.address_top}"></span>
+			</div>
+		</div>
+
+		<div class="section_two">
+
+			<div class="row">
+
+				<div class="letter_info col ">
+					<span>च.नं. :- </span><span th:text="${entity.chali_no}"></span><br>
+					<span>प.सं. :- </span><span th:text="${entity.letter_no}"></span>
+				</div>
+
+				<div class="letter_info col">
+					<div class="float-right">
+						<img th:src="${image_value}" style="position: absolute; margin-top:-21%"/>
+						<span>मिति :- </span><span th:text="${entity.letter_date}"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="body_content section_two">
+			<div >
+				<span th:each="data: ${entity.request_to_many}">
+						<span th:text="${data.office}" />,<span th:text="${data.address}" /> <br>
+				</span>
+				<br>
+				<br>
+			</div>
+
+			<div class="subject row d-flex justify-content-center">
+
+				<u><span>विषय: </span><span th:text="${entity.subject}"></span></u>
+
+			</div>
+
+			<div class="section_two message row d-flex justify-content-center" style="min-height:800px">
+
+				<span class="blockquote" th:utext="${entity.body_message}"></span>
+
+			</div>
+
+			<div class="section_two row float-right">
+
+				<div class="approved_by">
+					<div class="d-flex justify-content-center" th:text="${entity.requester_name}"></div>
+					<div class=" d-flex justify-content-center" th:text="'('+${entity.requester_position}+')'"></div>
+				</div>
+
+			</div>
+
+
+			<div class="section_two">
+				<u><span>बाेधाथ:</span></u><br>
+
+				<span th:each="data: ${entity.bodartha}">
+						<span th:text="${data.office}" /><br>
+						&nbsp;&nbsp;<span th:text="${data.address}" /><br>
+				</span>
+			</div>
+
+		</div>
+
+
+		<footer class="d-flex justify-content-center">
+			<p th:text="${entity.footer}"></p>
+		</footer>
+	</div>
+
+</div>
+</body>
+
+</html>

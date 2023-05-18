@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.PostAttendanceRequestDetailMapper">
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.PostAttendanceGetPojo">
+
+        <id property="id" column="id" />
+        <result property="officeCode" column="office_code" />
+        <result property="pisCode" column="pis_code" />
+        <result property="fiscalYearCode" column="fiscal_year_code" />
+        <result property="supportingDocumentsId" column="suppporting_documents_id" />
+        <result property="fromDateEn" column="from_date_en" />
+        <result property="toDateEn" column="to_date_en" />
+        <result property="fromDateNp" column="from_date_np" />
+        <result property="toDateNp" column="to_date_np" />
+        <result property="isActive" column="is_active" />
+        <result property="remarks" column="remarks" />
+
+
+        <collection property="approvalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverPisCode" column="para_approver_pis_code" />
+            <result property="approverNameEn" column="approverNameEn" />
+            <result property="approverNameNp" column="approverNameNp" />
+            <result property="remarks" column="para_remarks" />
+            <result property="status" column="para_status" />
+        </collection>
+
+        <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo">
+            <result property="id" column="document_id" />
+            <result property="name" column="document_name" />
+        </collection>
+    </resultMap>
+
+
+    <select id="getPostAttendanceById" resultMap="baseResultMap" >
+        select pard.id,
+        pard.from_date_en,
+        pard.remarks,
+        par.is_active,
+        pard.to_date_en,
+        pard.from_date_np,
+        pard.to_date_np,
+        par.office_code,
+        par.pis_code,
+        par.fiscal_year_code,
+        pard.document_id,
+        pard.document_name,
+        para.approver_pis_code as para_approver_pis_code,
+        para.remarks as para_remarks,
+        para.status as para_status,
+       case when e.middle_name_en IS NOT NULL then concat(e.first_name_en,' ',e.middle_name_en,' ',e.last_name_en)
+        else concat(e.first_name_en,' ',e.last_name_en) end as approverNameEn,
+
+       case when e.middle_name_np IS NOT NULL then concat(e.first_name_np,' ',e.middle_name_np,' ',e.last_name_np)
+            else concat(e.first_name_np,' ',e.last_name_np) end as approverNameNp
+
+        from post_attendance_request_detail pard
+        left join post_attendance_request par on par.id=pard.post_attendance_request_id
+        left join decision_approval para on pard.id = para.post_attendance_id
+        left join employee e on e.pis_code=para.approver_pis_code
+        where pard.id = #{id} and para.is_active=true;
+
+    </select>
+
+
+    <select id="getAllPostAttendance" resultMap="baseResultMap" >
+        select pard.id,
+        pard.from_date_en,
+        par.is_active,
+        pard.to_date_en,
+        pard.from_date_np,
+        pard.remarks,
+        pard.to_date_np,
+        par.office_code,
+        par.pis_code,
+        par.fiscal_year_code,
+        para.approver_pis_code as para_approver_pis_code,
+        pard.document_id,
+        pard.document_name,
+        para.remarks as para_remarks,
+        para.status as para_status,
+        case when e.middle_name_en IS NOT NULL then concat(e.first_name_en,' ',e.middle_name_en,' ',e.last_name_en)
+        else concat(e.first_name_en,' ',e.last_name_en) end as approverNameEn,
+
+       case when e.middle_name_np IS NOT NULL then concat(e.first_name_np,' ',e.middle_name_np,' ',e.last_name_np)
+            else concat(e.first_name_np,' ',e.last_name_np) end as approverNameNp
+        from post_attendance_request_detail pard
+        left join post_attendance_request par on par.id=pard.post_attendance_request_id
+        left join decision_approval para on pard.id = para.post_attendance_id
+        left join employee e on e.pis_code=para.approver_pis_code
+        where pard.is_active=true and para.is_active=true order by par.created_date;
+
+    </select>
+
+
+    <select id="getPostAttendanceByApprover" resultMap="baseResultMap" >
+        select pard.id,
+        pard.from_date_en,
+        par.is_active,
+        pard.to_date_en,
+        pard.from_date_np,
+        pard.remarks,
+        pard.to_date_np,
+        par.office_code,
+        par.pis_code,
+        par.fiscal_year_code,
+        pard.document_id,
+        pard.document_name,
+        para.approver_pis_code as para_approver_pis_code,
+        para.remarks as para_remarks,
+        para.status as para_status,
+        case when e.middle_name_en IS NOT NULL then concat(e.first_name_en,' ',e.middle_name_en,' ',e.last_name_en)
+        else concat(e.first_name_en,' ',e.last_name_en) end as approverNameEn,
+
+       case when e.middle_name_np IS NOT NULL then concat(e.first_name_np,' ',e.middle_name_np,' ',e.last_name_np)
+            else concat(e.first_name_np,' ',e.last_name_np) end as approverNameNp
+        from post_attendance_request_detail pard
+        left join post_attendance_request par on par.id=pard.post_attendance_request_id
+        left join decision_approval para on pard.id = para.post_attendance_id
+        left join employee e on e.pis_code=para.approver_pis_code
+        where para.approver_pis_code = #{approverPisCode} and pard.is_active=true and para.is_active=true order by par.created_date;
+
+    </select>
+</mapper>

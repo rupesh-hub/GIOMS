@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: eureka-server
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL:http://localhost:8888/}
+#      enabled: true
+      username: root
+      password: s3cr3t
+      fail-fast: true
+  profiles:
+    active: development

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gerp.dartachalani.mapper.UserMapper">
+
+    <select id="findUserBySection" resultType="java.lang.String">
+        select pis_code as pisCode from received_letter where section_code = #{sectionCode} and pis_code is not null
+            union
+        select receiver_pis_code as pisCode from received_letter_forward where receiver_section_id = #{sectionCode} and receiver_pis_code is not null
+            union
+        select sender_pis_code as pisCode from dispatch_letter where sender_section_code = #{sectionCode} and sender_pis_code is not null
+            union
+        select receiver_pis_code as pisCode from dispatch_letter_review where receiver_section_code = #{sectionCode} and receiver_pis_code is not null
+            union
+        select pis_code as pisCode from memo where section_code = #{sectionCode} and pis_code is not null
+            union
+        select approver_pis_code as pisCode from memo_approval where approver_section_code = #{sectionCode} and approver_pis_code is not null
+            union
+        select approver_pis_code as pisCode from memo_suggestion where approver_section_code = #{sectionCode} and approver_pis_code is not null
+    </select>
+
+    <select id="getInvolvedReceivedLetter" resultType="java.lang.Long">
+        select distinct rl.id from received_letter rl
+        left join received_letter_forward rlf on rl.id = rlf.received_letter_id
+        where rlf.receiver_pis_code in (<if test="!previousPisCode.isEmpty()">
+        <foreach item="item" index="index" collection="previousPisCode"
+                 separator=",">
+            #{item}
+        </foreach>
+    </if>) and rlf.receiver_section_id = #{sectionCode} and rlf.is_active = true
+    </select>
+
+    <select id="getInvolvedDispatchLetter" resultType="java.lang.Long">
+        select distinct dl.id from dispatch_letter dl
+        left join dispatch_letter_review dlr on dl.id = dlr.dispatch_id
+        left join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        where (dlr.receiver_pis_code in (<if test="!previousPisCode.isEmpty()">
+        <foreach item="item" index="index" collection="previousPisCode"
+                 separator=",">
+            #{item}
+        </foreach>
+    </if>) and dlr.receiver_section_code = #{sectionCode} and dlr.is_active = true) or
+        (dl.is_draft = false and dl.is_active=true and dl.status='A' and dlri.receiver_pis_code in (<if test="!previousPisCode.isEmpty()">
+        <foreach item="item" index="index" collection="previousPisCode"
+                 separator=",">
+            #{item}
+        </foreach>
+    </if>) and dlri.receiver_section_id = #{sectionCode}
+        and dlri.is_active = true)
+    </select>
+
+    <select id="getInvolvedMemo" resultType="java.lang.Long">
+        select distinct mm.id from memo mm
+        left join memo_approval ma on mm.id = ma.memo_id
+        left join memo_suggestion ms on mm.id = ms.memo_id
+        where (ma.approver_pis_code in (<if test="!previousPisCode.isEmpty()">
+        <foreach item="item" index="index" collection="previousPisCode"
+                 separator=",">
+            #{item}
+        </foreach>
+    </if>) and ma.approver_section_code = #{sectionCode} and ma.is_active = true)
+        or (ms.approver_pis_code in (<if test="!previousPisCode.isEmpty()">
+        <foreach item="item" index="index" collection="previousPisCode"
+                 separator=",">
+            #{item}
+        </foreach>
+    </if>) and ms.approver_section_code = #{sectionCode} and ms.is_active = true)
+    </select>
+
+    <resultMap id="baseResultMap" type="com.gerp.dartachalani.dto.LetterTransferResponsePojo">
+        <result property="id" column="id"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="historyData" column="history_data"/>
+    </resultMap>
+
+    <select id="getLetterHistoryByOfficeCode" resultMap="baseResultMap">
+        select id, created_date, office_code , pis_code, history_data
+        from letter_transfer_history where office_code = #{officeCode}
+        order by id desc
+    </select>
+
+</mapper>

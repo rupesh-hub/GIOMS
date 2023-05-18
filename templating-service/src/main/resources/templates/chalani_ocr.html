@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <style type="text/css" media="print">
+        @page {
+            size: auto;
+            margin: 5mm 5mm 15mm 1in !important;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        .header {
+            position: fixed;
+            top: 0.3rem;
+            width: 93%;
+            background-color: white;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 93%;
+            background-color: white;
+        }
+
+        .head-space, .header {
+            height: 200px;
+        }
+
+        .foot-space, .footer {
+            height: 60px;
+        }
+
+        .fault {
+            display: none;
+        }
+
+        @media print {
+            table {
+                page-break-after: auto;
+                word-break: break-word;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto
+            }
+
+            td {
+                page-break-inside: avoid;
+                page-break-after: auto
+            }
+
+            thead {
+                display: table-header-group
+            }
+
+            tfoot {
+                display: table-footer-group
+            }
+        }
+    </style>
+    <style>
+        body {
+            margin: 2rem;
+        }
+    </style>
+</head>
+<body>
+header_from_programmer
+<table style="width: 100%;">
+    <thead>
+    <tr>
+        <td>
+            <div class="head-space">&nbsp;</div>
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr>
+        <td
+                colspan="3"
+                style="
+							text-align: justify;
+							line-height: 30px;
+							padding-bottom: 5rem;
+							font-size: 1.0032rem;
+							display: block;
+							/*page-break-after: always;*/
+						"
+        >
+            <div style="display: flex; justify-content: space-between; color: red; font-weight: bold;">
+                <div>
+                    प.सं. :- <span style="color: black; font-weight: normal" th:text="${entity.letter_no}"></span>
+                </div>
+                <div>
+                    मिति :-
+                    <span style="color: black; font-weight: normal" th:text="${entity.letter_date}"></span>
+                </div>
+            </div>
+            <div style="
+								display: flex;
+								margin-bottom: 2rem;
+								color: red;
+								font-weight: bold;
+							"
+            >
+                <div>
+                    च.नं. :-
+                    <span style="color: black; font-weight: normal" th:text="${entity.chali_no}"></span>
+                </div>
+            </div>
+            subject_to_replace
+<!--            <div style="display: flex; justify-content: center; margin-bottom: 2rem">-->
+<!--                <div style="text-decoration: underline">-->
+<!--                    विषय: <span th:text="${entity.subject}"></span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div style="display: flex; margin-bottom: 1rem">-->
+<!--                <div>-->
+<!--                     <span th:each="data: ${entity.request_to_many}">-->
+<!--                        <span th:text="${data.office}"/>,<span th:text="${data.address}"/> <br>-->
+<!--                    </span>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div>
+                <span th:utext="${entity.body_message}"></span>
+            </div>
+            <!--<div
+                    style="display: flex; justify-content: flex-end; margin-bottom: 2rem"
+            >-->
+            <div
+                    style="display: block; justify-content: flex-end; margin-bottom: 2rem; text-align: right; margin-top: 5px"
+            >
+                signature_here
+                <div style="text-align: right">
+                    ......................................... <br/>
+                    <span style="display: block;" th:text="'('+${entity.requester_name}+')'"></span>
+                    <span style="display: block;" th:text="${entity.requester_position}"></span>
+                    <span style="display: block;" th:if="${entity.sectionLetter != null}"
+                          th:text="${entity.sectionLetter}"></span>
+                </div>
+            </div>
+            </div>
+
+            <!--            start-->
+            <span th:each="data: ${entity.ocr}">
+                <div style="text-align: left">
+                    <span th:utext="${data.review}"></span>
+                </div>
+                <!-- <div
+                         style="display: flex; justify-content: flex-end; margin-bottom: 2rem"
+                 >-->
+                <div
+                        style="display: block; justify-content: flex-end; margin-bottom: 2rem; text-align: right; margin-top: 5px"
+                >
+                     sign_<span th:text="${dataStat.index}"></span>
+                    <div style="text-align: right">
+                        ......................................... <br/>
+                        <span style="display: block;" th:text="'('+${data.requester_name}+')'"></span>
+                        <span style="display: block;" th:text="${data.requester_position}"></span>
+                        <span style="display: block;" th:if="${data.sectionLetter != null}"
+                              th:text="${data.sectionLetter}"></span>
+                    </div>
+                </div>
+                </div>
+            </span>
+
+            <!--end-->
+
+
+            <div
+                    class="print-format"
+                    style="display: flex; justify-content: flex-start"
+            >
+                <div colspan="3">
+                    <ul style="list-style: none;">
+                        <span style="text-decoration: underline" th:text="${saadar_awagataartha}"></span> <br/>
+                        <span th:each="data: ${entity.saadar_awagataartha}">
+                        <li th:text="${data.office}"></li>
+                        <li th:text="${data.section}"></li>
+                        <li th:text="${data.address}"></li>
+                     </span>
+                    </ul>
+                    <ul style="list-style: none;">
+                        <span style="text-decoration: underline" th:text="${bodartha_option}"></span> <br/>
+                        <span th:each="data: ${entity.bodartha}">
+                        <li th:text="${data.office}"></li>
+                        <li th:text="${data.section}"></li>
+                        <li th:text="${data.address}"></li>
+                     </span>
+                    </ul>
+                    <ul style="list-style: none;">
+                        <span style="text-decoration: underline" th:text="${bodartha_karyartha}"></span> <br/>
+                        <span th:each="data: ${entity.bodartha_karyartha}">
+                        <li th:text="${data.office}"></li>
+                        <li th:text="${data.section}"></li>
+                        <li th:text="${data.address}"></li>
+                     </span>
+                    </ul>
+                </div>
+            </div>
+
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td>
+            <div class="foot-space">&nbsp;</div>
+        </td>
+    </tr>
+    </tfoot>
+</table>
+<div
+        style="
+				flex: 1;
+				text-align: center;
+				border-top: 3px solid red;
+				color: red;
+				font-size: x-small;
+			"
+        class="footer"
+>
+    <span th:utext="${entity.footer}"></span>
+</div>
+</body>
+</html>

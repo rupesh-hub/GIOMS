@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gerp.usermgmt.mapper.usermgmt.UserRoleLogMapper">
+
+    <resultMap id="roleLogResponsePojoResultMap" type="com.gerp.usermgmt.pojo.RoleLogResponsePojo">
+        <id property="id" column="id"></id>
+        <result property="updatedDate" column="created_date"></result>
+        <result property="roleLogJson" column="role_log_json"></result>
+        <association property="updatedBy" javaType="com.gerp.shared.pojo.IdNamePojo">
+            <result property="name" column="employee_name_en"></result>
+            <result property="nameN" column="employee_name_np"></result>
+        </association>
+    </resultMap>
+
+    <resultMap id="userRoleLogResultMap" type="com.gerp.usermgmt.model.UserRoleLog">
+        <result property="id" column="id"></result>
+        <result property="createdDate" column="log_created_date"></result>
+        <result property="createdBy" column="log_created_by"></result>
+        <result property="roleChangedUserId" column="role_changed_user_id"></result>
+        <result property="lastModifiedBy" column="log_modified_by"></result>
+        <result property="lastModifiedDate" column="log_modified_date"></result>
+        <result property="roleLogData" column="role_log_data"></result>
+    </resultMap>
+
+    <select id="findRoleHistory" resultMap="roleLogResponsePojoResultMap">
+
+        select url.id,
+               case when e2.middle_name_en is  null then concat(e2.first_name_en, ' ', e2.last_name_en)
+                    else concat(e2.first_name_en,' ', e2.middle_name_en, ' ', e2.last_name_en) end as employee_name_en,
+               case when e2.middle_name_np is  null then concat(e2.first_name_np, ' ', e2.last_name_np)
+                    else concat(e2.first_name_np,' ', e2.middle_name_np, ' ', e2.last_name_np) end as employee_name_np,
+               url.created_date,
+               convert_from(lo_get(url.role_log_data :: bigint), 'UTF8') as role_log_json
+        from user_role_log url  join users u1 on u1.id = url.role_changed_user_id
+                                join employee e1 on e1.pis_code = u1.pis_employee_code
+                                join users u2 on u2.id = url.created_by
+                                join employee e2 on e2.pis_code = u2.pis_employee_code
+        where e1.pis_code = #{pisCode} and url.created_date between #{fiscalYearStartDate} and #{fiscalYearEndDate} order by url.id desc;
+    </select>
+
+
+    <select id="getLatestUserRoleLogByUserId" resultType="com.gerp.usermgmt.model.UserRoleLog">
+        select
+            url.id          as id,
+            url.created_date   as  log_created_date,
+            url.created_by     as log_created_by,
+            url.last_modified_by as log_modified_by,
+            url.last_modified_date  as log_modified_date,
+            url.role_changed_user_id  as role_changed_user_id,
+            convert_from(lo_get(url.role_log_data :: bigint), 'UTF8')          as role_log_data
+        from user_role_log url where url.role_changed_user_id = #{userId} order by url.id desc limit 1
+
+    </select>
+
+
+</mapper>

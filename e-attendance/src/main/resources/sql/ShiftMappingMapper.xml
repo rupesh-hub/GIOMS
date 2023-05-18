@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.ShiftMappingMapper">
+
+    <resultMap id="shiftMapped" type="com.gerp.attendance.Pojo.shift.mapped.ShiftMappedPojo">
+        <id property="id" column="id" />
+        <collection property="shift" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="shift_name_en" property="name"/>
+            <result column="shift_name_np" property="nameN"/>
+        </collection>
+        <collection property="shiftGroup" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="group_name_en" property="name"/>
+            <result column="group_name_np" property="nameN"/>
+        </collection>
+        <collection property="employee" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="emp_name_en" property="name"/>
+            <result column="emp_name_np" property="nameN"/>
+        </collection>
+    </resultMap>
+
+    <select id="getShiftMappedGroup" resultMap="shiftMapped" >
+        select seg.id,
+        seg.name_en as group_name_en,
+        seg.name_np as group_name_np,
+        s.name_en as shift_name_en,
+        s.name_np as shift_name_np
+        from shift_employee_group_config segc
+        inner join shift s on segc.shift_id = s.id
+        inner join shift_employee_group seg on segc.shift_employee_group_id = seg.id
+        where s.office_code = #{officeCode} and s.id != #{shiftId}
+        and (s.from_date_en BETWEEN #{fromDate} AND #{toDate}
+        or s.to_date_en BETWEEN #{fromDate} AND #{toDate})
+          and seg.id in
+        <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>
+         #{item}
+        </foreach>
+    </select>
+
+    <select id="getShiftMappedEmployee" resultMap="shiftMapped" >
+        select sec.pis_code as id,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        s.name_en as shift_name_en,
+        s.name_np as shift_name_np
+        from shift_employee_config sec
+        inner join shift s on sec.shift_id = s.id
+        inner join employee e on sec.pis_code = e.pis_code
+        where s.office_code = #{officeCode} and s.id != #{shiftId}
+        and (s.from_date_en BETWEEN #{fromDate} AND #{toDate}
+        or s.to_date_en BETWEEN #{fromDate} AND #{toDate})
+          and sec.pis_code in
+        <foreach item='item' index='index' collection='pisCodes' open='(' separator=',' close=')'>
+         #{item}
+        </foreach>
+    </select>
+</mapper>

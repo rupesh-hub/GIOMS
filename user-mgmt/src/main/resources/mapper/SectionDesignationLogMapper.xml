@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.SectionDesignationLogMapper">
+    <resultMap id="sectionDesignationLog"
+               type="com.gerp.usermgmt.pojo.SectionDesignationLogResponsePojo">
+        <result column="id" property="id"/>
+        <result column="created_date" property="createdDate"/>
+        <result column="is_assigned" property="isAssigned"/>
+        <result column="section_designation_assign_flag" property="designationAssignFlag"></result>
+        <collection property="employee" ofType="com.gerp.usermgmt.pojo.organization.employee.EmployeePojo">
+            <result column="new_pis_code" property="pisCode"/>
+            <result column="new_name_np" property="nameNp"/>
+            <result column="new_name_en" property="nameEn"/>
+        </collection>
+        <collection property="assignerEmployee" ofType="com.gerp.usermgmt.pojo.organization.employee.EmployeePojo">
+            <result column="ass_pis_code" property="pisCode"/>
+            <result column="ass_name_np" property="nameNp"/>
+            <result column="ass_name_en" property="nameEn"/>
+        </collection>
+    </resultMap>
+    <select id="getPrevEmployeeLog" resultType="java.lang.Object">
+        select pe.pis_code
+        from employee_section_designation_log esdl
+                 left join section_designation sd on sd.id = esdl.section_designation_id
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+                 left join employee pe on pe.pis_code = esdl.prev_employee_pis_code
+                 left join employee ne on ne.pis_code = esdl.new_employee_pis_code
+        where esdl.new_employee_pis_code = #{pisCode}
+          and ss.id = #{id} and esdl.is_latest = true;
+    </select>
+    <select id="getSectionDesignationAllDetailById"
+            resultMap="sectionDesignationLog">
+        select
+            esdl.id as id,
+            case
+                when esdl.prev_employee_pis_code is null then true
+                when esdl.new_employee_pis_code is null then false else null end as is_assigned,
+            esdl.created_date,
+            newemp.employee_code as new_pis_code,
+            concat(newemp.first_name_en, ' ', newemp.middle_name_en, ' ', newemp.last_name_en) as new_name_en,
+            concat(newemp.first_name_np, ' ', newemp.middle_name_np, ' ', newemp.last_name_np) as new_name_np,
+
+            assignerEmp.employee_code as ass_pis_code,
+            concat(assignerEmp.first_name_en, ' ', assignerEmp.middle_name_en, ' ', assignerEmp.last_name_en) as ass_name_en,
+            concat(assignerEmp.first_name_np, ' ', assignerEmp.middle_name_np, ' ', assignerEmp.last_name_np) as ass_name_np,
+            case when esdl.prev_employee_pis_code is null and esdl.new_employee_pis_code is not  null then 'ASSIGN'
+                 when  esdl.prev_employee_pis_code is not null and esdl.new_employee_pis_code is not null then 'REPLACE'
+                 when esdl.prev_employee_pis_code is not null and esdl.new_employee_pis_code is null then 'REMOVE'
+                 else 'NOT_SPECIFIED' end                                                      as section_designation_assign_flag
+
+        from employee_section_designation_log esdl
+                 left join employee newemp on esdl.new_employee_pis_code = newemp.pis_code
+                 left join employee prevemp on esdl.prev_employee_pis_code = prevemp.pis_code
+
+                 left join users assuser on esdl.created_by = assuser.id
+                 left join employee assignerEmp on assuser.pis_employee_code = assignerEmp.pis_code
+
+        where esdl.section_designation_id = #{id}
+        order by esdl.created_date desc
+    </select>
+</mapper>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+<head>
+    <title>Rawana Letter</title>
+    <style type="text/css">
+
+        .header{
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .container{
+            /*height:3508px;*/
+            margin-left: 200px;
+            margin-right: 300px;
+            width: 2480px;
+            height: 1750px;
+        }
+
+        .letter-body{
+            padding-top: 20px;
+            padding-right: 150px;
+        }
+
+        .letter_info{
+            padding-right: 200px;
+        }
+
+        .letter-employee-info{
+            padding-top: 25px;
+        }
+
+        .employee-designation{
+            padding-left: 50px;
+        }
+
+        .row{
+            padding-left:15px;
+        }
+
+        .column
+        {
+            float: left;
+            width: 50%;
+        }
+
+        .checkoboxCheck{
+            padding-left: 20px;
+            height: 30px;
+            width: 80px;
+
+        }
+        .letter-holiday{
+            padding-left:200px;
+        }
+
+        .row-holiday{
+            padding-left:300px;
+        }
+
+        .letter-row{
+            column-width: 150px;
+            padding-left: 30px;
+        }
+        .letter-ending{
+            border-top: 2px solid  black;
+            margin-top: 10px;
+            padding-top: 10px;
+            color:black;
+            width:500px;
+        }
+        .dottedUnderline{
+            border-bottom: 1px dotted;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-align: center;
+        }
+        .detail-info{
+            padding-left: 60px;
+        }
+
+        footer{
+            border-top: 4px solid  black;
+            color:black;
+            padding-top: 10px;
+            font-size: 40px;
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h3><u>निजामती सेवा नियमावली , २०५० (बाह्रौ संशोधन,२०७२ सहित)</u></h3>
+        <span>अनुसूची – १२</span><br>
+        <span>(नियम ३८ को उपनियम (२) को खण्ड (ख) सँग  सम्बन्धित)</span><br />
+        <span><u>रमाना पत्र</u></span><br />
+        <br />
+        <span>नेपाल सरकार</span><br />
+        <span class="dottedUnderline" th:text="${ramana.departmentName}"></span><span> मन्त्रालय/विभाग/कार्यालय</span>
+
+    </div>
+
+
+    <div class="row">
+        <div class="letter_info col">
+            <div class="float-left">
+                <span>पत्र संख्या :-</span><span th:text="${ramana.patroNo}"></span>
+            </div>
+            <div class="float-right">
+                <span>मिति :- </span><span th:text="${ramana.date}"></span>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="letter-salutation">
+        <span>श्री</span>&nbsp;<span class="dottedUnderline" th:text="${ramana.officeDetail.officeHead}"></span><br />
+        <span  class="dottedUnderline" th:text="${ramana.officeDetail.officeName}"></span><br />
+        <span  class="dottedUnderline" th:text="${ramana.officeDetail.officeAddress}"></span>
+    </div>
+
+    <div class="letter-body">
+        <span class="detail-info">त्यस कार्यालयमा सरुवा हुनु भएका श्री</span>
+        <span class="dottedUnderline" th:text="${ramana.employeeDetail.employeeName}"></span>
+        <span>    लाई निजको विवरण सहितको रमानापत्र दिई त्यस कार्यालयमा हाजिर हुन पठाइएको व्यहोरा अनुरोध गर्दछु ।</span>
+
+
+        <div class="letter-employee-info">
+            <span>१.</span><span class="letter-row">कर्मचारीको नाम, थरः– <span th:text="${ramana.employeeDetail.employeeName}"></span></span>
+        </div>
+
+        <div class="letter-employee-info">
+            <span>२.</span><span class="letter-row">कर्मचारीको संकेत नम्वरः– <span th:text="${ramana.employeeDetail.employeeCode}"></span></span>
+        </div>
+
+        <div class="letter-employee-info">
+                <span>३.</span><span class="letter-row">साविक</span>
+                <div class="employee-designation">
+                    <div class="row">
+                        <div class="column">
+                        <span>(क)</span><span class="letter-row">पदः– <span th:text="${ramana.sabikDetail.designation}"></span></span>
+                        </div>
+                        <div class="column">
+                            <span>(ख)</span><span class="letter-row">श्रेणीः– <span th:text="${ramana.sabikDetail.category}"></span></span>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="column">
+                        <span>(ग)</span><span class="letter-row">सेवाः– <span th:text="${ramana.sabikDetail.service}"></span></span>
+                        </div>
+                        <div class="column">
+                             <span>(घ)</span><span class="letter-row">समूह, उपसमूहः– <span th:text="${ramana.sabikDetail.group}"></span></span>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <span>(ङ)</span><span class="letter-row">कार्यालयः– <span th:text="${ramana.sabikDetail.office}"></span></span>
+                    </div>
+                </div>
+
+
+
+        </div>
+
+        <div class="letter-employee-info">
+
+                <span>४.</span><span class="letter-row">सरुवा भएको</span>
+                <div class="employee-designation">
+                    <div class="row">
+                        <span>(क)</span><span class="letter-row">निर्णय मितिः– <span th:text="${ramana.saruwaDetail.decisionDate}"></span></span>
+
+                    </div>
+                    <div class="row">
+                        <div class="column">
+                        <span>(ख)</span><span class="letter-row">पदः– <span th:text="${ramana.saruwaDetail.designation}"></span></span>
+                        </div>
+                        <div class="column">
+                            <span>(ग)</span><span class="letter-row">श्रेणीः– <span th:text="${ramana.saruwaDetail.category}"></span></span>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="column">
+                        <span>(घ)</span><span class="letter-row">सेवाः– <span th:text="${ramana.saruwaDetail.service}"></span></span>
+                        </div>
+                        <div class="column">
+                            <span>(ङ)</span><span class="letter-row2">समूह, उपसमूहः– <span th:text="${ramana.saruwaDetail.group}"></span></span>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <span>(च)</span><span class="letter-row">कार्यालयः– <span th:text="${ramana.saruwaDetail.office}"></span></span>
+                    </div>
+                </div>
+
+
+
+        </div>
+
+        <div class="letter-employee-info">
+
+            <span>५.</span><span class="letter-row">बरबुझारथ सम्बन्धी विवरणः–</span>
+            <div class="employee-designation">
+
+                <div class="row">
+
+                    <span style="padding-left: 30px">गरेको</span>
+                    <input  type="checkbox" class="checkoboxCheck"  th:checked="${ramana.barbujhanathGareko}">
+
+
+                    <span>नगरेको</span>
+                    <input  type="checkbox" class="checkoboxCheck"  th:checked="${ramana.barbujhanathNagareko}">
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="letter-employee-info">
+            <span>६.</span><span class="letter-row">रमाना हुने मितिः–</span><span th:text="${ramana.ramanaDate}"></span>
+
+        </div>
+
+        <div class="letter-employee-info">
+            <span>७.</span><span class="letter-row">रमानापत्रको मितिसम्म खर्च भएका विदाः–</span>
+
+
+            <div class="letter-holiday">
+
+                <div class="row">
+                    <div class="column">
+                    <span>(क)</span><span class="letter-row">भैपरी आउने र पर्व विदा</span>
+                    </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.leaveTaken.publicHoliday}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="column">
+                    <span>(ख)</span><span class="letter-row">घर विदा</span>
+                    </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.leaveTaken.homeLeave}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                   <div class="column">
+                    <span>(ग)</span><span class="letter-row">बिरामी विदा</span>
+                   </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.leaveTaken.sickLeave}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                   <div class="column">
+                    <span>(घ)</span><u><span class="letter-row">प्रसूति विदा/रसूति स्याहार विदा</span></u>
+                   </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.leaveTaken.paternityLeave}"></span>&nbsp;<span>पटक ।</span>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                    <div class="column">
+                    <span>(ङ)</span><span class="letter-row">अध्ययन विदा</span>
+                    </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.leaveTaken.studyLeave}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                   <div class="column">
+                    <span>(च)</span><span class="letter-row">असाधारण विदा</span>
+                   </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.leaveTaken.emergencyLeave}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="row">
+                   <div class="column">
+                    <span>(छ)</span><span class="letter-row">बेतलवी विदा</span>
+                   </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.leaveTaken.unpaidLeave}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="letter-employee-info">
+            <span>८.</span><span class="letter-row">रमानापत्रको मितिसम्म सञ्चित विदाः–</span>
+
+            <div class="letter-holiday">
+
+                <div class="row">
+                    <div class="column">
+                    <span>(क)</span><span class="letter-row">घर विदा</span>
+                    </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.accumulatedLeave.homeLeave}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                    <div class="column">
+                    <span>(ख)</span><span class="letter-row">बिरामी विदा</span>
+                    </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.accumulatedLeave.sickLeave}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                   <div class="column">
+                    <span>(ग)</span><u><span class="letter-row">प्रसूति विदा/सूति स्याहार विदा</span></u>
+                   </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.accumulatedLeave.paternityLeave}"></span>&nbsp;<span>पटक ।</span>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                   <div class="column">
+                    <span>(घ)</span><span class="letter-row">अध्ययन विदा</span>
+                   </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.accumulatedLeave.studyLeave}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                    <div class="column">
+                    <span>(ङ)</span><span class="letter-row">असाधारण विदा</span>
+                    </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.accumulatedLeave.emergencyLeave}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="row">
+                  <div class="column">
+                    <span>(च)</span><span class="letter-row">बेतलवी विदा</span>
+                   </div>
+                    <div class="column">
+                        <span class="dottedUnderline" th:text="${ramana.accumulatedLeave.unpaidLeave}"></span>&nbsp;<span>दिन ।</span>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="letter-employee-info">
+                <div class="row">
+                    <span>९.</span>
+                    <span>(क)</span><span class="letter-row">कार्यालयमा रुजु हाजिर भएको दिन:–</span>
+                    <span class="dottedUnderline" th:text="${ramana.verifyDate}"></span>
+                </div>
+
+            </div>
+
+
+            <div class="letter-employee-info">
+                <div class="row">
+                    <span>१०.</span><span class="letter-row">खाइपाई आएको मासिकः–</span>
+                    <span>(क)</span><span>तलब रु</span>
+                    <span class="dottedUnderline" th:text="${ramana.salary}"></span>
+                    <div class="row-holiday">
+                        <span>(ख)</span><span>तलब वृद्धि रु</span> <span class="dottedUnderline" th:text="${ramana.increaseSalary}"></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="letter-employee-info">
+                <div class="row">
+                    <span>११.</span>
+                    <span class="letter-row">तलब भत्ता भुक्तानी लिएको अन्तिम मितिः–</span>
+                    <span class="dottedUnderline" th:text="${ramana.allowanceDate}"></span>
+                </div>
+
+            </div>
+
+            <div class="letter-employee-info">
+                <div class="row">
+                    <span>१२.</span>
+                    <span class="letter-row">कर्मचारी सञ्चयकोष कट्टी रकमः–</span>
+                    <span class="dottedUnderline" th:text="${ramana.accumulatedSalary}"></span>
+                </div>
+
+            </div>
+
+            <div class="letter-employee-info">
+                <div class="row">
+                    <span>१३.</span>
+                    <span class="letter-row">भुक्तानी लिएको उपचार खर्चको रकमः–</span>
+                    <span class="dottedUnderline" th:text="${ramana.expenditureInHealth}"></span>
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <span>मिति :-</span><span th:text="${ramana.date}"></span>
+            </div>
+
+
+            <div class="letter-ending">
+                <span>दोस्रो संशोधनद्वारा संशोधित ।</span><br />
+                <span>सातौं संशोधनद्वारा संशोधित ।</span><br />
+                <span>सातौं संशोधनद्वारा थप ।</span><br />
+            </div>
+
+            <footer class="d-flex justify-content-left">
+                <span>८२ </span>
+            </footer>
+
+
+
+        </div>
+
+
+
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.ManualAttendanceMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.ManualAttendancePojo">
+        <id property="id" column="id"/>
+        <result property="dateEn" column="date_en"/>
+        <result property="dateNp" column="date_np"/>
+        <result property="recordId" column="record_id"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="remarks" column="remarks"/>
+        <result property="isActive" column="is_active"/>
+
+        <collection property="requesterInfo" ofType="com.gerp.attendance.Pojo.EmployeeDetailPojo"
+                    select="getRequesterDetail"
+                    column="{pisCode=pis_code,id=id}">
+        </collection>
+
+        <collection property="approvalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverNameEn" column="approver_name_en"/>
+            <result property="approverNameNp" column="approver_name_np"/>
+            <result property="designationEn" column="approver_designation_en"/>
+            <result property="designationNp" column="approver_designation_np"/>
+            <result property="approverPisCode" column="ra_approver_pis_code"/>
+            <result property="remarks" column="ra_remarks"/>
+            <result property="isApprover" column="is_approver"/>
+            <result property="status" column="ra_status"/>
+            <result property="approvedDate" column="approvedDate"/>
+            <result property="isOfficeHead" column="is_office_head_delegated_approval"/>
+            <result property="isDelegated" column="is_delegated"/>
+        </collection>
+
+        <collection property="delegatedApprovalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverPisCode" column="delegated_approver_pis_code"/>
+            <result property="approverNameEn" column="delegated_approver_name_en"/>
+            <result property="approverNameNp" column="delegated_approver_name_np"/>
+            <result property="isOfficeHead" column="is_office_head_delegated"/>
+            <result property="isDelegated" column="is_delegated_approval"/>
+        </collection>
+
+    </resultMap>
+
+    <resultMap id="excelEmployeeDetail" type="com.gerp.attendance.Pojo.manualattendance.ManualExcelDataPojo">
+        <result column="groupOrder" property="groupOrder"/>
+        <result column="manualId" property="manualId"/>
+        <result property="code" column="code"/>
+
+        <collection property="pisCodeList" ofType="java.lang.String"
+                    select="selectPisDetail" column="{id=manualId}">
+        </collection>
+
+        <collection property="dateList" ofType="com.gerp.attendance.Pojo.AttendanceDateListPojo"
+                    select="dateSelect" column="{id=manualId}">
+        </collection>
+    </resultMap>
+
+    <select id="getAllManualAttendanceByOfficeCode" resultMap="baseResultMap">
+        select ma.id,
+               ma.date_en,
+               ma.date_np,
+               ma.office_code,
+               ma.remarks,
+               ma.is_active,
+               da.is_approver,
+               da.approver_pis_code                                      as ra_approver_pis_code,
+               da.remarks                                                as ra_remarks,
+               da.status                                                 as ra_status,
+               da.status,
+               ma.document_name,
+               ma.document_id,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as approver_name_en,
+
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as approver_name_np,
+               fd.name_en                                                as approver_designation_en,
+               fd.name_np                                                as approver_designation_np
+        from manual_attendance ma
+                 left join decision_approval da on ma.id = da.manual_attendance_id
+                 left join delegation d on da.delegated_id = d.id
+                 left join employee e on
+            case
+                when da.delegated_id is not null then
+                    e.pis_code = d.to_piscode
+                else
+                    da.approver_pis_code = e.pis_code end
+                 left join functional_designation fd on e.designation_code = fd.code
+
+        where ma.is_active = true
+          and e.is_active = true
+          and da.is_active = true
+          and ma.office_code = #{officeCode}
+        order by ma.created_date
+    </select>
+
+    <select id="getManualAttendanceById" resultMap="baseResultMap">
+        select ma.id,
+               ma.date_en,
+               ma.date_np,
+               da.is_approver,
+               ma.office_code,
+               ma.remarks,
+               ma.is_active,
+               ma.pis_code,
+               da.approver_pis_code                                                    as ra_approver_pis_code,
+               case
+                   when (da.status = 'A') then
+                       da.last_modified_date end                                       as approvedDate,
+               da.remarks                                                              as ra_remarks,
+               da.status                                                               as ra_status,
+               da.status,
+               mad.document_name,
+               mad.document_id,
+               mad.created_date,
+               mad.last_modified_date,
+               mad.document_size,
+               md.checkin_time,
+               md.checkout_time,
+               md.from_date_en,
+               md.to_date_en,
+               md.from_date_np,
+               md.to_date_np,
+               md.group_order,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end               as approver_name_en,
+               fd.name_en                                                              as approver_designation_en,
+               fd.name_np                                                              as approver_designation_np,
+               de.pis_code                                                             as delegated_approver_pis_code,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end               as approver_name_np,
+               case
+                   when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ',
+                                                                  de.last_name_en)
+                   else concat(de.first_name_en, ' ', de.last_name_en) end             as delegated_approver_name_en,
+               case
+                   when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ',
+                                                                  de.last_name_np)
+                   else concat(de.first_name_np, ' ', de.last_name_np) end             as delegated_approver_name_np,
+               case when da.delegated_id is not null then true else false end          as is_delegated_approval,
+               case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+        from manual_attendance ma
+                 left join decision_approval da on ma.id = da.manual_attendance_id
+                 left join manual_attendance_detail md on ma.id = md.manual_attendance_id
+                 left join delegation d on da.delegated_id = d.id
+                 left join manual_attendance_document maad on maad.manual_attendance_id = ma.id
+                 left join manual_att_documents mad on mad.id = maad.manual_att_document_details_id
+                 left join employee e on
+            case
+                when da.delegated_id is not null then
+                    e.pis_code = d.to_piscode
+                else
+                    da.approver_pis_code = e.pis_code end
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join employee de on de.pis_code = d.to_piscode
+
+        where ma.id = #{id}
+        order by da.last_modified_date desc limit 1
+    </select>
+
+    <select id="checkManualForDate" resultMap="baseResultMap">
+        select ma.id,
+               ma.date_en,
+               ma.date_np,
+               ma.office_code,
+               ma.remarks,
+               ma.is_active,
+               ma.pis_code,
+               da.is_approver,
+               da.approver_pis_code                                      as ra_approver_pis_code,
+               da.remarks                                                as ra_remarks,
+               da.status                                                 as ra_status,
+               da.status,
+               ma.document_name,
+               ma.document_id,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as approver_name_en,
+
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as approver_name_np
+        from manual_attendance ma
+                 left join decision_approval da on ma.id = da.manual_attendance_id
+                 left join employee e on (e.pis_code = da.approver_pis_code or e.employee_code = da.approver_pis_code)
+        where ma.office_code = #{officeCode}
+          and ma.status = 'P'
+          and ma.date_en = #{dateEn}
+          and ma.is_active = true;
+    </select>
+
+    <select id="checkForApproval" resultMap="baseResultMap">
+        select ma.id,
+               ma.date_en,
+               ma.date_np,
+               ma.office_code,
+               da.record_id,
+               ma.remarks,
+               ma.is_active,
+               ma.pis_code,
+               da.is_approver,
+               da.approver_pis_code                                      as ra_approver_pis_code,
+               da.remarks                                                as ra_remarks,
+               da.status                                                 as ra_status,
+               da.status,
+               ma.document_name,
+               ma.document_id,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as approver_name_en,
+
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as approver_name_np
+        from manual_attendance ma
+                 left join decision_approval da on ma.id = da.manual_attendance_id
+                 left join employee e on e.pis_code = da.approver_pis_code
+        where ma.office_code = #{officeCode}
+          and ma.status in ('A', 'R')
+          and ma.date_en = #{dateEn}
+          and ma.is_active = true;
+    </select>
+
+    <select id="getManualAttendanceByApproverPisCode" resultMap="baseResultMap">
+        select ma.id,
+               ma.date_en,
+               ma.date_np,
+               ma.office_code,
+               ma.remarks,
+               ma.is_active,
+               da.is_approver,
+               da.approver_pis_code                                      as ra_approver_pis_code,
+               da.remarks                                                as ra_remarks,
+               da.status                                                 as ra_status,
+               da.status,
+               ma.document_name,
+               ma.document_id,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as approver_name_en,
+
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as approver_name_np
+        from manual_attendance ma
+                 left join decision_approval da on ma.id = da.manual_attendance_id
+                 left join employee e on e.pis_code = da.approver_pis_code
+        where ma.is_active = true
+          and e.is_active = true
+          and da.is_active = true
+          and da.approver_pis_code = #{approverPisCode}
+        order by ma.created_date
+    </select>
+
+    <select id="getExcelEmployeeDetail" resultMap="excelEmployeeDetail">
+        select mad.pis_code             as code,
+               mad.manual_attendance_id as manualId,
+               mad.group_order          as groupOrder,
+               mad.checkin_time,
+               mad.checkout_time,
+               mad.from_date_np,
+               mad.to_date_np,
+               mad.is_active
+        from manual_attendance_detail mad
+        where manual_attendance_id = #{id}
+        group by mad.group_order,
+                 mad.pis_code,
+                 mad.checkin_time,
+                 mad.checkout_time,
+                 mad.from_date_np,
+                 mad.to_date_np,
+                 mad.is_active,
+                 mad.manual_attendance_id limit 1;
+    </select>
+
+    <select id="filterData" resultMap="baseResultMap">
+        select ma.id,
+        ma.date_en,
+        ma.pis_code,
+        ma.date_np,
+        ma.office_code,
+        ma.remarks,
+        ma.is_active,
+        ma.created_date,
+        da.is_approver,
+        da.approver_pis_code as ra_approver_pis_code,
+        da.remarks as ra_remarks,
+        da.status as ra_status,
+        da.status,
+        ma.document_name,
+        ma.document_id,
+        case when e.middle_name_en IS NOT NULL then concat(e.first_name_en,' ',e.middle_name_en,' ',e.last_name_en)
+        else concat(e.first_name_en,' ',e.last_name_en) end as approver_name_en,
+
+        case when e.middle_name_np IS NOT NULL then concat(e.first_name_np,' ',e.middle_name_np,' ',e.last_name_np)
+        else concat(e.first_name_np,' ',e.last_name_np) end as approver_name_np,
+        fd.name_en as approver_designation_en,
+        fd.name_np as approver_designation_np,
+        case when da.delegated_id is not null then true else false end as is_delegated,
+        case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated_approval
+
+        from manual_attendance ma
+        left join decision_approval da on ma.id = da.manual_attendance_id
+        left join delegation d on d.id = da.delegated_id
+        left join employee e on
+        case when da.delegated_id is not null then
+        e.pis_code = d.to_piscode else
+        da.approver_pis_code = e.pis_code end
+        left join functional_designation fd on e.designation_code = fd.code
+
+        where ma.is_active = true and da.is_active = true
+
+        <if test="fiscalYear != null">
+            and ma.fiscal_year_code = #{fiscalYear}
+        </if>
+
+        <choose>
+            <when test="isApprover != null and isApprover == true">
+                and da.approver_pis_code = #{approverPisCode}
+            </when>
+            <otherwise>
+                and ma.office_code = #{officeCode}
+            </otherwise>
+        </choose>
+
+        <if test="searchField != null">
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and ma.date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+            </if>
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and ma.status = #{searchField.approvalStatus}
+            </if>
+
+            <if test="searchField.name!=null and searchField.name!=''">
+                <bind name="pattern_en" value="searchField.name + '%'"/>
+                and (
+                case
+                WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+                e.last_name_en))
+                else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                OR
+                case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+                e.last_name_np)
+                else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+            </if>
+        </if>
+
+        order by ma.created_date desc
+    </select>
+
+
+    <!--OPTIMIZED - EMPLOYEE/PAGINATED-->
+    <select id="manualAttendanceFilter" resultType="com.gerp.attendance.Pojo.ManualAttendanceResponsePojo">
+        select *,
+        (select case when e.middle_name_en IS NOT NULL
+            then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+            else concat(e.first_name_en, ' ', e.last_name_en) end
+            from employee e where e.pis_code = b.approverPis) as approverNameEn,
+        (select case when e.middle_name_np IS NOT NULL
+            then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+            else concat(e.first_name_np, ' ', e.last_name_np) end
+            from employee e where e.pis_code = b.approverPis) as approverNameNp,
+        (select case when e.middle_name_en IS NOT NULL
+            then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+            else concat(e.first_name_en, ' ', e.last_name_en) end
+            from employee e where e.pis_code = b.pisCode)     as requesterNameEn,
+        (select case when e.middle_name_np IS NOT NULL
+            then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+            else concat(e.first_name_np, ' ', e.last_name_np) end
+            from employee e where e.pis_code = b.pisCode)     as requesterNameNp
+        from (select ma.id as id,
+            ma.pis_code                     as pisCode,
+            ma.created_date                 as createdDate,
+            da.approver_pis_code            as approverPis,
+            ma.remarks                      as remarks,
+                     da.is_approver as isApprover,
+        (select case when (ma.status = 'P') and da.approver_pis_code = #{loginPis}
+            then (select da.status from decision_approval da where da.approver_pis_code = #{loginPis} and da.manual_attendance_id = ma.id
+                order by created_date desc limit 1)
+            else ma.status end) as status
+        from manual_attendance ma
+        left join decision_approval da on ma.id = da.manual_attendance_id
+        where ma.is_active = true and da.is_active = true
+        <if test="fiscalYear != null">
+            and ma.fiscal_year_code = #{fiscalYear}
+        </if>
+
+        <choose>
+            <when test="approverPisCode != null">
+                and da.approver_pis_code = #{approverPisCode}
+            </when>
+            <otherwise>
+                and ma.office_code = #{officeCode}
+            </otherwise>
+        </choose>
+
+        <if test="searchField != null">
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and ma.date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+            </if>
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and ma.status = #{searchField.approvalStatus}
+            </if>
+
+            <if test="searchField.name!=null and searchField.name!=''">
+                <bind name="pattern_en" value="searchField.name + '%'"/>
+                and (
+                case
+                WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+                e.last_name_en))
+                else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                OR
+                case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+                e.last_name_np)
+                else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+            </if>
+        </if>)b order by b.createdDate desc
+    </select>
+
+    <select id="checkForPendingManual" resultType="java.lang.Boolean">
+        select case
+                   when (count(*) > 0) then true
+                   else false end
+        from manual_attendance ma
+        where ma.status = 'P'
+          and ma.pis_code = #{pisCode}
+          and ma.is_active = true;
+    </select>
+
+    <select id="checkForApprovalManual" resultType="java.lang.Boolean">
+        select case
+                   when (count(*) > 0) then true
+                   else false end
+        from manual_attendance ma
+                 left join decision_approval da on ma.id = da.manual_attendance_id
+        where ma.status = 'P'
+          and da.approver_pis_code = #{pisCode}
+          and da.is_active = true
+          and ma.is_active = true;
+    </select>
+
+    <select id="selectPisDetail" resultType="java.lang.String">
+        select distinct mad.pis_code
+        from manual_attendance_detail mad
+        where manual_attendance_id = #{id}
+    </select>
+
+    <select id="dateSelect" resultType="com.gerp.attendance.Pojo.AttendanceDateListPojo">
+        select mad.pis_code,
+               mad.checkin_time,
+               mad.checkout_time,
+               mad.from_date_en,
+               mad.to_date_en,
+               mad.from_date_np,
+               mad.to_date_np
+        from manual_attendance_detail mad
+        where manual_attendance_id = #{id}
+        order by pis_code;
+    </select>
+
+    <select id="getEmployeeByPisCode" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select distinct e.pis_code                                                as code,
+                        mad.is_active                                             as isActive,
+                        case
+                            when e.middle_name_en IS NOT NULL
+                                then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                            else concat(e.first_name_en, ' ', e.last_name_en) end as name,
+                        case
+                            when e.middle_name_np IS NOT NULL
+                                then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                            else concat(e.first_name_np, ' ', e.last_name_np) end as nameN
+        from employee e
+                 left join manual_attendance_detail mad on e.pis_code = mad.pis_code
+        where e.pis_code = #{pisCode}
+          and mad.manual_attendance_id = #{id}
+        order by e.pis_code limit 1;
+    </select>
+
+    <select id="getRequesterDetail" resultType="com.gerp.attendance.Pojo.EmployeeDetailPojo">
+        SELECT distinct e.employee_code                                           as pisCode,
+                        ma.created_date                                           as requestDate,
+                        case
+                            when e.middle_name_en IS NOT NULL
+                                then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                            else concat(e.first_name_en, ' ', e.last_name_en) end as employeeNameEn,
+                        case
+                            when e.middle_name_np IS NOT NULL
+                                then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                            else concat(e.first_name_np, ' ', e.last_name_np) end as employeeNameNp,
+                        fd.name_en                                                as designationEn,
+                        fd.name_np                                                as designationNp,
+                        ss.name_en                                                as sectionNameEn,
+                        ss.name_np                                                as sectionNameNp
+        FROM employee e
+                 join functional_designation fd on e.designation_code = fd.code
+                 join section_designation sd on (sd.employee_pis_code = e.pis_code and sd.is_active = true)
+                 join section_subsection ss on sd.section_subsection_id = ss.id
+                 join manual_attendance ma on ma.pis_code = e.pis_code
+                 join manual_attendance_detail mad on mad.manual_attendance_id = ma.id
+        WHERE e.employee_code = #{pisCode}
+          and mad.manual_attendance_id = #{id};
+    </select>
+
+    <select id="selectDocument" resultType="com.gerp.attendance.Pojo.document.DocumentPojo">
+        SELECT COALESCE(ma.document_id, mad.document_id) AS id,
+               COALESCE(ma.document_name, mad.document_name) AS name
+        FROM manual_attendance ma
+                 full join manual_att_documents mad on
+            mad.manual_attendance_id = ma.id
+                 full join manual_attendance_document mad2 on mad2.manual_att_document_details_id = mad.id
+        WHERE ma.id = #{id} OR mad2.manual_attendance_id = #{id}
+    </select>
+
+
+</mapper>

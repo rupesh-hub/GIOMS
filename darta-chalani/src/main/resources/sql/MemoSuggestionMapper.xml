@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.dartachalani.mapper.MemoSuggestionMapper">
+
+    <select id="findSenderByMemo" resultType="com.gerp.dartachalani.dto.MemoSuggestionDto">
+        select
+        id,
+        approver_office_code as approverOfficeCode,
+        approver_pis_code as approverPisCode,
+        approver_designation_code as approverDesignationCode,
+        approver_section_code as approverSectionCode,
+        sender_pis_code as senderPisCode,
+        sender_section_code as senderSectionCode ,
+        sender_office_code as senderOfficeCode,
+        sender_designation_code as senderDesignationCode,
+        remarks,
+        status,
+        log,
+        initial_sender as initialSender,
+        first_sender as firstSender,
+        is_revert as isRevert
+        FROM memo_suggestion
+        WHERE id = 687
+    </select>
+
+</mapper>

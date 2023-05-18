@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.HolidayMapper">
+
+    <select id="getAllHolidays" resultType="com.gerp.attendance.Pojo.HolidayResponsePojo">
+        SELECT puh.id as holidayId,
+        puh.office_code as officeCode,
+        puh.name_en as holidayNameEn,
+        puh.name_np as holidayNameNp,
+        puh.holiday_for as holidayFor,
+        peh.id as id,
+        peh.from_date_en as fromDateEn,
+        peh.from_date_np as fromDateNp,
+        peh.to_date_en as toDateEn,
+        peh.to_date_np as toDateNp,
+        peh.fiscal_year_code as fiscalYearCode,
+        peh.is_active as isActive,
+        peh.is_specific_holiday
+        FROM periodic_holiday peh
+        RIGHT JOIN public_holiday puh ON peh.public_holiday_id = puh.id WHERE puh.is_active = true
+        and office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getHolidayBetween" resultType="com.gerp.attendance.Pojo.HolidayResponsePojo">
+         SELECT puh.office_code as officeCode,
+            peh.id as id,
+            puh.name_en as holidayNameEn,
+            puh.name_np as holidayNameNp,
+            puh.holiday_for as holidayFor,
+            peh.from_date_en as fromDateEn,
+            peh.from_date_np as fromDateNp,
+            peh.to_date_en as toDateEn,
+            peh.to_date_np as toDateNp,
+            peh.fiscal_year_code as fiscalYearCode,
+            peh.is_active as isActive,
+            peh.is_specific_holiday
+            FROM periodic_holiday peh
+            INNER JOIN public_holiday puh ON peh.public_holiday_id = puh.id
+            WHERE peh.is_specific_holiday = true
+            and peh.is_active = true
+            and (peh.from_date_en BETWEEN  #{fromDate} AND #{toDate}
+            OR peh.to_date_en BETWEEN  #{fromDate} AND #{toDate})
+            and puh.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </select>
+
+
+
+    <select id="checkHoliday" resultType="Long">
+    select count(*)
+    from
+    public_holiday puh left join
+    periodic_holiday ph on puh.id = ph.public_holiday_id
+    where puh.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    and(#{dateEn} between ph.from_date_en and ph.to_date_en)
+    and puh.is_active=true and ph.is_active=true and ph.year_np=#{year} and ph.is_specific_holiday=false
+    and puh.holiday_for in ('A',#{gender});
+    </select>
+
+    <select id="holidayDetail" resultType="com.gerp.attendance.Pojo.HolidayMapperPojo">
+    select puh.name_en as nameEn,puh.name_np  as nameNp,
+    puh.short_name_en as shortNameEn,puh.short_name_np as shortNameNp
+    from
+    public_holiday puh left join
+    periodic_holiday ph on puh.id = ph.public_holiday_id
+    where puh.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    and(#{dateEn} between ph.from_date_en and ph.to_date_en)
+    and puh.is_active=true and ph.is_active=true and ph.year_np=#{year}
+    </select>
+
+    <select id="getHolidayCountMinusWeekends" resultType="Long">
+        select count(*) as holidayCount from
+        (select i as dates from
+        (select distinct b.fiscalYear, generate_series(b.fromDate,
+        b.toDate, '1 day'::interval) i from
+        (select case when (#{fromDate}>=ph.from_date_en) then #{fromDate} else ph.from_date_en end as fromDate,
+        case when(ph.to_date_en >= #{toDate}) then #{toDate} else ph.to_date_en end as toDate,
+        ph.fiscal_year_code as fiscalYear from
+        public_holiday puh left join
+        periodic_holiday ph on puh.id = ph.public_holiday_id
+        where puh.is_active=true and ph.year_np=#{year}
+        and puh.holiday_for in ('A',#{gender})
+        and ph.is_specific_holiday=false
+        and ph.is_active=true and
+        puh.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and ((ph.from_date_en between #{fromDate} and #{toDate})
+        or(ph.to_date_en between #{fromDate} and #{toDate})))as b group by b.fiscalYear,b.fromDate,b.toDate) as f where
+        f.i between #{fromDate} and #{toDate}
+        )as p
+        <if test="checkWeekend!= null and checkWeekend != ''">
+          where p.dates not in
+        <foreach item="item" index="index" collection="weekends"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        </if>
+    </select>
+<!--    select count(*) as shiftweekend from-->
+<!--    (select i::date as dates, extract(dow from i) as days-->
+<!--    from generate_series(#{fromDate},-->
+<!--    #{toDate}, '1 day'::interval) i) as dr-->
+<!--    inner join-->
+<!--    (select distinct sdc.day_order as dayorder,cast(s.fiscal_year as text) as fiscalYear-->
+<!--    from-->
+<!--    shift s left join-->
+<!--    shift_day_config sdc on s.id = sdc.shift_id where sdc.is_weekend=true and-->
+<!--    sdc.shift_id in-->
+<!--    <foreach item="item" index="index" collection="shiftId"-->
+<!--             open="(" separator="," close=")">-->
+<!--        #{item}-->
+<!--    </foreach>-->
+<!--    and sdc.day_order in (-->
+<!--    select extract(dow from i::date) from generate_series(#{fromDate},-->
+<!--    #{toDate}, '1 day'::interval) i-->
+<!--    )-->
+<!--    )e on dr.days = e.dayorder-->
+
+    <select id="getWeekends" resultType="java.time.LocalDate">
+        select dr.dates
+        from (select i::date as dates, extract(dow from i) as days
+              from generate_series(#{fromDate},
+                                   #{toDate}, '1 day'::interval) i) as dr
+                 inner join (
+            select s.from_date_en, s.to_date_en, sdc.day_order
+            from shift s
+                     inner join shift_day_config sdc on s.id = sdc.shift_id
+            where s.id in
+                <foreach item="item" index="index" collection="shiftId"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+              and is_weekend = true
+        ) as s on dr.days = s.day_order and dr.dates between s.from_date_en and s.to_date_en
+    </select>
+
+    <select id="getPublicHolidayDetail" resultType="com.gerp.attendance.Pojo.holiday.PublicHolidayPojo">
+        (select case when (#{fromDate}>=ph.from_date_en) then #{fromDate} else ph.from_date_en end as fromDate,
+        case when(ph.to_date_en >= #{toDate}) then #{toDate} else ph.to_date_en end as toDate,
+        puh.name_en as nameEn,
+        puh.name_np as nameNp
+        from
+        public_holiday puh left join
+        periodic_holiday ph on puh.id = ph.public_holiday_id
+        where puh.is_active=true and ph.year_np=#{year}
+        and puh.holiday_for in ('A',#{gender})
+        and ph.is_specific_holiday=false
+         and ph.is_active=true and
+        puh.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and ((ph.from_date_en between #{fromDate} and #{toDate})
+        or(ph.to_date_en between #{fromDate} and #{toDate})))
+    </select>
+
+    <select id="getHolidayByDateRange" resultType="com.gerp.attendance.Pojo.HolidayResponsePojo">
+       SELECT puh.office_code as officeCode,
+            peh.id as id,
+            puh.name_en as holidayNameEn,
+            puh.name_np as holidayNameNp,
+            puh.holiday_for as holidayFor,
+            peh.from_date_en as fromDateEn,
+            peh.from_date_np as fromDateNp,
+            peh.to_date_en as toDateEn,
+            peh.to_date_np as toDateNp,
+            peh.fiscal_year_code as fiscalYearCode,
+            peh.is_active as isActive,
+            peh.is_specific_holiday
+            FROM periodic_holiday peh
+            INNER JOIN public_holiday puh ON peh.public_holiday_id = puh.id
+            WHERE (peh.from_date_en BETWEEN #{fromDate} AND #{toDate}
+            OR peh.to_date_en BETWEEN #{fromDate} AND #{toDate})
+            AND puh.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </select>
+
+
+    <select id="getHolidayByYearAndMonth" resultType="com.gerp.attendance.Pojo.HolidayResponsePojo">
+    select puh.name_en as holidayNameEn,
+           ph.id as id,
+           puh.name_np as holidayNameNp,
+           puh.holiday_for as holidayFor,
+           ph.from_date_np as fromDateNp,
+           ph.to_date_en as toDateEn,
+           ph.to_date_np as toDateNp,
+           ph.fiscal_year_code as fiscalYearCode,
+           ph.is_active as isActive,
+           ph.is_specific_holiday,
+           ph.from_date_en as fromDateEn,
+           puh.office_code as officeCode
+     from periodic_holiday ph left join public_holiday puh on ph.public_holiday_id = puh.id
+     where ((SELECT EXTRACT(MONTH FROM DATE (ph.from_date_en)))= #{month} or (SELECT EXTRACT(MONTH FROM DATE (ph.to_date_en)))=#{month})
+     and ((SELECT EXTRACT(Year FROM DATE (ph.from_date_en)))= #{year} or (SELECT EXTRACT(Year FROM DATE (ph.to_date_en)))=#{year}) and puh.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getAllHolidaysByYear" resultType="com.gerp.attendance.Pojo.HolidayResponsePojo">
+        SELECT puh.id as holidayId,
+        puh.office_code as officeCode,
+        puh.name_en as holidayNameEn,
+        puh.name_np as holidayNameNp,
+        puh.holiday_for as holidayFor,
+        peh.id as id,
+        peh.year_np as yearNp,
+        peh.from_date_en as fromDateEn,
+        peh.from_date_np as fromDateNp,
+        peh.to_date_en as toDateEn,
+        peh.to_date_np as toDateNp,
+        peh.fiscal_year_code as fiscalYearCode,
+        peh.is_active as isActive,
+        peh.is_specific_holiday
+        FROM periodic_holiday peh
+        RIGHT JOIN public_holiday puh ON peh.public_holiday_id = puh.id WHERE puh.is_active = true
+        and office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach> and year_np = #{year}
+    </select>
+    <select id="getAllHoliday" resultType="com.gerp.attendance.Pojo.HolidayResponsePojo">
+        SELECT puh.id as holidayId,
+        puh.office_code as officeCode,
+        puh.name_en as holidayNameEn,
+        puh.name_np as holidayNameNp,
+        puh.holiday_for as holidayFor
+        FROM  public_holiday puh  WHERE puh.is_active = true
+
+    </select>
+    <select id="getAllHolidaysNotSetupByYear" resultType="com.gerp.attendance.Pojo.HolidayResponsePojo">
+        select ph.id as holidayId,
+       ph.office_code as officeCode,
+       ph.name_en as holidayNameEn,
+       ph.name_np as holidayNameNp,
+       ph.holiday_for as holidayFor from public_holiday ph where ph.id not in
+                                      (select puh.public_holiday_id from periodic_holiday puh where
+                         puh.year_np = #{year} and puh.is_active is true) and ph.is_active is true and ph.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+</mapper>

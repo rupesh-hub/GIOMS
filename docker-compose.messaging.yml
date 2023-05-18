@@ -1,0 +1,23 @@
+version: '3.3'
+networks:
+  mynetwork:
+    external:
+      name: mynetwork
+services:
+  messaging-service-v2:
+    build: ./messaging-service
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: messaging-service-v2
+    container_name: messaging-service-v2
+    network_mode: mynetwork
+    restart: always
+    ports:
+      - 3003:3000
+    env_file:
+      - /var/lib/jenkins/env_files/messaging/messaging.env
+    volumes:
+      - /home/doitadmin/logs/messaging-service:/app/src/logs

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.DecisionApprovalMapper">
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.approvalActivity.ApprovalActivityPojo">
+        <result property="id" column="id" />
+        <result property="rejectMessage" column="remarks" />
+        <result property="status" column="status" />
+        <result property="date" column="created_date" />
+        <result property="modifiedDate" column="last_modified_date" />
+        <result property="requestedPisCode" column="requested_pis_code" />
+        <result property="code" column="code" />
+        <result column="is_active" property="isActive"/>
+        <result column="is_delegated" property="isDelegated"/>
+        <result property="isOfficeHead" column="is_office_head_delegated"/>
+        <result property="hashContent" column="hash_content"/>
+        <result property="signature" column="signature"/>
+
+        <collection property="employeeInAction"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="pis_code" property="code"/>
+            <result column="name_np" property="nameN"/>
+            <result column="name_en" property="name"/>
+            <result column="designation_np" property="designationNp"/>
+            <result column="designation_en" property="designationEn"/>
+        </collection>
+        <collection property="forwardedEmployee"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="forwarded_pis_code" property="code"/>
+            <result column="forwarded_name_np" property="nameN"/>
+            <result column="forwarded_name_en" property="name"/>
+        </collection>
+    </resultMap>
+
+    <select id="getActivityLogByRecordId" resultMap="baseResultMap" >
+        select
+            *,
+            lead(pis_code) OVER (ORDER BY created_date) as forwarded_pis_code,
+            lead(name_en) OVER (ORDER BY created_date) as forwarded_name_en,
+            lead(name_np) OVER (ORDER BY created_date) as forwarded_name_np
+        from (select
+                  e.pis_code,
+                  case
+                      when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                      else concat(e.first_name_en, ' ', e.last_name_en) end as name_en,
+                  case
+                      when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                      else concat(e.first_name_np, ' ', e.last_name_np) end as name_np,
+                     fd.name_en as designation_en,
+                     fd.name_np as designation_np,
+                  da.status,
+                  da.remarks,
+                  da.created_date,
+                  case when da.delegated_id is not null then true else false end as is_delegated,
+                  case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+
+              from decision_approval da
+                       left join delegation d on d.id = da.delegated_id
+                       inner join employee e on
+                  case when da.delegated_id is not null then
+                           e.pis_code = d.to_piscode else
+                           da.approver_pis_code = e.pis_code end
+                  left join employee ed on da.approver_pis_code = ed.pis_code
+                       left join functional_designation fd on ed.designation_code = fd.code
+              where da.code = #{code}
+                and record_id = #{recordId} order by created_date) a
+    </select>
+
+    <resultMap id="dailyLogMap" type="com.gerp.attendance.Pojo.DailyLogPojo">
+        <result property="timeFrom" column="in_time"/>
+        <result property="timeTo" column="out_time"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="remarks" column="remarks"/>
+    </resultMap>
+
+    <resultMap id="baseEmployeePaginatedLeave" type="com.gerp.attendance.Pojo.LeaveRequestMainPojo">
+    </resultMap>
+
+    <select id="getActivityLogById" resultMap="baseResultMap" >
+       select * from
+       ( select *,
+        lead(pis_code) OVER (ORDER BY created_date ) as forwarded_pis_code,
+        lead(name_en) OVER (ORDER BY created_date ) as forwarded_name_en,
+        lead(name_np) OVER (ORDER BY created_date ) as forwarded_name_np,
+        requestedPisCode as requested_pis_code,
+        activated as is_active
+        from (select
+        e.pis_code,
+        da.is_active as activated,
+        da.hash_content,da.signature,da.code,
+        COALESCE(da.leave_request_detail_id, da.manual_attendance_id, da.kaaj_request_id, da.daily_log_id) as id,
+        case
+        when (#{code} like 'LR') then
+         (select lr.emp_pis_code from leave_request lr inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        left  join  decision_approval dan on lrd.id=dan.leave_request_detail_id where da.id=dan.id)
+        when (#{code} like 'KR') then
+        (select distinct case when(kr.pis_code is null) then
+        kr.applied_pis_code
+        else kr.pis_code end as pis_code
+        from kaaj_request kr
+        left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active=true
+        left  join  decision_approval dan on kr.id=dan.kaaj_request_id where da.id=dan.id and kr.is_active=true)
+        when (#{code} like 'MA') then
+        (select ma.pis_code from manual_attendance ma
+        left  join decision_approval dan  on dan.manual_attendance_id=ma.id where da.id=dan.id)
+        when (#{code} like 'DL') then
+        ( select dl.pis_code from daily_log dl
+        left  join  decision_approval dan on dl.id=dan.daily_log_id where da.id=dan.id)
+        when (#{code} like 'GK') then
+        (select gk.pis_code from gayal_katti gk
+        left  join decision_approval dan  on dan.ta=gk.id where da.id=dan.id)
+        end as requestedPisCode,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as name_np,
+        da.status,
+        da.remarks,
+        case when da.status = 'A' then da.last_modified_date else da.created_date end as created_date,
+        da.last_modified_date,
+        fd.name_en as designation_en,
+        fd.name_np as designation_np,
+        case when da.delegated_id is not null then true else false end as is_delegated,
+        case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+        from decision_approval da
+        left join delegation d on d.id = da.delegated_id
+        left join employee e on
+        case when da.delegated_id is not null then
+        e.pis_code = d.to_piscode else
+        da.approver_pis_code = e.pis_code end
+        left join employee ed on da.approver_pis_code = ed.pis_code
+        left join functional_designation fd on ed.designation_code = fd.code
+        where da.code = #{code}
+        and (da.in_active_status !='INACTIVE' or da.in_active_status is null)
+        <choose>
+            <when test="code == 'LR'">
+                and leave_request_detail_id = #{id}
+            </when>
+            <when test="code == 'PR'">
+                and post_attendance_id = #{id}
+            </when>
+            <when test="code == 'KR'">
+                and kaaj_request_id = #{id}
+            </when>
+            <when test="code == 'DL'">
+                and daily_log_id = #{id}
+            </when>
+            <when test="code == 'MA'">
+                and manual_attendance_id = #{id}
+            </when>
+            <when test="code == 'GK'">
+                and gayal_katti_id = #{id}
+            </when>
+            <otherwise>
+                and false
+            </otherwise>
+        </choose>
+
+        order by created_date) a
+        order by created_date desc
+        <if test="limit!=0">
+        limit 2
+        </if>
+        )b
+        where 1=1
+        and
+        case when (b.activated=false and b.status='P')
+        then 1=0
+        else 1=1 end;
+    </select>
+
+    <select id = "getActivityLog" resultType="com.gerp.attendance.Pojo.ActivityLogPojo">
+        select *,
+        (select case when middle_name_np IS NOT NULL then concat(first_name_np, ' ', middle_name_np, ' ', last_name_np)
+        else concat(first_name_np, ' ', last_name_np) end from employee where pis_code = b.approverPis) as approverName,
+        (select case when middle_name_np IS NOT NULL then concat(first_name_np, ' ', middle_name_np, ' ', last_name_np)
+        else concat(first_name_np, ' ', last_name_np) end from employee where pis_code = b.forwarderPis) as forwarderName,
+        (select case when middle_name_np IS NOT NULL then concat(first_name_np, ' ', middle_name_np, ' ', last_name_np)
+        else concat(first_name_np, ' ', last_name_np) end from employee where pis_code = b.empPis) as empName
+        from (select status,
+        case when status in('C', 'RV') then lead(approver_pis_code) over(order by created_date desc)
+        when status = 'F' then lead(approver_pis_code) over(order by created_date asc)
+        else approver_pis_code end as approverPis,
+        case when status = 'F' then approver_pis_code else null end as forwarderPis,
+        remarks as remarks,
+        signature as signature,
+        hash_content as hashContent,
+        case when (#{code} like 'LR')
+        then (select case when (lr.applied_for_others) then lrd.pis_code else lr.emp_pis_code end
+        from leave_request lr
+        left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        where lrd.id = leave_request_detail_id)
+        when (#{code} like 'DL')
+        then (select pis_code from daily_log where id = daily_log_id)
+        when (#{code} like 'KR')
+        then (select coalesce(pis_code, applied_pis_code) from kaaj_request where id = kaaj_request_id)
+        when (#{code} like 'MA')
+        then (select pis_code from manual_attendance where id = manual_attendance_id)
+        end as empPis,
+        case when status = 'A' then last_modified_date else created_date end as createdDate
+        from decision_approval
+        where (in_active_status !='INACTIVE' or in_active_status is null)
+        <choose>
+            <when test="code == 'LR'">
+                and leave_request_detail_id = #{id}
+            </when>
+            <when test="code == 'KR'">
+                and kaaj_request_id = #{id}
+            </when>
+            <when test="code == 'DL'">
+                and daily_log_id = #{id}
+            </when>
+            <when test="code == 'MA'">
+                and manual_attendance_id = #{id}
+            </when>
+            <otherwise>
+                and false
+            </otherwise>
+        </choose>
+        )b where b.status not in ('P') order by b.createdDate desc
+    </select>
+
+    <select id = "getLeaveLog" resultType="com.gerp.attendance.Pojo.ActivityLogPojo">
+        select *,
+               (select case when middle_name_np IS NOT NULL then concat(first_name_np, ' ', middle_name_np, ' ', last_name_np)
+                            else concat(first_name_np, ' ', last_name_np) end from employee where pis_code = b.empPis) as empName,
+               (select case when middle_name_np IS NOT NULL then concat(first_name_np, ' ', middle_name_np, ' ', last_name_np)
+                            else concat(first_name_np, ' ', last_name_np) end from employee where pis_code = b.requesterPis) as requesterName
+        from (select lr.emp_pis_code as requesterPis,
+                     case when (lr.applied_for_others) then lrd.pis_code else lr.emp_pis_code end as empPis,
+                     lrd.created_date as createdDate,
+                     lrd.remarks as remarks,
+                     lr.leave_request_signature as requesterSignature,
+                     lr.leave_request_hash_content as requesterHashContent,
+                     'P' as status
+              from leave_request lr
+                       left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+              where lrd.id = #{id})b
+    </select>
+
+    <select id="getKaajLog" resultType="com.gerp.attendance.Pojo.ActivityLogPojo">
+        select *,
+               (select case when middle_name_np IS NOT NULL then concat(first_name_np, ' ', middle_name_np, ' ', last_name_np)
+                            else concat(first_name_np, ' ', last_name_np) end from employee where pis_code = b.requesterPis) as requesterName
+        from (select coalesce(pis_code, applied_pis_code) as requesterPis,
+                     created_date as createdDate,
+                     purpose as remarks,
+                     kaaj_requester_signature as requesterSignature,
+                     kaaj_requester_hash_content as requesterHashContent,
+                     'P' as status
+              from kaaj_request
+              where id = #{id})b
+    </select>
+
+    <select id="getAttendanceLog" resultType="com.gerp.attendance.Pojo.ActivityLogPojo">
+        select *,
+               (select case when middle_name_np IS NOT NULL then concat(first_name_np, ' ', middle_name_np, ' ', last_name_np)
+                            else concat(first_name_np, ' ', last_name_np) end from employee where pis_code = b.requesterPis) as requesterName
+        from (select pis_code as requesterPis,
+                     created_date as createdDate,
+                     remarks as remarks,
+                     manual_attendance_request_signature as requesterSignature,
+                     manual_attendance_request_hash_content as requesterHashContent,
+                     'P' as status
+              from manual_attendance where id = #{id})b
+    </select>
+
+    <select id="getDailyLog" resultType="com.gerp.attendance.Pojo.ActivityLogPojo">
+        select *,
+               (select case when middle_name_np IS NOT NULL then concat(first_name_np, ' ', middle_name_np, ' ', last_name_np)
+                            else concat(first_name_np, ' ', last_name_np) end from employee where pis_code = b.requesterPis) as requesterName
+        from (select pis_code as requesterPis,
+                     created_date as createdDate,
+                     remarks as remarks,
+                     daily_log_requester_signature as requesterSignature,
+                     daily_log_requester_hash_content as requesterHashContent,
+                     'P' as status
+              from daily_log where id = #{id})b
+    </select>
+
+    <select id="getDailyLogContent" resultMap="dailyLogMap">
+        select in_time,
+               out_time,
+               pis_code,
+               remarks
+        from daily_log
+        where is_active = true and id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,1302 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.dartachalani.mapper.DashboardMapper">
+
+    <resultMap id="dashboardMapping" type="com.gerp.dartachalani.dto.DashboardCountPojo">
+        <result column="manual" property="countManualDarta"/>
+        <result column="auto" property="countAutoDarta"/>
+        <result column="total" property="totalDarta"/>
+    </resultMap>
+
+
+    <select id="getDashboardDartaCount" resultMap="dashboardMapping">
+        select
+        sum(case when test.entry_type =true then 1 else 0 end ) as manual ,
+        sum(case when test.entry_type =false then 1 else 0 end) as auto,
+        count(*) as total
+        from
+        (
+        select
+        rl.entry_type
+        from
+        received_letter_forward rlf
+        right join received_letter rl on rlf.received_letter_id = rl.id
+        where rl.is_active = true and
+        rl.created_date >= #{startDate} and rl.created_date <![CDATA[<=]]> #{endDate}
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null">
+                    and rl.sender_office_code = #{officeCode}
+                </if>
+                <if test="toOfficeCode != null">
+                    and rl.office_code = #{toOfficeCode}
+                </if>
+            </when>
+            <otherwise>
+                <if test="officeCode">
+                    and rl.office_code = #{officeCode}
+                </if>
+
+                <if test="officeHead and sectionId != null and sectionId != '' ">
+                    and rlf.receiver_section_id = #{sectionId}
+                </if>
+
+                <if test="!officeHead and employeeCode!=null and employeeCode!= '' ">
+                    and rlf.receiver_pis_code in (
+                    <if test="!previousPisCodes.isEmpty()">
+                        <foreach item="item" index="index" collection="previousPisCodes"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    )
+                </if>
+
+                <if test="!officeHead and sectionId != null and sectionId != '' ">
+                    and rlf.receiver_section_id = #{sectionId}
+                </if>
+            </otherwise>
+        </choose>
+
+        <!--        <choose>-->
+        <!--            <when test="officeHead">-->
+
+
+        <!--            </when>-->
+        <!--            <otherwise>-->
+        <!--                <if test="employeeCode!=null and employeeCode!= '' ">-->
+        <!--                    and rlf.receiver_pis_code = #{employeeCode}-->
+        <!--                </if>-->
+        <!--                <if test="sectionId!=null and sectionId != '' ">-->
+        <!--                    and rlf.receiver_section_id = #{sectionId}-->
+        <!--                </if>-->
+        <!--            </otherwise>-->
+        <!--        </choose>-->
+
+        <!--
+        union all
+        select
+               0 as manual,
+               count(*) as auto,
+               count(*) as total
+        from
+             dispatch_letter dl
+                 left join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        where
+              dl.is_draft=false
+          and
+              dl.is_active=true
+          and
+              dl.status='A'
+          and
+              dlri.receiver_pis_code= #{employeeCode}
+          and
+              dlri.completion_status = 'P'
+
+              -->
+        group by rl.id
+        ) as test
+    </select>
+
+    <select id="getDashBoardChalaniCount" resultType="java.lang.Integer">
+        select
+        count(distinct dl.id) as total
+        from dispatch_letter dl
+        left join dispatch_letter_review dlr on dlr.dispatch_id = dl.id
+        left join dispatch_letter_receiver_internal dlri on dlri.dispatch_letter_id = dl.id
+        where dl.is_active = true and dl.status = 'A' and dl.is_archive = false
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null">
+                    and dl.sender_office_code = #{officeCode}
+                </if>
+                <if test="toOfficeCode !=null">
+                    and dlri.receiver_office_code = #{toOfficeCode}
+                </if>
+            </when>
+            <otherwise>
+                <if test="officeCode != null">
+                    and dl.sender_office_code = #{officeCode}
+                </if>
+
+                <if test="sectionId != null and sectionId != '' ">
+                    and dl.sender_section_code = #{sectionId}
+                </if>
+
+                <if test="!officeHead and employeeCode != null and employeeCode != '' ">
+                    and dl.sender_pis_code in (
+                    <if test="!previousPisCodes.isEmpty()">
+                        <foreach item="item" index="index" collection="previousPisCodes"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    )
+                </if>
+            </otherwise>
+        </choose>
+
+        <!--        <choose>-->
+        <!--            <when test="officeHead">-->
+        <!--                and-->
+        <!--                (dl.sender_office_code = #{officeCode}-->
+        <!--                or dlr.receiver_office_name = #{officeCode})-->
+
+        <!--                <if test="sectionId != null and sectionId != '' ">-->
+        <!--                    and (dl.sender_section_code = #{sectionId}-->
+        <!--                    or dlr.receiver_section_code = #{sectionId}-->
+        <!--                    or dlr.sender_section_code = #{sectionId})-->
+        <!--                </if>-->
+
+        <!--            </when>-->
+        <!--            <otherwise>-->
+        <!--                <if test="employeeCode != null and employeeCode != '' ">-->
+        <!--                    and dl.sender_pis_code = #{employeeCode}-->
+        <!--                </if>-->
+        <!--                <if test="sectionId != null and sectionId != '' ">-->
+        <!--                    and dl.sender_section_code = #{sectionId}-->
+        <!--                </if>-->
+        <!--            </otherwise>-->
+        <!--        </choose>-->
+
+        <if test="startDate != null and endDate != null ">
+            and dlr.created_date > #{startDate} and dlr.created_date <![CDATA[<=]]> #{endDate}
+        </if>
+
+
+        <!--select count(*) as total from dispatch_letter dl
+            inner join dispatch_letter_review dlv on dlv.dispatch_id =dl.id
+            where dl.status='A' and   dlv.created_date >= #{startDate} and dlv.created_date <![CDATA[<=]]> #{endDate}
+            <if test="employeeCode != null">
+                <choose>
+                    <when test="isSent">
+                        <choose>
+                            <when test="sectionId == null or sectionId == ''">
+                                and  dlv.receiver_pis_code=#{employeeCode}
+                            </when>
+                            <otherwise>
+                                and dlv.receiver_section_code= #{sectionId}
+                            </otherwise>
+                        </choose>
+
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="sectionId == null or sectionId == ''">
+                                and dlv.sender_pis_code =#{employeeCode}
+                            </when>
+                            <otherwise>
+                                and dlv.sender_section_code= #{sectionId}
+                            </otherwise>
+                        </choose>
+
+                    </otherwise>
+                </choose>
+
+            </if>
+            -->
+    </select>
+
+    <select id="getDashBoardTipadiCount" resultType="java.lang.Integer">
+
+        SELECT count(distinct mm.id) as total
+        FROM memo mm
+        LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+        LEFT JOIN memo_suggestion ms on mm.id = ms.memo_id
+        WHERE mm.is_active = true and mm.is_archive = false
+        and mm.status = 'A'
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null">
+                    and mm.office_code = #{officeCode}
+                </if>
+            </when>
+
+            <otherwise>
+
+                <choose>
+                    <when test="officeHead">
+                        <if test="officeCode != null">
+                            and (ma.sender_office_code = #{officeCode} or ma.approver_office_code = #{officeCode}
+                            or ms.sender_office_code = #{officeCode} or ms.approver_office_code = #{officeCode} or
+                            mm.office_code
+                            = #{officeCode})
+
+                        </if>
+                        <if test="sectionId != null and sectionId != '' ">
+                            and (mm.section_code = #{sectionId}
+                            or ms.approver_section_code = #{sectionId}
+                            or ms.sender_section_code = #{sectionId}
+                            or ma.approver_section_code = #{sectionId}
+                            or ma.sender_section_code = #{sectionId})
+                        </if>
+                    </when>
+                    <otherwise>
+                        <if test="employeeCode != null and employeeCode != '' ">
+                            and (mm.pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            )
+                            or ms.sender_pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            )
+                            or ms.approver_pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            )
+                            or ms.sender_pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            )
+                            or ma.approver_pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            ))
+
+
+                            <if test="sectionId != null and sectionId != '' ">
+                                and ((mm.pis_code in (
+                                <if test="!previousPisCodes.isEmpty()">
+                                    <foreach item="item" index="index" collection="previousPisCodes"
+                                             separator=",">
+                                        #{item}
+                                    </foreach>
+                                </if>
+                                ) and mm.section_code = #{sectionId})
+                                or (ms.sender_pis_code in (
+                                <if test="!previousPisCodes.isEmpty()">
+                                    <foreach item="item" index="index" collection="previousPisCodes"
+                                             separator=",">
+                                        #{item}
+                                    </foreach>
+                                </if>
+                                ) and ms.sender_section_code = #{sectionId})
+                                or (ms.approver_pis_code in (
+                                <if test="!previousPisCodes.isEmpty()">
+                                    <foreach item="item" index="index" collection="previousPisCodes"
+                                             separator=",">
+                                        #{item}
+                                    </foreach>
+                                </if>
+                                ) and ms.approver_pis_code = #{sectionId})
+                                or (ma.sender_pis_code in (
+                                <if test="!previousPisCodes.isEmpty()">
+                                    <foreach item="item" index="index" collection="previousPisCodes"
+                                             separator=",">
+                                        #{item}
+                                    </foreach>
+                                </if>
+                                ) and ma.sender_section_code = #{sectionId})
+                                or (ma.approver_pis_code in (
+                                <if test="!previousPisCodes.isEmpty()">
+                                    <foreach item="item" index="index" collection="previousPisCodes"
+                                             separator=",">
+                                        #{item}
+                                    </foreach>
+                                </if>
+                                ) and ma.approver_section_code = #{sectionId}))
+                            </if>
+                        </if>
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+
+        <!--        <choose>-->
+        <!--            <when test="officeHead">-->
+
+        <!--                <if test="sectionId != null and sectionId != '' ">-->
+        <!--                    and (mm.section_code = #{sectionId}-->
+        <!--                    or ms.approver_section_code = #{sectionId}-->
+        <!--                    or ms.sender_section_code = #{sectionId}-->
+        <!--                    or ma.approver_section_code = #{sectionId}-->
+        <!--                    or ma.sender_section_code = #{sectionId})-->
+        <!--                </if>-->
+        <!--            </when>-->
+        <!--            <otherwise>-->
+        <!--                <if test="employeeCode != null and employeeCode != '' ">-->
+        <!--                    and (mm.pis_code = #{employeeCode}-->
+        <!--                    or ms.sender_pis_code = #{employeeCode}-->
+        <!--                    or ms.approver_pis_code = #{employeeCode}-->
+        <!--                    or ms.sender_pis_code = #{employeeCode}-->
+        <!--                    or ma.approver_pis_code = #{employeeCode})-->
+        <!--                </if>-->
+        <!--                <if test="sectionId != null and sectionId != '' ">-->
+        <!--                    and (mm.section_code = #{sectionId} or ms.sender_section_code = #{sectionId} or-->
+        <!--                    ms.approver_section_code = #{sectionId} or-->
+        <!--                    ma.sender_section_code = #{sectionId} or ma.approver_section_code = #{sectionId})-->
+        <!--                </if>-->
+        <!--            </otherwise>-->
+        <!--        </choose>-->
+
+        <if test="startDate != null and endDate != null ">
+            and ma.created_date > #{startDate} and ma.created_date <![CDATA[<=]]> #{endDate}
+        </if>
+
+        <!--
+        select  count(distinct ma.memo_id) from memo m
+                inner join memo_approval ma on m.id = ma.memo_id
+                where ma.status='A' and   ma.created_date >= #{startDate} and ma.created_date <![CDATA[<=]]> #{endDate}
+                <if test="employeeCode != null">
+                    <choose>
+                        <when test="isSent">
+                            <choose>
+                                <when test="sectionId == null or sectionId == ''">
+                                    and  ma.approver_pis_code=#{employeeCode}
+                                </when>
+                                <otherwise>
+                                    and ma.approver_section_code= #{sectionId}
+                                </otherwise>
+                            </choose>
+                        </when>
+                        <otherwise>
+                            <choose>
+                                <when test="sectionId == null or sectionId == ''">
+                                    and ma.sender_pis_code =#{employeeCode}
+                                </when>
+                                <otherwise>
+                                    and ma.sender_section_code= #{sectionId}
+                                </otherwise>
+                            </choose>
+
+                        </otherwise>
+                    </choose>
+                </if>
+
+                -->
+    </select>
+
+    <select id="getDartaStatusWiseDetail" resultType="com.gerp.dartachalani.dto.DashboardCountPojo">
+        select sum(case when t.rlf_status ='P' and t.rlf_active = true then 1 else 0 end) as pending,
+        sum(case when t.rlf_status ='IP' then 1 else 0 end) as inProgress,
+        sum(case when t.rlf_status ='FN' then 1 else 0 end ) as approvedDarta,
+        count(distinct t.id) as total
+        from
+        (select distinct rlf.completion_status as rlf_status, rlf.is_active as rlf_active, rl.status as rl_status, rl.id
+        from received_letter_forward
+        rlf
+        inner join received_letter rl on rlf.received_letter_id = rl.id
+        where
+        rl.created_date >= #{startDate} and rl.created_date <![CDATA[<=]]> #{endDate}
+        and rlf.is_active = true
+
+        <if test="employeeCode != null and employeeCode != ''">
+            and rlf.receiver_pis_code in (
+            <if test="!previousPisCodes.isEmpty()">
+                <foreach item="item" index="index" collection="previousPisCodes"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            )
+        </if>
+        <if test="sectionId != null and sectionId != '' ">
+            and rlf.receiver_section_id= #{sectionId}
+        </if>) as t
+    </select>
+
+    <select id="getDartaStatusWiseDetailHead" resultType="com.gerp.dartachalani.dto.DashboardCountPojo">
+        select sum (case when tt.rl_status = 'P' then (select case when sum (case when (completion_status = 'IP' or
+        completion_status = 'FN') and is_active is true then 1 else 0 end)>0 then 0 else 1 end
+        from received_letter_forward rlf where rlf.received_letter_id = tt.rl_id) else 0 end) as pending,
+        sum (case when tt.rl_status = 'P' then
+        (select case when sum (case when completion_status = 'IP' and is_active is true then 1 else 0 end)>0 then 1 else
+        0 end
+        from received_letter_forward rlf where rlf.received_letter_id = tt.rl_id) else 0
+        end) as inProgress,
+        sum (case when tt.rl_status = 'FN' and rlf_is_active is true then 1 else 0 end) as approvedDarta,
+        count(*) as total
+        from (
+        select distinct rlf.is_active as rlf_is_active ,rlf.completion_status as rlf_status, rl.status as rl_status,
+        rl.id as rl_id, rlf.id as rlf_id,
+        row_number( ) over (partition by rl.status , rl.id order by 1 ) as rn
+        from received_letter_forward rlf
+        inner join received_letter rl on rlf.received_letter_id = rl.id
+        where rl.is_active = true and
+        rl.created_date >= #{startDate} and rl.created_date <![CDATA[<=]]> #{endDate}
+        and rlf.is_active = true
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null ">
+                    and rl.sender_office_code = #{officeCode}
+                </if>
+                <if test="toOfficeCode != null">
+                    and rl.office_code = #{toOfficeCode}
+                </if>
+            </when>
+            <otherwise>
+                <if test="officeCode != null ">
+                    and rl.office_code = #{officeCode}
+                    <if test="sectionId != null and sectionId != '' ">
+                        and rlf.receiver_section_id= #{sectionId}
+                    </if>
+                </if>
+            </otherwise>
+        </choose>
+        ) tt
+        where tt.rn=1
+    </select>
+
+    <select id="getTippadiStatusWiseDetail" resultType="com.gerp.dartachalani.dto.DashboardCountPojo">
+
+        select
+        sum(case when test.status = 'A' then 1 else 0 end) as approvedTippadi,
+        sum(case when test.status = 'P' then 1 else 0 end) as pending
+        from
+        (
+        select distinct m.id, m.status as status from
+        memo m
+        left join memo_approval ma on m.id = ma.memo_id
+        left join memo_suggestion ms on m.id = ms.memo_id
+        where m.is_active = true and m.is_archive = false and
+        ma.created_date > #{startDate} and ma.created_date <![CDATA[<=]]> #{endDate}
+
+        <choose>
+
+            <when test="isSuperAdmin">
+                <if test="officeCode != null">
+                    and m.office_code = #{officeCode}
+                </if>
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="officeHead">
+                        <if test="officeCode != null">
+                            and ((ma.sender_office_code = #{officeCode} or ma.approver_office_code = #{officeCode})
+                            or (ms.sender_office_code = #{officeCode} or ms.approver_office_code = #{officeCode}) or
+                            m.office_code = #{officeCode})
+                        </if>
+                        <if test="sectionId != null and sectionId != '' ">
+                            and ( ma.sender_section_code = #{sectionId}
+                            or ma.approver_section_code= #{sectionId}
+                            or ms.sender_section_code = #{sectionId}
+                            or ms.approver_section_code = #{sectionId}
+                            or m.section_code = #{sectionId}
+                            )
+                        </if>
+
+                    </when>
+                    <otherwise>
+                        <if test="employeeCode != null and employeeCode != '' and sectionId != null and sectionId != ''">
+                            and (ma.sender_pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            )
+                            or ma.approver_pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            )
+                            or ms.sender_pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            )
+                            or ms.approver_pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            )
+                            or m.pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            )
+                            )
+
+                            <if test="sectionId != null and sectionId != '' ">
+                                and ((ma.sender_pis_code in (
+                                <if test="!previousPisCodes.isEmpty()">
+                                    <foreach item="item" index="index" collection="previousPisCodes"
+                                             separator=",">
+                                        #{item}
+                                    </foreach>
+                                </if>
+                                ) and ma.sender_section_code = #{sectionId})
+                                or (ma.approver_pis_code in (
+                                <if test="!previousPisCodes.isEmpty()">
+                                    <foreach item="item" index="index" collection="previousPisCodes"
+                                             separator=",">
+                                        #{item}
+                                    </foreach>
+                                </if>
+                                ) and ma.approver_section_code= #{sectionId})
+                                or (ms.sender_pis_code in (
+                                <if test="!previousPisCodes.isEmpty()">
+                                    <foreach item="item" index="index" collection="previousPisCodes"
+                                             separator=",">
+                                        #{item}
+                                    </foreach>
+                                </if>
+                                ) and ms.sender_section_code = #{sectionId})
+                                or (ms.approver_pis_code in (
+                                <if test="!previousPisCodes.isEmpty()">
+                                    <foreach item="item" index="index" collection="previousPisCodes"
+                                             separator=",">
+                                        #{item}
+                                    </foreach>
+                                </if>
+                                ) and ms.approver_section_code = #{sectionId})
+                                or (m.pis_code in (
+                                <if test="!previousPisCodes.isEmpty()">
+                                    <foreach item="item" index="index" collection="previousPisCodes"
+                                             separator=",">
+                                        #{item}
+                                    </foreach>
+                                </if>
+                                ) and m.section_code = #{sectionId})
+                                )
+                            </if>
+                        </if>
+
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+
+        ) as test
+
+        <!--
+                select
+                sum(case when ma.status='A' then 1 else 0 end ) as approvedTippadi,
+                sum(case when ma.status='P' then 1 else 0 end ) as pending
+                from memo m
+                inner join memo_approval ma on m.id = ma.memo_id
+                where
+
+                m.created_date >= #{startDate} and
+                m.created_date <![CDATA[<=]]> #{endDate}
+                <choose>
+                    <when test="isSent">
+                            <if test=" employeeCode != null and employeeCode != '' and sectionId != null and sectionId != ''">
+                               ((ma.approver_pis_code=#{employeeCode} and ma.approver_section_code= #{sectionId})
+                                or   (ma.sender_pis_code = #{employeeCode} and ma.sender_section_code = #{sectionId}))
+                            </if>
+
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="sectionId == null or sectionId == ''">
+                                and ma.sender_pis_code =#{employeeCode}
+                            </when>
+                            <otherwise>
+                                and ma.sender_section_code= #{sectionId}
+                            </otherwise>
+                        </choose>
+
+                    </otherwise>
+                </choose>
+                -->
+    </select>
+
+    <select id="getChalaniStatusWiseDetail" resultType="com.gerp.dartachalani.dto.DashboardCountPojo">
+
+        select
+        sum(case when test.status='A' then 1 else 0 end ) as approvedChalani,
+        sum(case when test.status='P' then 1 else 0 end ) as pending,
+        sum(case when test.status='R' then 1 else 0 end ) as rejected,
+        count(*) as total
+        from
+        (select
+        distinct dl.id, dl.status as status
+        from
+        dispatch_letter dl
+        left join dispatch_letter_review dlr on dl.id = dlr.dispatch_id
+        left join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        where dl.is_active = true and dl.is_archive = false and
+        dlr.created_date > #{startDate} and dlr.created_date <![CDATA[<=]]> #{endDate}
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null ">
+                    and dl.sender_office_code = #{officeCode}
+                </if>
+                <if test="toOfficeCode != null">
+                    and dlri.receiver_office_code = #{toOfficeCode}
+                </if>
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="officeHead">
+                        <if test="officeCode != null ">
+                            and dl.sender_office_code = #{officeCode}
+                        </if>
+
+                        <if test="sectionId != null and sectionId != '' ">
+                            and dl.sender_section_code = #{sectionId}
+                        </if>
+
+                    </when>
+                    <otherwise>
+                        <if test="employeeCode != null and employeeCode != '' ">
+                            and dl.sender_pis_code in (
+                            <if test="!previousPisCodes.isEmpty()">
+                                <foreach item="item" index="index" collection="previousPisCodes"
+                                         separator=",">
+                                    #{item}
+                                </foreach>
+                            </if>
+                            )
+                        </if>
+                        <if test="sectionId != null and sectionId != ''">
+                            and dl.sender_section_code = #{sectionId}
+                        </if>
+
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+        ) as test
+
+        <!--
+        select
+        sum(case when dl.status='A' then 1 else 0 end ) as approvedChalani,
+        sum(case when dl.status='P' then 1 else 0 end ) as pending,
+        sum(case when dl.status='R' then 1 else 0 end ) as rejected,
+        count(*) as total
+        from dispatch_letter dl
+        inner join dispatch_letter_review dlv on dlv.dispatch_id =dl.id
+        where
+        dl.created_date >= #{startDate} and
+        dl.created_date <![CDATA[<=]]> #{endDate}
+        <choose>
+            <when test="isSent">
+                <choose>
+                    <when test="sectionId == null or sectionId == ''">
+                        and  dlv.receiver_pis_code=#{employeeCode}
+                    </when>
+                    <otherwise>
+                        and dlv.receiver_section_code= #{sectionId}
+                    </otherwise>
+                </choose>
+
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="sectionId == null or sectionId == ''">
+                        and dlv.sender_pis_code =#{employeeCode}
+                    </when>
+                    <otherwise>
+                        and dlv.sender_section_code= #{sectionId}
+                    </otherwise>
+                </choose>
+
+            </otherwise>
+        </choose>
+        -->
+    </select>
+
+    <!--    <resultMap id="yearData" type="com.gerp.dartachalani.dto.DashboardBarChartPojo">-->
+    <!--        <id column="id" property="count"/>-->
+    <!--        <collection property="counts" ofType="Integer"/>-->
+    <!--    </resultMap>-->
+
+
+    <select id="getYearBarChartDarta" resultType="com.gerp.dartachalani.dto.DashboardBarChartPojo">
+        select
+        <foreach collection="dataMap" open=" unnest(array [" item="value" separator="," close="]) as name">
+            #{value.months}
+        </foreach>,
+        <foreach collection="dataMap" index="key" open=" unnest(array [" item="value" separator=","
+                 close="] ) as count">
+            sum(CASE WHEN t.created_date> #{value.minDate} AND t.created_date <![CDATA[<=]]> #{value.maxDate} THEN 1
+            else 0 end )
+        </foreach>
+        from
+        (select distinct rl.id, rl.created_date
+        from received_letter_forward rlf
+        right join received_letter rl on rlf.received_letter_id = rl.id
+        where rl.is_active = true
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null">
+                    and rl.sender_office_code = #{officeCode}
+                </if>
+                <if test="toOfficeCode != null">
+                    and rl.office_code = #{toOfficeCode}
+                </if>
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="isSent">
+                        <choose>
+                            <when test="officeHead">
+                                <if test="officeCode != null">
+                                    and rl.office_code = #{officeCode}
+                                </if>
+                                <if test="sectionId != null and sectionId != ''">
+                                    and rl.section_code = #{sectionId}
+                                </if>
+                            </when>
+                            <otherwise>
+                                <if test="employeeCode != null">
+                                    and rlf.receiver_pis_code = #{employeeCode}
+                                </if>
+                                <if test="sectionId != null and sectionId != ''">
+                                    and rlf.receiver_section_id = #{sectionId}
+                                </if>
+                            </otherwise>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="sectionId == null">
+                                and rlf.sender_pis_code =#{employeeCode}
+                            </when>
+                            <otherwise>
+                                and rlf.sender_section_id= #{sectionId}
+                            </otherwise>
+                        </choose>
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+        ) t
+    </select>
+    <select id="getBarChartDarta" resultType="com.gerp.dartachalani.dto.DashboardBarChartPojo">
+        select
+        <choose>
+            <when test="period.equals('MONTHLY')">
+                <foreach collection="dates" index="key" open=" unnest(array [" item="value" separator=","
+                         close="]) as currentDate">
+                    #{key}
+                </foreach>,
+                <foreach collection="dates" index="key" open=" unnest(array [" item="value" separator=","
+                         close="] ) as count">
+                    sum(CASE WHEN t.created_date> #{key} AND t.created_date <![CDATA[<=]]> #{value} THEN 1 else 0
+                    end )
+                </foreach>
+            </when>
+            <otherwise>
+                date_trunc('day',t.created_date) as currentDate
+                , count(*) as count
+            </otherwise>
+        </choose>
+        from
+        (select distinct rl.id, rl.created_date
+        from received_letter_forward rlf
+        right join received_letter rl on rlf.received_letter_id = rl.id
+        where rl.is_active = true
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null">
+                    and rl.sender_office_code = #{officeCode}
+                </if>
+                <if test="toOfficeCode != null">
+                    and rl.office_code = #{toOfficeCode}
+                </if>
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="isSent">
+                        <choose>
+                            <when test="officeHead">
+                                <if test="officeCode != null">
+                                    and rl.office_code = #{officeCode}
+                                </if>
+                                <if test="sectionId != null and sectionId != ''">
+                                    and rl.section_code = #{sectionId}
+                                </if>
+
+                            </when>
+                            <otherwise>
+                                <if test="pisCode != null ">
+                                    and rlf.receiver_pis_code = #{pisCode}
+                                </if>
+                                <if test="sectionId != null and sectionId != ''">
+                                    and rlf.receiver_section_id = #{sectionId}
+                                </if>
+                            </otherwise>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="sectionId == null">
+                                and rlf.sender_pis_code =#{pisCode}
+                            </when>
+                            <otherwise>
+                                and rlf.sender_section_id= #{sectionId}
+                            </otherwise>
+                        </choose>
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+        ) t
+
+        <if test="period.equals('WEEKLY')">
+            where t.created_date >= #{startDate} and t.created_date  <![CDATA[<=]]> #{endDate} group by currentDate
+        </if>
+        order by currentDate
+    </select>
+    <!--    <select id="getBarChartDarta" resultType="com.gerp.dartachalani.dto.DashboardBarChartPojo">-->
+    <!--        select<choose>-->
+    <!--        <when test="period.equals('YEARLY')">-->
+    <!--            date_trunc('month',rlf.created_date) as currentDate-->
+    <!--        </when>-->
+    <!--        <otherwise>-->
+    <!--            date_trunc('day',rlf.created_date) as currentDate-->
+    <!--        </otherwise>-->
+    <!--    </choose>, count(*) as count-->
+    <!--        from received_letter rl inner join received_letter_forward rlf on rl.id = rlf.received_letter_id-->
+    <!--        where (rlf.receiver_pis_code =#{pisCode} or rlf.sender_pis_code=#{pisCode})-->
+    <!--        and rlf.created_date >=  #{startDate} and rlf.created_date  <![CDATA[<=]]> #{endDate}-->
+    <!--        group by  currentDate-->
+    <!--        order by currentDate-->
+    <!--    </select>-->
+
+    <select id="getBarChartChalani" resultType="com.gerp.dartachalani.dto.DashboardBarChartPojo">
+        select
+        <choose>
+            <when test="period.equals('MONTHLY')">
+                <foreach collection="dates" index="key" open=" unnest(array [" item="value" separator=","
+                         close="]) as currentDate">
+                    #{key}
+                </foreach>,
+                <foreach collection="dates" index="key" open=" unnest(array [" item="value" separator=","
+                         close="] ) as count">
+                    sum(CASE WHEN tt.l_m_d> #{key} AND tt.l_m_d <![CDATA[<=]]> #{value} THEN 1 else 0
+                    end )
+                </foreach>
+            </when>
+            <otherwise>
+                date_trunc('day',tt.l_m_d) as currentDate
+            </otherwise>
+        </choose>
+        , count(*) as count
+        from (select
+        (select last_modified_date as l_m_d
+        from dispatch_letter_review dlr where dlr.dispatch_id = t.dl_id order by last_modified_date desc limit 1) from (
+        select distinct dl.id as dl_id from dispatch_letter_review dlr
+        inner join dispatch_letter dl on dlr.dispatch_id = dl.id
+        right join dispatch_letter_receiver_internal dlri on dlri.dispatch_letter_id = dl.id
+        where dl.is_active = true and dl.status = 'A' and dl.is_archive = false
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null">
+                    and dl.sender_office_code = #{officeCode}
+                </if>
+                <if test="toOfficeCode !=null">
+                    and dlri.receiver_office_code = #{toOfficeCode}
+                </if>
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="isSent">
+                        <choose>
+                            <when test="officeHead">
+                                <if test="officeCode != null">
+                                    and dl.sender_office_code = #{officeCode}
+                                </if>
+                                <if test="sectionId != null and sectionId != ''">
+                                    and dl.sender_section_code = #{sectionId}
+                                </if>
+                            </when>
+                            <otherwise>
+                                <if test="pisCode != null">
+                                    and dl.sender_pis_code= #{pisCode}
+                                </if>
+                                <if test="sectionId != null and sectionId != ''">
+                                    and dl.sender_section_code = #{sectionId}
+                                </if>
+                            </otherwise>
+                        </choose>
+
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="sectionId == null">
+                                dlr.sender_pis_code =#{pisCode}
+                            </when>
+                            <otherwise>
+                                dlr.sender_section_code= #{sectionId}
+                            </otherwise>
+                        </choose>
+
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+        ) t) tt
+        <if test="period.equals('WEEKLY')">
+            where tt.l_m_d >= #{startDate} and tt.l_m_d  <![CDATA[<=]]> #{endDate} group by currentDate
+        </if>
+        order by currentDate
+    </select>
+
+    <select id="getBarChartTippani" resultType="com.gerp.dartachalani.dto.DashboardBarChartPojo">
+        select
+        <choose>
+            <when test="period.equals('MONTHLY')">
+                <foreach collection="dates" index="key" open=" unnest(array [" item="value" separator=","
+                         close="]) as currentDate">
+                    #{key}
+                </foreach>,
+                <foreach collection="dates" index="key" open=" unnest(array [" item="value" separator=","
+                         close="] ) as count">
+                    sum(CASE WHEN (t.l_m_d> #{key} AND t.l_m_d <![CDATA[<=]]> #{value} AND
+                    t.ma_status = 'A') THEN 1 else 0 end)
+                </foreach>
+            </when>
+            <otherwise>
+                date_trunc('day',t.l_m_d) as currentDate
+            </otherwise>
+        </choose>
+        , count(*) as count
+        from
+        (select distinct m.id, ma.status as ma_status, ma.last_modified_date as l_m_d
+        from
+        memo m
+        inner join memo_approval ma on m.id = ma.memo_id
+        left join memo_suggestion ms on m.id = ms.memo_id
+        where m.is_active = true and m.status = 'A' and m.is_archive = false
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null">
+                    and m.office_code = #{officeCode}
+                </if>
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="isSent">
+                        <choose>
+                            <when test="officeHead">
+                                <if test="officeCode != null">
+                                    and (m.office_code = #{officeCode} or ms.approver_office_code = #{officeCode})
+                                </if>
+                                <if test="sectionId != null and sectionId != ''">
+                                    and (m.section_code = #{sectionId} or ms.approver_section_code = #{sectionId})
+                                </if>
+                            </when>
+                            <otherwise>
+                                <if test="pisCode != null">
+                                    and (m.pis_code = #{pisCode}
+                                    or ma.sender_pis_code = #{pisCode}
+                                    or ma.approver_pis_code = #{pisCode}
+                                    or ms.sender_pis_code = #{pisCode}
+                                    or ms.approver_pis_code = #{pisCode})
+                                    <if test="sectionId != null and sectionId != ''">
+                                        and ((m.pis_code = #{pisCode} and m.section_code = #{sectionId})
+                                        or (ma.sender_pis_code = #{pisCode} and ma.sender_section_code = #{sectionId})
+                                        or (ma.approver_pis_code = #{pisCode} and ma.approver_section_code =
+                                        #{sectionId})
+                                        or (ms.sender_pis_code = #{pisCode} and ms.sender_section_code = #{sectionId})
+                                        or (ms.approver_pis_code = #{pisCode} and ms.approver_section_code =
+                                        #{sectionId}))
+                                    </if>
+                                </if>
+
+                            </otherwise>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="sectionId == null">
+                                ma.sender_pis_code =#{pisCode}
+                            </when>
+                            <otherwise>
+                                ma.sender_section_code= #{sectionId}
+                            </otherwise>
+                        </choose>
+
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+        ) t
+        <if test="period.equals('WEEKLY')">
+            where t.l_m_d >= #{startDate} and t.l_m_d  <![CDATA[<=]]> #{endDate} and t.ma_status
+            = 'A' group by currentDate order by currentDate
+        </if>
+
+    </select>
+
+    <select id="getYearBarChartChalani" resultType="com.gerp.dartachalani.dto.DashboardBarChartPojo">
+        select
+        <foreach collection="dataMap" open=" unnest(array [" item="value" separator="," close="]) as name">
+            #{value.months}
+        </foreach>,
+        <foreach collection="dataMap" index="key" open=" unnest(array [" item="value" separator=","
+                 close="] ) as count">
+            sum(CASE WHEN tt.l_m_d > #{value.minDate} AND tt.l_m_d <![CDATA[<=]]>
+            #{value.maxDate} THEN 1 else 0 end )
+        </foreach>
+        from (select
+        (select last_modified_date as l_m_d
+        from dispatch_letter_review dlr where dlr.dispatch_id = t.dl_id order by last_modified_date desc limit 1) from (
+        select distinct dl.id as dl_id from dispatch_letter_review dlr
+        inner join dispatch_letter dl on dlr.dispatch_id = dl.id
+        right join dispatch_letter_receiver_internal dlri on dlri.dispatch_letter_id = dl.id
+        where dl.is_active = true and dl.status = 'A' and dl.is_archive = false
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null">
+                    and dl.sender_office_code = #{officeCode}
+                </if>
+                <if test="toOfficeCode !=null">
+                    and dlri.receiver_office_code = #{toOfficeCode}
+                </if>
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="isSent">
+                        <choose>
+                            <when test="officeHead">
+                                <if test="officeCode != null">
+                                    and dl.sender_office_code = #{officeCode}
+                                </if>
+                                <if test="sectionId != null and sectionId != ''">
+                                    and dl.sender_section_code = #{sectionId}
+                                </if>
+                            </when>
+                            <otherwise>
+                                <if test="employeeCode != null">
+                                    and dl.sender_pis_code= #{employeeCode}
+                                </if>
+                                <if test="sectionId != null and sectionId != ''">
+                                    and dl.sender_section_code = #{sectionId}
+                                </if>
+                            </otherwise>
+                        </choose>
+
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="sectionId == null">
+                                and dlr.sender_pis_code =#{employeeCode}
+                            </when>
+                            <otherwise>
+                                and dlr.sender_section_code= #{sectionId}
+                            </otherwise>
+                        </choose>
+
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+
+        ) t) tt
+    </select>
+    <select id="getYearBarChartTippani" resultType="com.gerp.dartachalani.dto.DashboardBarChartPojo">
+        select
+        <foreach collection="dataMap" open=" unnest(array [" item="value" separator="," close="]) as name">
+            #{value.months}
+        </foreach>,
+        <foreach collection="dataMap" index="key" open=" unnest(array [" item="value" separator=","
+                 close="] ) as count">
+            sum(CASE WHEN t.l_m_d> #{value.minDate} AND t.l_m_d <![CDATA[<=]]>
+            #{value.maxDate} and t.ma_status = 'A' THEN 1
+            else 0 end )
+        </foreach>
+        from
+        (select distinct m.id , ma.status as ma_status, ma.last_modified_date as l_m_d
+        from memo_approval ma
+        inner join memo m on ma.memo_id = m.id
+        left join memo_suggestion ms on ms.memo_id = m.id
+        where m.is_active = true and m.status = 'A' and m.is_archive = false
+
+        <choose>
+            <when test="isSuperAdmin">
+                <if test="officeCode != null">
+                    and m.office_code = #{officeCode}
+                </if>
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="isSent">
+                        <choose>
+                            <when test="officeHead">
+                                <if test="officeCode != null">
+                                    and (m.office_code = #{officeCode} or ms.approver_office_code = #{officeCode})
+                                </if>
+                                <if test="sectionId != null and sectionId != ''">
+                                    and (m.section_code = #{sectionId} or ms.approver_section_code = #{sectionId})
+                                </if>
+                            </when>
+                            <otherwise>
+                                <if test="employeeCode != null">
+                                    and (m.pis_code = #{employeeCode}
+                                    or ma.sender_pis_code = #{employeeCode}
+                                    or ma.approver_pis_code = #{employeeCode}
+                                    or ms.sender_pis_code = #{employeeCode}
+                                    or ms.approver_pis_code = #{employeeCode})
+                                    <if test="sectionId != null and sectionId != ''">
+                                        and ((m.pis_code = #{employeeCode} and m.section_code = #{sectionId})
+                                        or (ma.sender_pis_code = #{employeeCode} and ma.sender_section_code =
+                                        #{sectionId})
+                                        or (ma.approver_pis_code = #{employeeCode} and ma.approver_section_code =
+                                        #{sectionId})
+                                        or (ms.sender_pis_code = #{employeeCode} and ms.sender_section_code =
+                                        #{sectionId})
+                                        or (ms.approver_pis_code = #{employeeCode} and ms.approver_section_code =
+                                        #{sectionId}))
+                                    </if>
+                                </if>
+
+                            </otherwise>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="sectionId == null">
+                                and ma.sender_pis_code =#{employeeCode}
+                            </when>
+                            <otherwise>
+                                and ma.sender_section_code= #{sectionId}
+                            </otherwise>
+                        </choose>
+
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+        ) t
+    </select>
+    <select id="sidebarCountDarta" resultType="com.gerp.dartachalani.dto.DashboardCountPojo">
+        select count(distinct rl.id) as inbox
+        from received_letter rl
+        left join received_letter_forward rlf on rl.id = rlf.received_letter_id
+        where
+        rl.office_code = #{officeCode}
+        and rl.is_active = true
+        and rlf.is_active = true
+        and rlf.receiver_pis_code in (
+        <if test="!pisCodes.isEmpty()">
+            <foreach item="item" index="index" collection="pisCodes"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and rlf.completion_status = 'P'
+        and rlf.receiver_section_id = #{sectionId}
+        and rl.fiscal_year_code = #{fiscalYearCode}
+    </select>
+    <select id="sidebarCountTippadi" resultType="com.gerp.dartachalani.dto.DashboardCountPojo">
+        select count(distinct m.id) as inbox
+        from memo m
+        left join memo_approval ma on m.id = ma.memo_id
+        left join memo_suggestion ms on m.id = ms.memo_id
+        where m.is_active = true  and m.is_archive = false and
+        m.fiscal_year_code = #{fiscalYearCode} and
+        ((
+        ma.is_active = true and ma.approver_pis_code in (
+        <if test="!pisCodes.isEmpty()">
+            <foreach item="item" index="index" collection="pisCodes"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and ma.status = 'P' and
+        ma.approver_section_code = #{sectionId}
+        and ma.approver_office_code = #{officeCode}
+        )
+        or (
+        ms.is_active = true and ms.approver_pis_code in (
+        <if test="!pisCodes.isEmpty()">
+            <foreach item="item" index="index" collection="pisCodes"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and ms.status = 'P' and
+        ms.approver_section_code = #{sectionId}
+        and ms.approver_office_code = #{officeCode}
+        ))
+    </select>
+    <select id="sidebarCountChalani" resultType="com.gerp.dartachalani.dto.DashboardCountPojo">
+        select count(distinct dl.id) as inbox
+        from
+        dispatch_letter dl
+        left join dispatch_letter_review dlr on dl.id = dlr.dispatch_id
+        where
+        dlr.receiver_pis_code in (
+        <if test="!pisCodes.isEmpty()">
+            <foreach item="item" index="index" collection="pisCodes"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        AND dlr.is_active = true
+        AND dl.is_draft = false
+        AND dlr.receiver_section_code = #{sectionId}
+        AND dl.sender_office_code = #{officeCode}
+        AND dl.is_active = true
+        AND dl.fiscal_year_code = #{fiscalYearCode}
+        AND dl.is_archive = false
+
+    </select>
+    <select id="sidebarCountDartaForOfficeHead" resultType="com.gerp.dartachalani.dto.DashboardCountPojo">
+        SELECT count(distinct rl.id) as inbox
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        WHERE rl.is_active = true and (rl.id not in ( select rlf.received_letter_id from received_letter_forward rlf
+        where rlf.received_letter_id is not null) or
+        (rlf.receiver_pis_code= #{pisCode} and rlf.is_active = true) )
+        and rl.office_code = #{officeCode}
+        and rl.fiscal_year_code = #{fiscalYearCode}
+    </select>
+
+    <!--    &#45;&#45;        sum(case when rlf.is_active =true and rlf.receiver_pis_code = #{pisCode} and rlf.completion_status='P' and rlf.receiver_section_id=#{sectionId}then 1 else 0 end ) as inbox-->
+    <!--    &#45;&#45;         sum(case when rlf.sender_pis_code = #{pisCode} then 1 else 0 end ) as pending,-->
+    <!--    &#45;&#45;           sum(case when rlf.completion_status ='IP' and rlf.receiver_pis_code = #{pisCode}  then 1 else 0 end ) as inProgress,-->
+    <!--    &#45;&#45;           sum(case when rlf.completion_status ='FN' and rlf.receiver_pis_code = #{pisCode} then 1 else 0 end ) as approvedDarta-->
+
+    <!--    &#45;&#45;         sum(case when ma.is_active =true and ma.approver_pis_code = #{pisCode} and ma.status='P' and ma.approver_section_code=#{sectionId}then 1 else 0 end ) as inbox-->
+    <!--    &#45;&#45;         select sum(case when mm.is_active =true and mm.pis_code = #{pisCode} and mm.status='P' and mm.section_code=#{sectionId} and mm.is_draft =true then 1 else 0 end ) as tipani_create,-->
+    <!--    &#45;&#45;         sum(case when ma.status='A' then 1 else 0 end ) as approvedTippadi,-->
+    <!--    &#45;&#45;         sum(case when ma.status='A' then 1 else 0 end ) as approvedTippadi,-->
+    <!--    &#45;&#45;         sum(case when ma.status='P' then 1 else 0 end ) as pending-->
+</mapper>

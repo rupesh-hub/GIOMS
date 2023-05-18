@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <style type="text/css" media="print">
+        @page {
+            size: auto;
+            margin: 5mm 5mm 15mm 1in !important;
+        }
+
+        body {
+            margin: 0;
+            font-family: Kalimati;
+            white-space: normal !important;
+        }
+
+        pre {
+            white-space: pre-wrap;
+        }
+
+        .header {
+            position: fixed;
+            top: 1rem;
+            width: 93%;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 93%;
+        }
+
+        .head-space, .header {
+            height: 170px;
+        }
+
+        /*.foot-space, .footer {*/
+        /*    height: 95px;*/
+        /*}*/
+
+        .fault {
+            display: none;
+        }
+
+        @media print {
+            table {
+                page-break-after: auto;
+                word-break: break-word;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto
+            }
+
+            td {
+                page-break-inside: avoid;
+                page-break-after: auto
+            }
+
+            thead {
+                display: table-header-group
+            }
+
+            tfoot {
+                display: table-footer-group
+            }
+        }
+    </style>
+    <style>
+        body {
+            margin: 2rem;
+            font-family: Kalimati;
+            white-space: normal !important;
+        }
+
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+dynamic_header
+<table style="width: 100%;">
+    <thead>
+    <tr>
+        <td>
+            <div class="head-space">&nbsp;</div>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <div style="display: flex;
+    justify-content: center; margin-left: 2px;">
+         <span style="
+         font-weight: bold;
+         margin: 0;
+         font-size: 2rem;
+         padding-top: 0.5rem;
+         text-decoration: underline;
+         text-align: center;
+         color: red;
+        ">
+                टिप्पणी र आदेश
+        </span>
+
+            </div>
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+
+        <td
+                colspan="3"
+                style="
+							text-align: justify;
+							line-height: 30px;
+							padding-bottom: 5rem;
+							font-size: 1.0032rem;
+							display: block;
+							/*page-break-after: always;*/
+						"
+        >
+            <div style="color: red; font-weight: bolder">
+                विषय:-
+                <span style="font-weight: normal; color: black" th:text="${entity.subject}"></span>
+            </div>
+            <div
+                    style="
+								display: flex;
+								justify-content: space-between;
+								margin-bottom: 2rem;
+							"
+            >
+                <div colspan="3" style="flex: 1">
+                    <div style="height: 2px; width: 100%; background-color: red"></div>
+                </div>
+            </div>
+            <span th:each="data:${entity.tippaniContentList}">
+            <div style="display: flex; justify-content: flex-start; margin-bottom: 2rem">
+                <div
+                        colspan="3"
+                        style="text-align: justify; line-height: 30px; font-size: 1.0032rem"
+                >
+                    <span th:utext="${data.content}"></span>
+                </div>
+            </div>
+                <!-- <div
+                         class="print-format"
+                         style="display: flex; justify-content: flex-end; margin-bottom: 1rem"
+                 >-->
+                <div class="print-format"
+                     style="display: block; justify-content: flex-end; margin-bottom: 1rem; text-align: right; break-before: auto;">
+                                                    sign_<span th:text="${dataStat.index}"></span>
+                    <div colspan="3">
+                   <span style="display: flex; justify-content: flex-end;">...................................</span>
+
+                    <span style="display: flex; justify-content: flex-end;"
+                          th:text="'('+${data.senderEmployeeDetail.employeeName}+')'"></span>
+                    <span style="display: flex; justify-content: flex-end;"
+                          th:utext="${data.senderEmployeeDetail.employeeDesignation}"></span>
+                        <span style="display: flex; justify-content: flex-end;"
+                              th:utext="${data.senderEmployeeDetail.employeeSection}"></span>
+                        <span style="display: flex; justify-content: flex-end;"
+                              th:text="${data.senderEmployeeDetail.date}"></span>
+                    </div>
+                </div>
+                </span>
+        </td>
+    </tr>
+    </tbody>
+<!--    <tfoot>-->
+<!--    <tr>-->
+<!--        <td>-->
+<!--            <div class="foot-space">&nbsp;</div>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--    </tfoot>-->
+</table>
+
+<!--<div-->
+<!--        style="-->
+<!--				flex: 1;-->
+<!--				text-align: center;-->
+<!--				border-top: 3px solid red;-->
+<!--				color: red;-->
+<!--			"-->
+<!--        class="footer"-->
+<!--&gt;-->
+<!--</div>-->
+</body>
+</html>

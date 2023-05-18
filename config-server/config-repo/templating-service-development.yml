@@ -1,0 +1,69 @@
+server:
+  port: 8090
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+spring:
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+      FAIL_ON_EMPTY_BEANS: false
+  datasource:
+    url: jdbc:postgresql://103.69.127.118:5432/tms
+    #url: jdbc:postgresql://103.69.127.118:5432/tms
+    username: postgres
+    password: D0!T@.db
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800
+      leak-detection-threshold: 600000
+  jpa:
+    show-sql: true
+    hibernate:
+      #      naming:
+      #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: none
+    database: postgresql
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+      format_sql: true
+# discovery server
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 160000000
+        readTimeout: 160000000
+keycloak:
+  # turn off Spring-Boots Keycloak AutoConfiguration:
+  # We only want to use Spring-Security without servlet container specific infrastructure.
+  # This allows us to pull the Keycloak configuration from here instead of keycloak.json
+#  enabled: false
+  #auth-server-url: http://103.69.124.84:9091/auth
+  auth-server-url: http://103.69.127.118:9091/auth
+#  auth-server-url: http://103.69.127.56:9090/auth
+  realm: gerp-services
+  #client id
+  resource: gerp-main
+  enable-basic-auth: true
+  credentials:
+    secret: gerp-main
+  ssl-required: none
+  principal-attribute: preferred_username
+  use-resource-role-mappings: true
+qr:
+  link: http://103.69.127.118/#/public/document?key=

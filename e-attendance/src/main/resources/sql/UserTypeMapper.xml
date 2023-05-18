@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.UserMgmtMapper">
+
+    <select id="getUserType" resultType="java.lang.String">
+ select case when(#{type}=0) then
+     es.name_np
+            else es.name_en end
+from employee_service_status es
+where
+      1=1
+        <if test="searchField != null">
+        <if test="(searchField.userType != null and searchField.uerType != '')">
+            <choose>
+                <when test="(searchField.userType == '01')">
+                    and es.code is null or es.code='01'
+                </when>
+                <otherwise>
+                    and es.code=#{searchField.userType}
+                </otherwise>
+            </choose>
+
+        </if>
+        </if>
+        limit 1
+    </select>
+</mapper>

@@ -1,0 +1,101 @@
+tags:
+- name: users
+  description: users API
+schemes:
+  - http
+paths:
+# [GET] users
+  /fcm-token:
+    post:
+      tags:
+      - Firbase Token
+      security:
+        - bearerAuth: []
+      requestBody:
+        name: body
+        description: user Data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/token'
+      summary: Insert firebase Token
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
+# [POST] users
+  /notification:
+    get:
+      tags:
+      - Notification
+      summary: Get Forticication for a given user
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: limit
+        in: query
+        type: integer
+        description: Number of data
+        required: false
+      - name: page
+        in: query
+        type: integer
+        description: page number
+        required: false
+      responses:
+        200:
+          description: 'Success'
+        400:
+          description: 'Bad Request'
+        500:
+          description: 'Server Error'
+  /notification/count:
+    get:
+      tags:
+        - Notification
+      summary: Get Notification Count\
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: 'Success'
+        400:
+          description: 'Bad Request'
+        500:
+          description: 'Server Error'
+# definitions
+definitions:
+  token:
+    type: object
+    required:
+      - token
+    properties:
+      token:
+        type: string
+        description: firebase token fetched from mobile
+  users:
+    type: object
+    required:
+        - email
+        - password
+    properties:
+      id:
+        type: integer
+        description: user Id
+      email:
+        type: string
+        description: user Email
+      password:
+        type: string
+        description: user Password
+
+
+components:
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

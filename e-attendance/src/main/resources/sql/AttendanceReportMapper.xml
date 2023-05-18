@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gerp.attendance.mapper.AttendanceReportMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.report.AttendanceStatusPojo">
+        <result property="checkin" column="checkin"/>
+        <result property="checkout" column="checkout"/>
+        <result property="dateEn" column="date_en"/>
+        <result property="dateNp" column="date_np"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="leaveFlag" column="leaveFlag"/>
+        <result property="message" column="message"/>
+        <result property="attendanceStatus" column="attendance_status"/>
+    </resultMap>
+
+    <resultMap id="baseMonthlyReport" type="com.gerp.attendance.Pojo.report.AttendanceReportPojo">
+        <result property="nameEn" column="nameEn"/>
+        <result property="nameNp" column="nameNp"/>
+        <result property="fdNameEn" column="fdNameEn"/>
+        <result property="fdNameNp" column="fdNameNp"/>
+        <result property="pisCode" column="pisCode"/>
+        <result property="originalPisCode" column="originalPisCode"/>
+        <result property="isLeft" column="isLeft"/>
+        <result property="isJoin" column="isJoin"/>
+
+        <result property="oldDesignationEn" column="oldDesignationEn"/>
+        <result property="oldDesignationEn" column="oldDesignationEn"/>
+        <result property="dateEn" column="dateEn"/>
+        <result property="dateNp" column="dateNp"/>
+    </resultMap>
+
+    <select id="getAttendanceReport" resultMap="baseResultMap">
+        SELECT ea.checkin,
+        ea.checkout,
+        ea.date_en,
+        ea.date_np,
+        ea.attendance_status,
+        ea.office_code,
+        CASE WHEN (ea.attendance_status = 'LEAVE' or ea.attendance_status='DEVICE' or ea.attendance_status='MA') then
+        (SELECT  CASE  WHEN (ls.short_name_np is not null  and lrd.leave_for=NULL) THEN 0
+        when (ls.short_name_np is not null and lrd.leave_for='FIRST_HALF') then 1
+        when (ls.short_name_np is not null and lrd.leave_for='SECOND_HALF') then 2
+        ELSE 0 END
+
+        FROM leave_request lr
+        LEFT JOIN leave_request_detail lrd ON lr.id = lrd.leave_request_id
+        LEFT JOIN leave_policy lp ON lrd.leave_policy_id = lp.id
+        LEFT JOIN leave_setup ls ON lp.leave_setup_id = ls.id
+        WHERE CASE WHEN (lr.applied_for_others) THEN lrd.pis_code = ea.pis_code ELSE lr.emp_pis_code = ea.pis_code END
+        AND lrd.status = 'A'
+        AND ea.date_en BETWEEN lrd.from_date_en AND lrd.to_date_en LIMIT 1)
+        end as leaveFlag,
+
+
+        CASE WHEN ea.attendance_status = 'LEAVE' THEN
+        (SELECT CASE WHEN ls.short_name_np IS NOT NULL THEN ls.short_name_np ELSE 'सा.बि.' END
+        FROM leave_request lr
+        LEFT JOIN leave_request_detail lrd ON lr.id = lrd.leave_request_id
+        LEFT JOIN leave_policy lp ON lrd.leave_policy_id = lp.id
+        LEFT JOIN leave_setup ls ON lp.leave_setup_id = ls.id
+        WHERE CASE WHEN (lr.applied_for_others) THEN lrd.pis_code = ea.pis_code ELSE lr.emp_pis_code = ea.pis_code END
+        AND lrd.status = 'A'
+        AND ea.date_en BETWEEN lrd.from_date_en AND lrd.to_date_en LIMIT 1)
+        ELSE CASE WHEN ea.attendance_status = 'PUBLIC_HOLIDAY' AND ea.checkin IS NULL
+        THEN (SELECT CASE WHEN ph2.short_name_np IS NOT NULL THEN ph2.short_name_np ELSE 'सा.वि.' END
+        FROM periodic_holiday ph
+        LEFT JOIN public_holiday ph2 ON ph.public_holiday_id = ph2.id
+        WHERE ph2.office_code IN (WITH RECURSIVE q AS (SELECT o.parent_code, o.code
+        FROM office o WHERE o.code = ea.office_code
+        UNION ALL
+        SELECT z.parent_code, z.code FROM office z
+        JOIN q ON z.code = q.parent_code)
+        SELECT q.code FROM q)
+        AND ea.date_en BETWEEN ph.from_date_en AND ph.to_date_en LIMIT 1
+        )
+        ELSE CASE WHEN ea.attendance_status = 'KAAJ' THEN 'का'
+        ELSE CASE WHEN ea.attendance_status = 'UNINOFRMED_LEAVE_ABSENT' THEN 'अनु'
+        ELSE CASE WHEN ea.attendance_status = 'BAATO_MYAAD' THEN 'बा.म्या'
+        ELSE CASE WHEN ea.attendance_status = 'WEEKEND' and ea.checkin IS NULL THEN 'सा.बि.'
+        ELSE CASE WHEN ea.attendance_status IN('WEEKEND','PUBLIC_HOLIDAY') AND ea.checkin IS NOT NULL OR
+        (ea.attendance_status = 'MA' and ea.is_holiday IS TRUE) THEN 'बि.उ.'
+        ELSE CASE WHEN ea.attendance_status IN('DEVICE','MA') AND ea.checkin IS NOT NULL THEN 'उ'
+        ELSE ''
+        END END END END END END END END AS message
+        FROM employee_attendance ea
+        WHERE ea.pis_code = #{pisCode}
+        AND ea.date_en BETWEEN
+        (SELECT MIN(eng_date)::DATE AS fromDate FROM date_list WHERE nepali_month = #{month} AND nepali_year::VARCHAR =
+        #{year})
+        AND (SELECT MAX(eng_date)::DATE AS toDate FROM date_list WHERE nepali_month = #{month} AND nepali_year::VARCHAR = #{year})
+        <if test="isJoin == true">
+            AND ea.date_en >= (SELECT expected_join_date_en FROM org_transfer_history
+            WHERE pis_code = #{pisCode} AND transfer_status='A'
+            AND target_office_code = #{officeCode}
+            AND expected_join_date_en BETWEEN
+            (SELECT MIN(eng_date)::DATE AS fromDate FROM date_list WHERE nepali_month = #{month} AND
+            nepali_year::VARCHAR = #{year})
+            AND (SELECT MAX(eng_date)::DATE AS toDate FROM date_list WHERE nepali_month = #{month} AND
+            nepali_year::VARCHAR = #{year})
+            order by last_modified_date desc limit 1)
+        </if>
+        <if test="isLeft == true">
+            AND (select expected_join_date_en from org_transfer_history
+            WHERE pis_code = #{pisCode} AND transfer_status='A'
+            AND from_office_code = #{officeCode}
+            AND expected_join_date_en BETWEEN
+            (SELECT MIN(eng_date)::DATE AS fromDate FROM date_list WHERE nepali_month = #{month} AND
+            nepali_year::VARCHAR = #{year})
+            AND (SELECT MAX(eng_date)::DATE AS toDate FROM date_list WHERE nepali_month = #{month} AND
+            nepali_year::VARCHAR = #{year})
+            order by last_modified_date desc limit 1) > ea.date_en
+        </if>
+        ORDER BY ea.date_np ASC
+    </select>
+
+    <select id="monthlyAttendanceReport" resultMap="baseMonthlyReport">
+        select *,
+        (select name_en from functional_designation where code = b.old_designation_code) as oldDesignationEn,
+        (select name_np from functional_designation where code = b.old_designation_code) as oldDesignationNp
+        from
+        (select distinct
+             (case when e.employee_code is not null then
+                    e.employee_code
+                    else
+                    e.pis_code
+             end ) as pisCode,
+                 e.pis_code as originalPisCode,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as nameEn,
+
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as nameNp,
+
+        (select start_date from employee_job_detail_log where pis_code = e.pis_code and start_date BETWEEN #{fromDate}
+        and #{toDate}
+        order by id desc offset 0 limit 1) as dateEn,
+
+        (select start_date_np from employee_job_detail_log where pis_code = e.pis_code and start_date BETWEEN
+        #{fromDate} and #{toDate}
+        order by id desc offset 0 limit 1) as dateNp,
+
+        (select old_designation_code from employee_job_detail_log where pis_code = e.pis_code
+        and start_date BETWEEN #{fromDate} and #{toDate} order by id desc offset 0 limit 1) as old_designation_code,
+
+        case
+        when ((select count(*) from employee_job_detail_log where pis_code = e.pis_code) = 0) then fd.name_en
+        when ((select start_date from employee_job_detail_log where pis_code = e.pis_code order by id asc offset 0 limit
+        1) > #{toDate})
+        then (select fd.name_en from functional_designation fd right join employee_job_detail_log eLog
+        on eLog.old_designation_code = fd.code where eLog.pis_code = e.pis_code order by eLog.id asc offset 0 limit 1)
+        when ((select start_date from employee_job_detail_log where pis_code = e.pis_code order by id desc offset 0
+        limit 1) <![CDATA[<]]> #{fromDate})
+        then (select fd.name_en from functional_designation fd right join employee_job_detail_log eLog
+        on eLog.new_designation_code = fd.code where eLog.pis_code = e.pis_code order by eLog.id desc offset 0 limit 1)
+        when((select count(*) from functional_designation fd right join employee_job_detail_log eLog
+        on eLog.new_designation_code = fd.code where eLog.pis_code = e.pis_code and eLog.start_date
+        between #{fromDate} and #{toDate}) = 0)
+        then (select fd.name_en from functional_designation fd right join employee_job_detail_log eLog
+        on eLog.new_designation_code = fd.code where eLog.pis_code = e.pis_code and eLog.start_date <![CDATA[<=]]>
+        #{fromDate}
+        order by eLog.id desc offset 0 limit 1)
+        else (select fd.name_en from functional_designation fd right join employee_job_detail_log eLog
+        on eLog.new_designation_code = fd.code where eLog.pis_code=e.pis_code and eLog.start_date
+        between #{fromDate} and #{toDate} order by eLog.id desc offset 0 limit 1)
+        end as fdNameEn,
+
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        p.order_no as position_order_no,
+        e.current_position_app_date_bs,
+
+        case when(
+        (select count(*) from org_transfer_history where pis_code = e.pis_code and transfer_status='A'
+        and from_office_code = #{officeCode}
+        and expected_join_date_en between #{fromDate} and #{toDate})>0) then true else false end as isLeft,
+
+        case when(
+        (select count(*) from org_transfer_history where pis_code=e.pis_code and transfer_status='A'
+        and target_office_code = #{officeCode}
+        and expected_join_date_en between #{fromDate} and #{toDate})>0) then true else false end as isJoin,
+
+        case when ((select count(*) from employee_job_detail_log where pis_code=e.pis_code) = 0) then fd.name_np
+        when ((select start_date from employee_job_detail_log where pis_code = e.pis_code order by id asc offset 0 limit
+        1) > #{toDate})
+        then (select fd.name_np from functional_designation fd right join employee_job_detail_log eLog
+        on eLog.old_designation_code = fd.code where eLog.pis_code = e.pis_code order by eLog.id asc offset 0 limit 1)
+        when ((select start_date from employee_job_detail_log where pis_code = e.pis_code order by id desc offset 0
+        limit 1) <![CDATA[<]]> #{fromDate})
+        then (select fd.name_np from functional_designation fd right join employee_job_detail_log eLog
+        on eLog.new_designation_code = fd.code where eLog.pis_code = e.pis_code order by eLog.id desc offset 0 limit 1)
+        when((select count(*) from functional_designation fd right join employee_job_detail_log eLog
+        on eLog.new_designation_code = fd.code where eLog.pis_code = e.pis_code and eLog.start_date
+        between #{fromDate} and #{toDate}) = 0)
+        then (select fd.name_np from functional_designation fd right join employee_job_detail_log eLog
+        on eLog.new_designation_code = fd.code where eLog.pis_code = e.pis_code and eLog.start_date <![CDATA[<=]]>
+        #{fromDate} order by eLog.id desc offset 0 limit 1)
+        else (select fd.name_np from functional_designation fd right join employee_job_detail_log eLog
+        on eLog.new_designation_code = fd.code where eLog.pis_code = e.pis_code and eLog.start_date
+        between #{fromDate} and #{toDate} order by eLog.id desc offset 0 limit 1)
+        end as fdNameNp
+
+        from employee e
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        WHERE fd.designation_type='NORMAL_DESIGNATION'
+        and (e.pis_code in (select distinct pis_code from employee_attendance where office_code = #{officeCode} and date_en between #{fromDate} and #{toDate}))
+        and e.is_active = true
+        and ((ss.is_active=true or sd.is_active=true) or sd.id is null)
+        and case when (e.pis_code like 'KR_%')
+            then (e.pis_code like 'KR_%'
+            and (select count(*) from employee ea inner join employee_joining_date ejd on ea.pis_code = ejd.employee_pis_code
+            and ea.is_active=true and ea.pis_code=e.pis_code
+            and (#{fromDate} between ejd.join_date_en and ejd.end_date_en
+            or #{toDate} between ejd.join_date_en and ejd.end_date_en))>0)
+            else 1=1 end
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="searchField != null">
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                and e.pis_code = #{searchField.pisCode}
+            </if>
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+            </if>
+        </if>
+        )b
+        order by b.e_order,b.position_order_no,b.current_position_app_date_bs,b.nameEn
+    </select>
+</mapper>

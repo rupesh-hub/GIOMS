@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.dartachalani.mapper.SalutationMapper">
+
+
+    <select id="findByCreator" resultType="com.gerp.dartachalani.dto.SalutationPojo">
+      select  s.id,s.pis_code as pisCode,
+       s.custom_salutation_en as customSalutationEn,
+       s.custom_salutation_np as customSalutationNp,
+       s.section_id as sectionId,
+       s.type,
+       s.office_code as officeCode
+       from salutation s where s.type is not null
+      and s.creator = #{creator}
+      <if test="pisCode != null">
+        and  s.pis_code = #{pisCode}
+      </if>
+  </select>
+
+
+</mapper>

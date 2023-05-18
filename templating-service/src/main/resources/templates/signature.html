@@ -1,0 +1,26 @@
+<div style="display: inline-block;">
+    <table style="border-collapse: collapse; margin-left: auto; color: rgb(67, 160, 71); border: 1px solid rgb(0, 0, 0); padding: 4px; ">
+        <tr>
+            <td style="margin: 0px; font-size: 12px; font-weight: 800; line-height: 1.5; color: rgb(67, 160, 71);">
+                <!--प्रमाणित डिजिटल हस्ताक्षर-->
+                <span th:text="${signature_check}"></span>
+            </td>
+        </tr>
+        <tr>
+            <td style="margin: 0px; font-size: 12px; font-weight: 800; line-height: 1.5;">
+                <!--डिजिटल हस्ताक्षर गर्ने व्यक्ति-->
+                <span th:text="${signature_by}"></span>
+            </td>
+        </tr>
+        <tr>
+            <td style="margin: 0px; font-size: 12px; font-weight: 800; line-height: 1.5;">
+                <span th:text="${signature_name}"></span>
+            </td>
+        </tr>
+        <tr>
+            <td style="margin: 0px; font-size: 12px; font-weight: 800; line-height: 1.5;
+font-family: 'Times New Roman'">
+                <span th:text="${signature_email}"></span>
+            </td>
+        </tr>
+    </table>

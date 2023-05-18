@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.DesignationMapper">
+    <select id="getDesignationByFilter" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select distinct d.name_np as nameN, d.name_en as name, d.code, d.order_no from functional_designation d
+        left join designation_detail dd on d.code = dd.designation_code
+        left join service s on dd.service_code = s.code
+        left join position p on dd.position_code = p.code
+        left join section_designation sd on sd.functional_designation_code = d.code
+        and sd.is_active = true
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join office o on ss.office_code = o.code
+        <if test="map!=null">
+            <where>
+                <if test="map.serviceCode!=null and map.serviceCode!=''">
+                    dd.service_code = #{map.serviceCode}
+                </if>
+                <if test="map.positionCode!=null and map.positionCode!=''">
+                    and dd.position_code = #{map.positionCode}
+                </if>
+                <if test="map.officeCode!=null and map.officeCode!=''">
+                    and o.code = #{map.officeCode}
+                </if>
+                <if test="map.specialDesignation !=null and map.specialDesignation!=''">
+                    and d.designation_type = 'SPECIAL_DESIGNATION'
+                </if>
+                <if test="map.designationType !=null and map.designationType!=''">
+                    and d.designation_type = #{map.designationType}
+                </if>
+                <if test="orgTypeId != null">
+                    and d.organisation_type_id = #{orgTypeId}
+                </if>
+            </where>
+
+        </if>  order by d.order_no
+    </select>
+    <select id="getOfficeDesignationByFilter" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select distinct d.name_np as nameN, d.name_en as name, d.code, d.order_no
+        from employee e
+        inner join functional_designation d on d.code = e.designation_code
+        inner join office o on e.office_code = o.code
+        inner join service s on e.service_code = s.code
+        inner join position p on e.position_code = p.code
+
+        <if test="map!=null">
+            <where>
+                <if test="map.serviceCode!=null and map.serviceCode!=''">
+                    e.service_code = #{map.serviceCode}
+                </if>
+                <if test="map.positionCode!=null and map.positionCode!=''">
+                    and e.position_code = #{map.positionCode}
+                </if>
+                <if test="map.officeCode!=null and map.officeCode!=''">
+                    and o.code = #{map.officeCode}
+                </if>
+                <if test="orgTypeId != null">
+                    and d.organisation_type_id = #{orgTypeId}
+                </if>
+            </where>
+        </if>
+               order by  d.order_no
+    </select>
+    <select id="filterPaginated"
+            resultType="com.gerp.usermgmt.pojo.organization.employee.FunctionalDesignationPojo">
+        select distinct d.name_np, d.name_en, d.code, d.manually_created,d.is_active, d.designation_type, d.order_no as
+        orderNo, d.is_active
+        from functional_designation d
+
+        <where>
+            <if test="searchField.nameEn!=null and searchField.nameEn!=''">
+                upper(d.name_en) like CONCAT('%', upper(#{searchField.nameEn}), '%') or
+                d.name_np like CONCAT('%', #{searchField.nameEn}, '%')
+            </if>
+            <if test="searchField.manuallyCreated!=null and searchField.manuallyCreated!=''">
+                and d.manually_created = #{searchField.manuallyCreated}
+            </if>
+            <if test="searchField.designationType!=null and searchField.designationType!=''">
+                and d.designation_type = #{searchField.designationType}
+            </if>
+            <if test="orgTypeId != null">
+                and d.organisation_type_id = #{orgTypeId}
+            </if>
+        </where>
+        order by d.designation_type desc,d.order_no
+    </select>
+
+    <select id="getSectionDesignations" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select distinct name_en as name, name_np as name_n, code from functional_designation fd
+        inner join section_designation sd on fd.code = sd.functional_designation_code and sd.is_active = true
+        where sd.section_subsection_id = #{sectionId}
+        <if test="orgTypeId != null">
+            and fd.organisation_type_id = #{orgTypeId}
+        </if>
+    </select>
+
+    <select id="getOfficeDesignations" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select distinct fd.name_en as name , fd.name_np as name_n, fd.code as code from functional_designation fd
+        inner join section_designation sd on sd.functional_designation_code = fd.code and sd.is_active = true
+        inner join employee e on e.pis_code = sd.employee_pis_code
+        where office_code = #{officeCode}
+        <if test="orgTypeId != null">
+            and fd.organisation_type_id = #{orgTypeId}
+        </if>
+    </select>
+</mapper>

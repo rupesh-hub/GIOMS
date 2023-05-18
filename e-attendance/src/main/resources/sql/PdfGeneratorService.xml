@@ -1,0 +1,2196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gerp.attendance.mapper.KaajRequestMapper">
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.KaajRequestCustomPojo">
+
+        <id property="id" column="id"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="employeeCode" column="employee_code"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="kaajTypeName" column="kaaj_type_name_en"/>
+        <result property="kaajTypeNameNp" column="kaaj_type_name_np"/>
+        <result property="kaajTypeId" column="kaaj_type_id"/>
+        <result property="durationType" column="duration_type"/>
+        <result property="location" column="location"/>
+        <result property="countryId" column="country_id"/>
+        <result property="purpose" column="purpose"/>
+        <result property="status" column="status"/>
+        <result property="isInternational" column="is_international"/>
+        <result property="isActive" column="is_active"/>
+        <result property="advanceAmountTravel" column="advance_amount_travel"/>
+        <result property="remarkRegardingTravel" column="remark_regarding_travel"/>
+        <result property="kaajApproveDartaNo" column="kaaj_approve_darta_no"/>
+        <result property="approveDate" column="approvedDate"/>
+        <result property="designationNameEn" column="designationNameEn"/>
+        <result property="appliedForOthers" column="appliedForOthers"/>
+        <result property="totalDays" column="totalDays"/>
+        <result property="fiscalYearCode" column="fiscal_year_code"/>
+        <result property="kaajRequesterHashContent" column="kaaj_requester_hash_content"/>
+        <result property="kaajRequesterContent" column="kaajRequesterContent"/>
+        <result property="kaajRequesterSignature" column="kaaj_requester_signature"/>
+        <result property="approvalHashContent" column="approvalHashContent"/>
+        <result property="approvalSignature" column="approvalSignature"/>
+        <result property="approvalContent" column="approvalContent"/>
+        <result property="approverCheck" column="approverCheck"/>
+        <result property="designationNameNp" column="designationNameNp"/>
+        <result property="appliedPisCode" column="appliedPisCode"/>
+
+        <collection property="approvalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverPisCode" column="ra_approver_pis_code"/>
+            <result property="remarks" column="ra_remarks"/>
+            <result property="isApprover" column="is_approver"/>
+            <result property="status" column="ra_status"/>
+            <result property="approvedDate" column="approvedDate"/>
+            <result property="isOfficeHead" column="is_office_head_delegated"/>
+            <result property="isDelegated" column="is_delegated"/>
+        </collection>
+
+        <collection property="delegatedApprovalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverPisCode" column="delegated_approver_pis_code"/>
+            <result property="approverNameEn" column="delegated_approver_name_en"/>
+            <result property="approverNameNp" column="delegated_approver_name_np"/>
+        </collection>
+
+        <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo" select="documentDetail"
+                    column="id">
+        </collection>
+
+
+        <collection property="referenceDocument" ofType="com.gerp.attendance.Pojo.document.DocumentPojo"
+                    select="selectDocument"
+                    column="{kaajRequestId=id}">
+        </collection>
+
+        <!--        <collection property="vehicleCategories" ofType="com.gerp.shared.pojo.IdNamePojo">-->
+        <!--            <id property="id" column="vehicle_category_id"/>-->
+        <!--            <result column="vehicle_category_name_np" property="nameN"/>-->
+        <!--            <result column="vehicle_category_name_en" property="name"/>-->
+        <!--        </collection>-->
+
+        <collection property="country" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="id" column="country_id"/>
+            <result column="country_name_en" property="nameN"/>
+            <result column="country_name_np" property="name"/>
+        </collection>
+
+        <collection property="pisCodesDetail" ofType="com.gerp.attendance.Pojo.EmployeeDetailPojo"
+                    select="selectPisDetail" column="{id=id,pisCode=pis_code,approverCheck=approverCheck}">
+        </collection>
+
+        <collection property="kaajAppliedOthersPojo" ofType="com.gerp.attendance.Pojo.KaajAppliedOthersPojo"
+                    select="kaajAppliedDate"
+                    column="{id=id,pisCode=pis_code,approverCheck=approverCheck,appliedPisCode=appliedPisCode}">
+        </collection>
+
+    </resultMap>
+
+    <resultMap id="baseResult" type="com.gerp.attendance.Pojo.KaajRequestCustomPojo">
+        <id property="id" column="id"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="kaajTypeName" column="kaaj_type_name_en"/>
+        <result property="kaajTypeNameNp" column="kaaj_type_name_np"/>
+        <result property="kaajTypeId" column="kaaj_type_id"/>
+        <result property="durationType" column="duration_type"/>
+        <result property="location" column="location"/>
+        <result property="countryId" column="country_id"/>
+        <result property="purpose" column="purpose"/>
+        <result property="status" column="status"/>
+        <result property="isInternational" column="is_international"/>
+        <result property="isActive" column="is_active"/>
+        <result property="advanceAmountTravel" column="advance_amount_travel"/>
+        <result property="remarkRegardingTravel" column="remark_regarding_travel"/>
+        <result property="kaajApproveDartaNo" column="kaajApproveDartaNo"/>
+        <result property="approveDate" column="approvedDate"/>
+        <result property="designationNameEn" column="designationNameEn"/>
+        <result property="appliedForOthers" column="appliedForOthers"/>
+        <result property="approverPiscode" column="ra_approver_pis_code"/>
+        <result property="kaajRequesterHashContent" column="kaaj_requester_hash_content"/>
+        <result property="kaajRequesterContent" column="content"/>
+        <result property="kaajRequesterSignature" column="kaaj_requester_signature"/>
+        <result property="approvalHashContent" column="approvalHashContent"/>
+        <result property="approvalSignature" column="approvalSignature"/>
+        <result property="approvalContent" column="approvalContent"/>
+        <result property="approverCheck" column="approverCheck"/>
+        <result property="totalDays" column="totalDays"/>
+        <result property="designationNameNp" column="designationNameNp"/>
+        <result property="appliedPisCode" column="appliedPisCode"/>
+
+        <collection property="pisCodesDetail" ofType="com.gerp.attendance.Pojo.EmployeeDetailPojo"
+                    select="selectPisDetail" column="{id=id,pisCode=pis_code,approverCheck=approverCheck}">
+        </collection>
+
+        <collection property="country" ofType="com.gerp.shared.pojo.IdNamePojo" select="selectCountry" column="id">
+        </collection>
+
+        <collection property="approvalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo"
+                    select="selectApproval" column="{id=id,approverPiscode=ra_approver_pis_code}">
+        </collection>
+
+        <collection property="kaajAppliedOthersPojo" ofType="com.gerp.attendance.Pojo.KaajAppliedOthersPojo"
+                    select="kaajAppliedDate"
+                    column="{id=id,pisCode=pis_code,approverCheck=approverCheck,appliedPisCode=appliedPisCode}">
+        </collection>
+
+        <collection property="vehicleCategories" ofType="com.gerp.shared.pojo.IdNamePojo" select="vehicleCategory"
+                    column="id">
+        </collection>
+
+        <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo" select="documentDetail"
+                    column="id"></collection>
+
+        <collection property="referenceDocument" ofType="com.gerp.attendance.Pojo.document.DocumentPojo"
+                    select="referenceDocumentDetail" column="id">
+        </collection>
+
+    </resultMap>
+
+    <resultMap id="baseResults" type="com.gerp.attendance.Pojo.KaajRequestCustomPojo">
+        <id property="id" column="id"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="kaajTypeName" column="kaaj_type_name_en"/>
+        <result property="kaajTypeNameNp" column="kaaj_type_name_np"/>
+        <!--        <result property="kaajTypeId" column="kaaj_type_id"/>-->
+        <result property="location" column="location"/>
+        <!--        <result property="countryId" column="country_id"/>-->
+        <result property="status" column="status"/>
+        <result property="isInternational" column="is_international"/>
+        <result property="isActive" column="is_active"/>
+        <result property="remarkRegardingTravel" column="remark_regarding_travel"/>
+        <result property="approveDate" column="approvedDate"/>
+        <!--        <result property="designationNameEn" column="designationNameEn"/>-->
+        <result property="appliedForOthers" column="appliedForOthers"/>
+        <result property="approverPiscode" column="ra_approver_pis_code"/>
+        <result property="approverCheck" column="approverCheck"/>
+        <result property="totalDays" column="totalDays"/>
+        <result property="appliedPisCode" column="appliedPisCode"/>
+
+        <collection property="pisCodesDetail" ofType="com.gerp.attendance.Pojo.EmployeeDetailPojo"
+                    select="selectPisDetail" column="{id=id,pisCode=pis_code,approverCheck=approverCheck}">
+        </collection>
+
+        <!--        <collection property="country" ofType="com.gerp.shared.pojo.IdNamePojo" select="selectCountry" column="id">-->
+        <!--        </collection>-->
+
+        <collection property="approvalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo"
+                    select="selectApproval" column="{id=id,approverPiscode=ra_approver_pis_code}">
+        </collection>
+
+        <collection property="kaajAppliedOthersPojo" ofType="com.gerp.attendance.Pojo.KaajAppliedOthersPojo"
+                    select="kaajAppliedDate"
+                    column="{id=id,pisCode=pis_code,approverCheck=approverCheck,appliedPisCode=appliedPisCode}">
+        </collection>
+
+        <!--    <collection property="vehicleCategories" ofType="com.gerp.shared.pojo.IdNamePojo" select="vehicleCategory"
+                        column="id">
+            </collection>-->
+
+        <!-- <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo" select="documentDetail"
+                     column="id">
+         </collection>-->
+
+        <!-- <collection property="referenceDocument" ofType="com.gerp.attendance.Pojo.document.DocumentPojo"
+                     select="referenceDocumentDetail" column="id">
+         </collection>-->
+
+    </resultMap>
+
+
+    <!--KAAJ OPTIMIZED-->
+    <resultMap id="kaajBaseResult" type="com.gerp.attendance.Pojo.KaajResponsePojo">
+        <id property="id" column="id"/>
+        <result property="createdDate" column="createdDate"/>
+        <result property="kaajTypeName" column="kaajNameEn"/>
+        <result property="kaajTypeNameNp" column="kaajNameNp"/>
+        <result property="location" column="location"/>
+        <result property="status" column="status"/>
+        <result property="durationType" column="durationType"/>
+        <result property="approveDate" column="approveDate"/>
+        <result property="appliedForOthers" column="appliedForOthers"/>
+        <result property="approverNameEn" column="approverNameEn"/>
+        <result property="approverNameNp" column="approverNameNp"/>
+        <result property="requesterNameEn" column="requesterNameEn"/>
+        <result property="requesterNameNp" column="requesterNameNp"/>
+        <result property="kaajApproveDartaNo" column="kaajApproveDartaNo"/>
+
+        <collection property="dates" ofType="com.gerp.attendance.Pojo.DatesPojo"
+                    select="selectDates" column="{id=id}">
+        </collection>
+
+        <collection property="pisCodesDetail" ofType="com.gerp.attendance.Pojo.EmployeeDetailPojo"
+                    select="selectEmployee" column="{id=id}">
+        </collection>
+
+    </resultMap>
+
+
+    <resultMap id="baseResultMapReport" type="com.gerp.attendance.Pojo.kaaj.report.KaajReportData">
+        <result property="officeCode" column="office_code"/>
+        <result property="officeNameNp" column="office_name_np"/>
+        <result property="employeeNameNp" column="employee_name_np"/>
+        <result property="positionNameNp" column="position_name_np"/>
+        <result property="functionalDesignationNameNp" column="functional_designation_name_np"/>
+        <result property="dartaNo" column="kaaj_approve_darta_no"/>
+        <result property="location" column="location"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="durationType" column="duration_type"/>
+        <result property="advanceAmountTravel" column="advance_amount_travel"/>
+        <result property="purpose" column="purpose"/>
+        <result property="remarkRegardingTravel" column="remark_regarding_travel"/>
+        <result property="appliedForOthers" column="appliedForOthers"/>
+
+        <collection property="pisCodes" ofType="java.lang.String">
+            <result column="pis_code"/>
+        </collection>
+
+        <collection property="vehicleCategories" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="id" column="vehicle_category_id"/>
+            <result column="vehicle_category_name_np" property="nameN"/>
+            <result column="vehicle_category_name_en" property="name"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="dashboardEmployeeOnKaaj" type="com.gerp.attendance.Pojo.EmployeeOnKaajPojo">
+        <id property="id" column="id"/>
+        <result property="kaajTypeNameEn" column="kaaj_type_name_en"/>
+        <result property="kaajTypeNameNp" column="kaaj_type_name_np"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="durationType" column="duration_type"/>
+        <collection property="pisCodes" ofType="java.lang.String">
+            <result column="pis_code"/>
+        </collection>
+        <!--        <collection  property="pisCodes" column="pis_code" ofType="java.lang.String" javaType="java.util.ArrayList" />-->
+
+    </resultMap>
+
+    <resultMap id="minimalResultMap" type="com.gerp.attendance.Pojo.KaajRequestMinimalPojo">
+
+        <id property="id" column="id"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="kaajTypeName" column="kaaj_type_name_en"/>
+        <result property="kaajTypeNameNp" column="kaaj_type_name_np"/>
+        <result property="kaajTypeId" column="kaaj_type_id"/>
+        <result property="durationType" column="duration_type"/>
+        <result property="location" column="location"/>
+        <result property="purpose" column="purpose"/>
+        <result property="status" column="status"/>
+        <result property="isActive" column="is_active"/>
+
+        <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo">
+            <result property="id" column="document_id"/>
+            <result property="name" column="document_name"/>
+            <result property="size" column="document_size"/>
+            <result property="createdDate" column="docCreated"/>
+            <result property="lastUpdatedDate" column="docLastUpdated"/>
+        </collection>
+        <!--        <result property="createdDate" column="created_date"/>-->
+        <!--        <result property="lastUpdatedDate" column="last_modified_date"/>-->
+
+
+        <collection property="referenceDocument" ofType="com.gerp.attendance.Pojo.document.DocumentPojo">
+            <result property="id" column="reference_document_id"/>
+            <result property="name" column="reference_document_name"/>
+            <result property="size" column="reference_document_size"/>
+            <result property="createdDate" column="docCreated"/>
+            <result property="lastUpdatedDate" column="docLastUpdated"/>
+        </collection>
+        <!--        <result property="createdDate" column="created_date"/>-->
+        <!--        <result property="lastUpdatedDate" column="last_modified_date"/>-->
+
+        <collection property="vehicleCategories" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="id" column="vehicle_category_id"/>
+            <result column="vehicle_category_name_np" property="nameN"/>
+            <result column="vehicle_category_name_en" property="name"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="baseKaajAppliedList" type="com.gerp.attendance.Pojo.KaajAppliedOthersPojo">
+        <id property="orders" column="orders"/>
+        <result column="id" property="id"/>
+
+        <collection property="pisCode" ofType="java.lang.String">
+            <result column="pisCode"/>
+        </collection>
+
+        <collection property="kaajEmployeeDetail" ofType="com.gerp.attendance.Pojo.EmployeeDetailPojo"
+                    select="selectKaajPisCode" column="{id=id,orders=orders}">
+        </collection>
+
+        <collection property="appliedDateList" ofType="com.gerp.attendance.Pojo.KaajDateListPojo">
+            <result column="from_date_en" property="fromDateEn"/>
+            <result column="to_date_en" property="toDateEn"/>
+            <result column="from_date_np" property="fromDateNp"/>
+            <result column="to_date_np" property="toDateNp"/>
+            <result column="is_active" property="isActive"/>
+            <result column="durationType" property="durationType"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="getAllKaajRequest" resultMap="baseResultMap">
+        select kr.id                   as id,
+               case
+                   when (kr.applied_for_others) then
+                       krob.pis_code
+                   else
+                       kr.pis_code end as pis_code,
+               kr.created_date,
+               kr.from_date_en,
+               kr.to_date_en,
+               kr.from_date_np,
+               kr.to_date_np,
+               kr.duration_type,
+               kr.is_international,
+               kr.advance_amount_travel,
+               kr.remark_regarding_travel,
+               kt.name_en              as kaaj_type_name_en,
+               kt.name_np              as kaaj_type_name_np,
+               kr.location,
+               c.code                  as country_id,
+               c.name_en               as country_name_en,
+               c.name_np               as country_name_np,
+               kr.status,
+               da.approver_pis_code    as ra_approver_pis_code,
+               da.remarks              as ra_remarks,
+               da.status               as ra_status,
+               kt.id                   as kaaj_type_id,
+               kr.office_code,
+               kr.is_active,
+               kr.duration_type,
+               kr.purpose,
+               da.remarks              as ra_remarks,
+               da.is_approver,
+               da.status               as ra_status,
+               de.employee_code,
+               vc.id                   as vehicle_category_id,
+               vc.name_en              as vehicle_category_name_en,
+               vc.name_np              as vehicle_category_name_np,
+               kd.document_id,
+               kd.document_name,
+               kd.document_size,
+               kd.created_date         as docCreated,
+               kd.last_modified_date   as docLastUpdated,
+               krd.document_id         as reference_document_id,
+               krd.document_name       as reference_document_name,
+               krd.document_size       as reference_document_size
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join kaaj_type kt on kr.kaaj_type_id = kt.id
+                 left join employee de on
+            case
+                when krob.pis de.pis_code = d.to_piscode
+                 left join decision_approval da on kr.id = da.kaaj_request_id
+                 left join country c on kr.country_id = c.code
+                 left join kaaj_vehicles kv on kr.id = kv.kaaj_id
+                 left join vehicle_category vc on kv.vehicle_id = vc.id
+                 left join kaaj_document_details kd on kr.id = kd.kaaj_request_id
+                 left join kaaj_request_reference_documents krd on kr.id = krd.kaaj_request_id
+        where kr.is_active = true
+          and da.is_active = true
+        order by kr.created_date
+    </select>
+
+    <select id="kaajAppliedDate" resultMap="baseKaajAppliedList">
+        select *, (select duration_type from kaaj_request_on_behalf where id = b.krobId) as durationType
+        from (select distinct pis_code as pisCode,
+                              krob.kaaj_request_id as id,
+                              krob.id as krobId,
+                              group_order as orders,
+                              is_active,
+                              from_date_en,
+                              to_date_en,
+                              to_date_np,
+                              from_date_np
+              from kaaj_request_on_behalf krob
+              where krob.kaaj_request_id = #{id})b;
+    </select>
+
+    <select id="vehicleCategory" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select vc.id      as id,
+               vc.name_en as name,
+               vc.name_np as nameN
+        from kaaj_vehicles kv
+                 left join vehicle_category vc on kv.vehicle_id = vc.id
+        where kv.kaaj_id = #{kaajId};
+    </select>
+
+    <select id="documentDetail" resultType="com.gerp.attendance.Pojo.document.DocumentPojo">
+        select kd.document_id        as id,
+               kd.document_name      as name,
+               kd.created_date       as docCreated,
+               kd.last_modified_date as docLastUpdated,
+               kd.document_size as size
+        from kaaj_request kr
+            left join kaaj_document_details kd
+        on kr.id = kd.kaaj_request_id
+        where kr.id=#{kaajId} and kr.document_master_id is not null;
+    </select>
+
+    <select id="referenceDocumentDetail" resultType="com.gerp.attendance.Pojo.document.DocumentPojo">
+        select krd.document_id        as id,
+               krd.document_name      as name,
+               krd.created_date       as docCreated,
+               krd.last_modified_date as docLastUpdated,
+               krd.document_size as size
+        from kaaj_request kr
+            inner join kaaj_request_reference_documents krd
+        on kr.id = krd.kaaj_request_id
+        where kr.id=#{kaajId} and kr.reference_document_master_id is not null;
+    </select>
+
+    <select id="getKaajRequestById" resultMap="baseResultMap">
+        select kr.id                                                                   as id,
+               case
+                   when (kr.applied_for_others) then
+                       krob.pis_code
+                   else
+                       kr.pis_code end,
+                case
+                   when (kr.applied_for_others) then
+                       e.employee_code
+                   else
+                       ke.employee_code  end,
+               kr.applied_for_others                                                   as appliedForOthers,
+               false                                                                   as approverCheck,
+               kr.created_date,
+               kr.applied_pis_code                                                     as appliedPisCode,
+               kr.from_date_en,
+               kr.to_date_en,
+               kr.from_date_np,
+               kr.to_date_np,
+               kr.is_international,
+               kr.kaaj_approve_darta_no,
+               kr.advance_amount_travel,
+               kr.remark_regarding_travel,
+               kt.name_en                                                              as kaaj_type_name_en,
+               kt.name_np                                                              as kaaj_type_name_np,
+               kr.location,
+               c.code                                                                  as country_id,
+               c.name_en                                                               as country_name_en,
+               c.name_np                                                               as country_name_np,
+               kr.status,
+               da.is_approver,
+               da.approver_pis_code                                                    as ra_approver_pis_code,
+               da.remarks                                                              as ra_remarks,
+               da.status                                                               as ra_status,
+               case
+                   when (da.status = 'A') then
+                       da.last_modified_date end                                       as approvedDate,
+               kt.id                                                                   as kaaj_type_id,
+               kr.office_code,
+               kr.is_active,
+               kr.duration_type,
+               kr.purpose,
+               kr.fiscal_year                                                          as fiscal_year_code,
+               da.remarks                                                              as ra_remarks,
+               da.status                                                               as ra_status,
+               kd.document_id,
+               kd.document_name,
+               kd.document_size,
+               kd.created_date                                                         as docCreated,
+               kd.last_modified_date                                                   as docLastUpdated,
+               krd.document_id                                                         as reference_document_id,
+               krd.document_name                                                       as reference_document_name,
+               krd.document_size                                                       as reference_document_size,
+               de.pis_code                                                             as delegated_approver_pis_code,
+               de.employee_code,
+               kr.kaaj_requester_hash_content,
+               kr.content                                                              as kaajRequesterContent,
+               kr.kaaj_requester_signature,
+               da.hash_content                                                         as approvalHashContent,
+               da.signature                                                            as approvalSignature,
+               da.content                                                              as approvalContent,
+               case
+                   when (kr.applied_for_others) then
+                       (DATE_PART('day', krob.to_date_en::timestamp - krob.from_date_en::timestamp) + 1)
+                   else (DATE_PART('day', kr.to_date_en::timestamp - kr.from_date_en::timestamp) + 1)
+                   end                                                                 as totalDays,
+               case
+                   when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ',
+                                                                  de.last_name_en)
+                   else concat(de.first_name_en, ' ', de.last_name_en) end             as delegated_approver_name_en,
+               case
+                   when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ',
+                                                                  de.last_name_np)
+                   else concat(de.first_name_np, ' ', de.last_name_np) end             as delegated_approver_name_np,
+               case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join kaaj_type kt on kr.kaaj_type_id = kt.id
+                 left join decision_approval da on kr.id = da.kaaj_request_id
+                 left join country c on kr.country_id = c.code
+                 left join kaaj_document_details kd on kr.id = kd.kaaj_request_id
+                 left join kaaj_request_reference_documents krd on kr.id = krd.kaaj_request_id
+                 left join delegation d on da.delegated_id = d.id
+                 left join employee de on de.pis_code = d.to_piscode
+                 left join employee e on e.pis_code = krob.pis_code
+                 left join employee ke on ke.pis_code = kr.pis_code
+        where kr.is_active = true
+          and da.is_active = true
+          and kr.id = #{id}
+        order by da.last_modified_date desc limit 1
+    </select>
+
+    <select id="getPaperReportData" resultMap="baseResultMapReport">
+        select kr.office_code,
+               o.name_np                                                 as office_name_np,
+               case
+                   when (kr.applied_for_others) then
+                       krob.pis_code
+                   else
+                       kr.pis_code end                                   as pis_code,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+               p.name_np                                                 as position_name_np,
+               fd.name_np                                                as functional_designation_name_np,
+               kr.kaaj_approve_darta_no,
+               kr.applied_for_others                                     as appliedForOthers,
+               kr.location,
+               kr.from_date_np,
+               kr.to_date_np,
+               kr.duration_type,
+               kr.advance_amount_travel,
+               kr.purpose,
+               kr.remark_regarding_travel,
+               vc.id                                                     as vehicle_category_id,
+               vc.name_en                                                as vehicle_category_name_en,
+               vc.name_np                                                as vehicle_category_name_np,
+               e.employee_code
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join kaaj_vehicles kv on kr.id = kv.kaaj_id
+                 left join vehicle_category vc on kv.vehicle_id = vc.id
+                 left join office o on kr.office_code = o.code
+                 left join employee e on kr.pis_code = e.pis_code
+                 left join position p on e.position_code = p.code
+                 left join functional_designation fd on e.designation_code = fd.code
+        where kr.status = 'A'
+          and kr.id = #{id}
+    </select>
+
+    <select id="getKaajRequestByPisCode" resultMap="baseResultMap">
+        select kr.id                 as id,
+               kr.created_date,
+               kr.from_date_en,
+               kr.to_date_en,
+               kr.from_date_np,
+               kr.to_date_np,
+               kr.duration_type,
+               kr.is_international,
+               kr.advance_amount_travel,
+               kr.remark_regarding_travel,
+               kt.name_en            as kaaj_type_name_en,
+               kt.name_np            as kaaj_type_name_np,
+               kr.location,
+               c.code                as country_id,
+               c.name_en             as country_name_en,
+               c.name_np             as country_name_np,
+               kr.status,
+               da.approver_pis_code  as ra_approver_pis_code,
+               da.is_approver,
+               da.remarks            as ra_remarks,
+               da.status             as ra_status,
+               kt.id                 as kaaj_type_id,
+               kr.office_code,
+               kr.is_active,
+               kr.duration_type,
+               kr.purpose,
+               da.remarks            as ra_remarks,
+               da.status             as ra_status,
+               vc.id                 as vehicle_category_id,
+               vc.name_en            as vehicle_category_name_en,
+               vc.name_np            as vehicle_category_name_np,
+               kd.document_id,
+               kd.document_name,
+               kd.document_size,
+               kd.created_date       as docCreated,
+               kd.last_modified_date as docLastUpdated,
+               krd.document_id       as reference_document_id,
+               krd.document_name     as reference_document_name,
+               krd.document_size     as reference_document_size
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join kaaj_type kt on kr.kaaj_type_id = kt.id
+                 left join decision_approval da on kr.id = da.kaaj_request_id
+                 left join country c on kr.country_id = c.code
+                 left join kaaj_vehicles kv on kr.id = kv.kaaj_id
+                 left join vehicle_category vc on kv.vehicle_id = vc.id
+                 left join kaaj_document_details kd on kr.id = kd.kaaj_request_id
+                 left join kaaj_request_reference_documents krd on kr.id = krd.kaaj_request_id
+
+        where kr.is_active = true
+          and da.is_active = true
+          and (krob.pis_code = #{pisCode} or kr.pis_code = #{pisCode})
+        order by kr.created_date desc
+    </select>
+
+    <select id="getKaajByApproverPisCode" resultMap="baseResultMap">
+        select kr.id                   as id,
+               case
+                   when (kr.applied_for_others) then
+                       krob.pis_code
+                   else
+                       kr.pis_code end as pis_code,
+               kr.created_date,
+               kr.from_date_en,
+               kr.to_date_en,
+               kr.from_date_np,
+               kr.to_date_np,
+               kr.duration_type,
+               kr.is_international,
+               kr.advance_amount_travel,
+               kr.remark_regarding_travel,
+               kt.name_en              as kaaj_type_name_en,
+               kt.name_np              as kaaj_type_name_np,
+               kr.location,
+               c.code                  as country_id,
+               c.name_en               as country_name_en,
+               c.name_np               as country_name_np,
+               kr.status,
+               da.approver_pis_code    as ra_approver_pis_code,
+               da.remarks              as ra_remarks,
+               da.is_approver,
+               da.status               as ra_status,
+               kt.id                   as kaaj_type_id,
+               kr.office_code,
+               kr.is_active,
+               kr.duration_type,
+               kr.purpose,
+               vc.id                   as vehicle_category_id,
+               vc.name_en              as vehicle_category_name_en,
+               vc.name_np              as vehicle_category_name_np,
+               kd.document_id,
+               kd.document_name,
+               kd.document_size,
+               kd.created_date         as docCreated,
+               kd.last_modified_date   as docLastUpdated,
+               krd.document_id         as reference_document_id,
+               krd.document_name       as reference_document_name,
+               krd.document_size       as reference_document_size
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join kaaj_type kt on kr.kaaj_type_id = kt.id
+                 left join decision_approval da on kr.id = da.kaaj_request_id
+                 left join country c on kr.country_id = c.code
+                 left join kaaj_vehicles kv on kr.id = kv.kaaj_id
+                 left join vehicle_category vc on kv.vehicle_id = vc.id
+                 left join kaaj_document_details kd on kr.id = kd.kaaj_request_id
+                 left join kaaj_request_reference_documents krd on kr.id = krd.kaaj_request_id
+
+        where kr.is_active = true
+          and da.is_active = true
+          and da.approver_pis_code = #{approverPisCode}
+        order by kr.created_date desc
+    </select>
+
+    <select id="getKaajByMonthAndYear" resultMap="minimalResultMap">
+        select kr.id                   as id,
+               kr.office_code,
+               case
+                   when (kr.applied_for_others) then
+                       krob.pis_code
+                   else
+                       kr.pis_code end as pis_code,
+               kr.from_date_en,
+               kr.to_date_en,
+               kr.from_date_np,
+               kr.to_date_np,
+               kr.is_active,
+               kt.name_en              as kaaj_type_name_en,
+               kt.name_np              as kaaj_type_name_np,
+               kt.id                   as kaaj_type_id,
+               vc.id                   as vehicle_category_id,
+               vc.name_en              as vehicle_category_name_en,
+               vc.name_np              as vehicle_category_name_np,
+               kr.duration_type,
+               kr.location,
+               kr.purpose,
+               kr.status,
+               kd.document_id,
+               kd.document_name,
+               kd.created_date         as docCreated,
+               kd.last_modified_date   as docLastUpdated,
+               kd.document_size,
+               krd.document_id         as reference_document_id,
+               krd.document_name       as reference_document_name,
+               krd.document_size       as reference_document_size
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join kaaj_type kt on kr.kaaj_type_id = kt.id
+                 left join kaaj_vehicles kv on kr.id = kv.kaaj_id
+                 left join vehicle_category vc on kv.vehicle_id = vc.id
+                 left join decision_approval da on kr.id = da.kaaj_request_id
+                 left join kaaj_document_details kd on kr.id = kd.kaaj_request_id
+                 left join kaaj_request_reference_documents krd on kr.id = krd.kaaj_request_id
+        where kr.is_active = true
+          and da.is_active = true
+          and ((SELECT EXTRACT(MONTH FROM DATE (kr.from_date_en))) = #{month} or
+               (SELECT EXTRACT(MONTH FROM DATE (kr.to_date_en))) = #{month})
+          and ((SELECT EXTRACT(Year FROM DATE (kr.from_date_en))) = #{year} or
+               (SELECT EXTRACT(Year FROM DATE (kr.to_date_en))) = #{year})
+          and (krob.pis_code = #{pisCode} or kr.pis_code = #{pisCode})
+        order by kr.created_date
+    </select>
+
+    <select id="getKaajByDateRange" resultMap="minimalResultMap">
+        select kr.id                   as id,
+               kr.office_code,
+               case
+                   when (kr.applied_for_others) then
+                       krob.pis_code
+                   else
+                       kr.pis_code end as pis_code,
+               kr.from_date_en,
+               kr.to_date_en,
+               kr.from_date_np,
+               kr.to_date_np,
+               kr.is_active,
+               kt.name_en              as kaaj_type_name_en,
+               kt.name_np              as kaaj_type_name_np,
+               kt.id                   as kaaj_type_id,
+               vc.id                   as vehicle_category_id,
+               vc.name_en              as vehicle_category_name_en,
+               vc.name_np              as vehicle_category_name_np,
+               kr.duration_type,
+               kr.location,
+               kr.purpose,
+               kr.status,
+               kd.document_id,
+               kd.document_name,
+               kd.document_size,
+               kd.created_date         as docCreated,
+               kd.last_modified_date   as docLastUpdated,
+               krd.document_id         as reference_document_id,
+               krd.document_name       as reference_document_name,
+               krd.document_size       as reference_document_size
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join kaaj_type kt on kr.kaaj_type_id = kt.id
+                 left join kaaj_vehicles kv on kr.id = kv.kaaj_id
+                 left join vehicle_category vc on kv.vehicle_id = vc.id
+                 left join decision_approval da on kr.id = da.kaaj_request_id
+                 left join kaaj_document_details kd on kr.id = kd.kaaj_request_id
+                 left join kaaj_request_reference_documents krd on kr.id = krd.kaaj_request_id
+
+        where kr.is_active = true
+          and da.is_active = true
+          and (kr.from_date_en BETWEEN #{fromDate} AND #{toDate}
+            OR kr.to_date_en BETWEEN #{fromDate} AND #{toDate})
+          and (krob.pis_code = #{pisCode} or kr.pis_code = #{pisCode})
+        order by kr.created_date;
+    </select>
+
+
+    <!--    <select id="filterData" resultMap="baseResultMap">-->
+    <!--        select * from(-->
+    <!--        select distinct kr.id as id,-->
+    <!--&#45;&#45;         case when(kr.applied_for_others)then-->
+    <!--        krob.pis_code-->
+    <!--       as pis_code,-->
+    <!--        krob.id as kaaj_behalf_id,-->
+    <!--        case-->
+    <!--        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)-->
+    <!--        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,-->
+    <!--        case-->
+    <!--        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)-->
+    <!--        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,-->
+    <!--        kr.from_date_en,-->
+    <!--        kr.applied_for_others as appliedForOthers,-->
+    <!--        kr.applied_pis_code as appliedPisCode,-->
+    <!--        kr.to_date_en,-->
+    <!--        kr.from_date_np,-->
+    <!--        kr.to_date_np,-->
+    <!--        kr.created_date,-->
+    <!--        kr.duration_type,-->
+    <!--        kr.purpose,-->
+    <!--        kr.is_international,-->
+    <!--        kr.advance_amount_travel,-->
+    <!--        kr.remark_regarding_travel,-->
+    <!--        kt.name_en as kaaj_type_name_en,-->
+    <!--        kt.name_np as kaaj_type_name_np,-->
+    <!--        kr.location,-->
+    <!--        c.code as country_id,-->
+    <!--        c.name_en as country_name_en,-->
+    <!--        c.name_np as country_name_np,-->
+    <!--        vc.id as vehicle_category_id,-->
+    <!--        vc.name_en as vehicle_category_name_en,-->
+    <!--        vc.name_np as vehicle_category_name_np,-->
+    <!--        kr.status,-->
+    <!--        case-->
+    <!--        when(da.delegated_id IS NOT NULL) then-->
+    <!--        d.to_piscode else da.approver_pis_code end as ra_approver_pis_code,-->
+    <!--        da.remarks as ra_remarks,-->
+    <!--        da.status as ra_status,-->
+    <!--        fd.name_en as designationNameEn,-->
+    <!--        fd.name_np as designationNameNp,-->
+    <!--        case when(da.status='A') then da.last_modified_date-->
+    <!--        else null end as approvedDate,-->
+    <!--        kr.kaaj_approve_darta_no as kaajApproveDartaNo,-->
+    <!--        case-->
+    <!--        when e.employee_service_status_code = '01' then 0-->
+    <!--        when (e.employee_service_status_code = '04') then 2-->
+    <!--        when (e.employee_service_status_code = '08') then 3-->
+    <!--        when (e.employee_service_status_code = '09') then 4 else 0-->
+    <!--        end as e_order,-->
+    <!--        po.order_no,-->
+    <!--        e.current_position_app_date_bs,-->
+    <!--        e.first_name_en,-->
+    <!--        kd.document_id,-->
+    <!--        kd.document_name,-->
+    <!--        kd.document_size,-->
+    <!--        krd.document_id as reference_document_id,-->
+    <!--        krd.document_name as reference_document_name,-->
+    <!--        krd.document_size as reference_document_size,-->
+    <!--        case when da.delegated_id is not null then true else false end as is_delegated,-->
+    <!--        case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated-->
+    <!--        from kaaj_request kr-->
+    <!--        left join kaaj_request_on_behalf krob on-->
+    <!--        kr.id = krob.kaaj_request_id and krob.is_active=true-->
+    <!--        left join employee e on ((e.pis_code=kr.pis_code and kr.applied_for_others=false) or (e.pis_code=krob.pis_code and kr.applied_for_others=true))-->
+    <!--        left join employee_service_status es on es.code=e.employee_service_status_code-->
+    <!--        left join position po on e.position_code = po.code-->
+    <!--        left join functional_designation fd on e.designation_code = fd.code-->
+    <!--        left join section_designation sd on sd.employee_pis_code=e.pis_code-->
+    <!--        left join section_subsection ss on sd.section_subsection_id = ss.id-->
+    <!--        inner join users u on e.pis_code = u.pis_employee_code-->
+    <!--        inner join users_roles ur on u.id = ur.user_id-->
+    <!--        inner join role_group rg on ur.role_id = rg.id-->
+    <!--        left join decision_approval da on kr.id = da.kaaj_request_id-->
+    <!--        left join kaaj_type kt on kr.kaaj_type_id = kt.id-->
+    <!--        left join country c on kr.country_id = c.code-->
+    <!--        left join kaaj_vehicles kv on kr.id = kv.kaaj_id-->
+    <!--        left join vehicle_category vc on kv.vehicle_id = vc.id-->
+    <!--        left join kaaj_document_details kd on kr.id = kd.kaaj_request_id-->
+    <!--        left join kaaj_request_reference_documents krd on kr.id = krd.kaaj_request_id-->
+    <!--        left join delegation d on da.delegated_id = d.id-->
+    <!--        where kr.is_active = true-->
+    <!--        and (kr.status = da.status or da.status='F')-->
+    <!--        and kr.applied_for_others=true-->
+    <!--        <if test="fiscalYear != null">-->
+    <!--            and kr.fiscal_year = #{fiscalYear}-->
+    <!--        </if>-->
+    <!--        <choose>-->
+    <!--        <when test="pisCode != null and forReport ==null">-->
+    <!--            and(krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode})-->
+    <!--            and kr.office_code=#{officeCode}-->
+    <!--            and da.is_active = true-->
+    <!--        </when>-->
+    <!--        <when test="approverPisCode != null and forReport ==null">-->
+    <!--            and kr.status != 'C'-->
+    <!--            and((da.status ='P' and da.approver_pis_code = #{approverPisCode} and da.is_active = true)-->
+    <!--            or (da.status in ('F','R','A' )and da.approver_pis_code = #{approverPisCode}))-->
+    <!--        </when>-->
+    <!--        <otherwise>-->
+    <!--        <if test="pisCode!=null">-->
+    <!--            and(krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode})-->
+    <!--        </if>-->
+    <!--           and kr.office_code=#{officeCode}-->
+    <!--            and da.is_active = true-->
+    <!--        </otherwise>-->
+    <!--        </choose>-->
+
+    <!--        <if test="searchField != null">-->
+
+    <!--            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">-->
+    <!--                and ((kr.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND-->
+    <!--                to_date(#{searchField.toDate}, 'YYYY-MM-DD')-->
+    <!--                OR kr.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND-->
+    <!--                to_date(#{searchField.toDate}, 'YYYY-MM-DD') ))-->
+    <!--            </if>-->
+
+    <!--            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">-->
+    <!--                and kr.status = #{searchField.approvalStatus}-->
+    <!--            </if>-->
+
+    <!--            <if test="(searchField.section != null and searchField.section != '')">-->
+    <!--                <bind name="section_en" value="searchField.section"/>-->
+    <!--                and cast(ss.id as text) = #{section_en}-->
+    <!--            </if>-->
+
+    <!--            <if test="(searchField.userType != null and searchField.uerType != '')">-->
+    <!--                <choose>-->
+    <!--                    <when test="(searchField.userType == '01')">-->
+    <!--                        and (es.code is null or es.code='01')-->
+    <!--                    </when>-->
+    <!--                    <otherwise>-->
+    <!--                        and es.code=#{searchField.userType}-->
+    <!--                    </otherwise>-->
+    <!--                </choose>-->
+
+    <!--            </if>-->
+
+    <!--            <if test="(searchField.position != null and searchField.position != '')">-->
+    <!--                and po.code = #{searchField.position}-->
+    <!--            </if>-->
+
+    <!--            <if test="(searchField.designation != null and searchField.designation != '')">-->
+    <!--                and fd.code = #{searchField.designation}-->
+    <!--            </if>-->
+    <!--             <if test="isApprover !=null">-->
+    <!--            <if test="searchField.name!=null and searchField.name!='' and isApprover == true">-->
+    <!--                <bind name="pattern_en" value="searchField.name + '%'"/>-->
+    <!--                and (-->
+    <!--                case-->
+    <!--                WHEN  COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en))-->
+    <!--                else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})-->
+    <!--                OR-->
+    <!--                case WHEN  COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)-->
+    <!--                else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})-->
+    <!--            </if>-->
+    <!--             </if>-->
+
+    <!--            <if test="(searchField.appliedDateEn != null and searchField.appliedDateEn != '')">-->
+    <!--                and kr.created_date::date BETWEEN to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD') AND-->
+    <!--                to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD')-->
+
+    <!--            </if>-->
+
+    <!--        </if>-->
+    <!--        )b-->
+    <!--        <choose>-->
+    <!--        <when test="pisCode != null">-->
+    <!--            order by b.created_date desc-->
+    <!--        </when>-->
+    <!--        <when test="approverPisCode != null">-->
+    <!--            order by b.created_date desc-->
+    <!--        </when>-->
+    <!--        <otherwise>-->
+    <!--            order by b.e_order,b.order_no,b.current_position_app_date_bs, b.first_name_en-->
+    <!--        </otherwise>-->
+    <!--        </choose>-->
+
+    <!--    </select>-->
+
+    <select id="selectApproval" resultType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+        select
+        case
+        when(da.delegated_id IS NOT NULL) then
+        d.to_piscode else da.approver_pis_code end as approverPisCode,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as approverNameEn,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as approverNameNp,
+        da.remarks as remarks,
+        da.is_approver as isApprover,
+        da.status as status,
+        case when da.delegated_id is not null then true else false end as isDelegated,
+        case when d.is_office_head is null then false else d.is_office_head end as isOfficeHead,
+        case when(da.status='A') then da.last_modified_date
+        else null end as approvedDate
+        from kaaj_request
+        left join decision_approval da on kaaj_request.id = da.kaaj_request_id
+        left join employee e on e.pis_code=da.approver_pis_code
+        left join delegation d on da.delegated_id = d.id
+        where kaaj_request.id=#{id}
+        <choose>
+            <when test="approverPiscode != null">
+                and((da.status ='P' and da.approver_pis_code = #{approverPiscode} and da.is_active = true)
+                or (da.status in ('F','R','A' )and da.approver_pis_code = #{approverPiscode}))
+            </when>
+            <otherwise>
+                and da.is_active=true
+            </otherwise>
+        </choose>
+        order by da.created_date desc limit 1
+    </select>
+
+    <select id="selectCountry" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select c.code    as id,
+               c.name_np as nameN,
+               c.name_en as name
+        from kaaj_request kr
+                 inner join country c on kr.country_id = c.code
+        where kr.id = #{kaajId}
+          and c.is_active = true;
+    </select>
+
+    <select id="selectPisDetail" resultType="com.gerp.attendance.Pojo.EmployeeDetailPojo">
+
+        SELECT distinct case
+                            when (kr.applied_for_others) then
+                                krob.pis_code
+                            else kr.pis_code end,
+                            e.employee_code,
+                        krob.group_order,
+                        case
+                            when e.middle_name_en IS NOT NULL
+                                then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                            else concat(e.first_name_en, ' ', e.last_name_en) end as employeeNameEn,
+                        case
+                            when e.middle_name_np IS NOT NULL
+                                then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                            else concat(e.first_name_np, ' ', e.last_name_np) end as employeeNameNp,
+                        fd.name_en                                                as designationEn,
+                        fd.name_np                                                as designationNp,
+                        ss.name_en                                                as sectionNameEn,
+                        ss.name_np                                                as sectionNameNp
+        FROM kaaj_request kr
+                 left join kaaj_request_on_behalf krob on
+            kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join employee e on ((e.pis_code = kr.pis_code and kr.applied_for_others = false) or
+                                          (e.pis_code = krob.pis_code
+                                              and kr.applied_for_others = true))
+                 left join employee_service_status es on es.code = e.employee_service_status_code
+                 left join position po on e.position_code = po.code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join section_designation sd on (sd.employee_pis_code = e.pis_code and sd.is_active = true)
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+                 inner join users u on e.pis_code = u.pis_employee_code
+                 inner join users_roles ur on u.id = ur.user_id
+                 inner join role_group rg on ur.role_id = rg.id
+        WHERE kr.id = #{id}
+        order by krob.group_order asc;
+    </select>
+    <!--TODO: check for kaaj-->
+    <!--  <if test="approverCheck==false">
+          and case when(kr.applied_for_others is true and kr.applied_pis_code=#{pisCode}) then
+          1=1
+          when(kr.applied_for_others is false and kr.pis_code=#{pisCode}) then
+          1=1
+          else
+          krob.group_order in (select koo.group_order from kaaj_request_on_behalf koo
+          where koo.pis_code=#{pisCode} and koo.kaaj_request_id=#{id} and koo.is_active=true)
+          end
+      </if>-->
+
+    <select id="selectKaajPisCode" resultType="com.gerp.attendance.Pojo.EmployeeDetailPojo">
+        SELECT distinct case
+                            when (kr.applied_for_others) then
+                                krob.pis_code
+                            else kr.pis_code end,
+                        case
+                            when e.middle_name_en IS NOT NULL
+                                then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                            else concat(e.first_name_en, ' ', e.last_name_en) end as employeeNameEn,
+                        case
+                            when e.middle_name_np IS NOT NULL
+                                then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                            else concat(e.first_name_np, ' ', e.last_name_np) end as employeeNameNp,
+                        fd.name_en                                                as designationEn,
+                        fd.name_np                                                as designationNp
+        FROM kaaj_request kr
+                 left join kaaj_request_on_behalf krob on
+            kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join employee e on ((e.pis_code = kr.pis_code and kr.applied_for_others = false) or
+                                          (e.pis_code = krob.pis_code and kr.applied_for_others = true))
+                 left join employee_service_status es on es.code = e.employee_service_status_code
+                 left join position po on e.position_code = po.code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join section_designation sd on (sd.employee_pis_code = e.pis_code and sd.is_active = true)
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+                 inner join users u on e.pis_code = u.pis_employee_code
+                 inner join users_roles ur on u.id = ur.user_id
+                 inner join role_group rg on ur.role_id = rg.id
+        WHERE kr.id = #{id}
+          and case when (kr.applied_for_others) then krob.group_order = #{orders} end;
+    </select>
+
+    <select id="kaajFilter" resultMap="baseResult">
+        select * from(
+        select distinct kr.id as id,
+        case when(kr.applied_for_others and kr.applied_pis_code=#{pisCode})then
+        kr.applied_pis_code
+        when(kr.applied_for_others and krob.pis_code=#{pisCode}) then
+        krob.pis_code
+        else
+        kr.pis_code end
+        as pis_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        kr.from_date_en,
+        kr.applied_for_others as appliedForOthers,
+        case when(kr.applied_pis_code is null)then
+        kr.pis_code else
+        kr.applied_pis_code end
+        as appliedPisCode,
+        #{isApprover} as approverCheck,
+        kr.to_date_en,
+        kr.from_date_np,
+        kr.to_date_np,
+        kr.created_date,
+        kr.duration_type,
+        kr.purpose,
+        kr.is_international,
+        kr.advance_amount_travel,
+        kr.remark_regarding_travel,
+        kt.name_en as kaaj_type_name_en,
+        kt.name_np as kaaj_type_name_np,
+        kr.location,
+        kr.kaaj_requester_hash_content,
+        kr.content,
+        kr.kaaj_requester_signature,
+        da.hash_content as approvalHashContent,
+        da.signature as approvalSignature,
+        da.content as approvalContent,
+        kr.status,
+        case
+        when(da.delegated_id IS NOT NULL) then
+        d.to_piscode else
+        da.approver_pis_code end as ra_approver_pis_code,
+        da.remarks as ra_remarks,
+        da.is_approver as is_approver,
+        da.status as ra_status,
+        fd.name_en as designationNameEn,
+        fd.name_np as designationNameNp,
+        case when(da.status='A') then da.last_modified_date
+        else null end as approvedDate,
+        kr.kaaj_approve_darta_no as kaajApproveDartaNo,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        po.order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en,
+        case when(kr.applied_for_others)then
+        (DATE_PART('day', krob.to_date_en::timestamp - krob.from_date_en::timestamp)+1)
+        else (DATE_PART('day', kr.to_date_en::timestamp - kr.from_date_en::timestamp)+1)
+        end as totalDays,
+        case when da.delegated_id is not null then true else false end as is_delegated,
+        case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+        from kaaj_request kr
+        left join kaaj_request_on_behalf krob on
+        kr.id = krob.kaaj_request_id and krob.is_active=true
+        left join employee e on (
+        case when (kr.applied_for_others=false) then
+        (e.pis_code=kr.pis_code)
+        when (#{pisCode}!=null) then
+        case when(kr.applied_for_others=true and kr.applied_pis_code=#{pisCode}) then
+        e.pis_code=kr.applied_pis_code
+        when (kr.applied_for_others=true and krob.pis_code=#{pisCode}) then
+        e.pis_code=krob.pis_code and kr.status='A'
+        end
+        else
+        (e.pis_code=kr.applied_pis_code)
+        end
+        )
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position po on e.position_code = po.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on (sd.employee_pis_code=e.pis_code and sd.is_active=true)
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        inner join users u on e.pis_code = u.pis_employee_code
+        inner join users_roles ur on u.id = ur.user_id
+        inner join role_group rg on ur.role_id = rg.id
+        left join decision_approval da on kr.id = da.kaaj_request_id
+        left join kaaj_type kt on kr.kaaj_type_id = kt.id
+        left join delegation d on da.delegated_id = d.id
+        where kr.is_active = true
+        and (kr.status = da.status or da.status='F')
+        <if test="fiscalYear != null">
+            and kr.fiscal_year = #{fiscalYear}
+        </if>
+        <choose>
+            <when test="pisCode != null and forReport ==null">
+                and((krob.pis_code =#{pisCode} and kr.status='A') or kr.pis_code = #{pisCode} or
+                kr.applied_pis_code=#{pisCode})
+                and kr.office_code=#{officeCode}
+                and da.is_active = true
+            </when>
+            <when test="approverPisCode != null and forReport ==null">
+                and kr.status != 'C'
+                and((da.status ='P' and da.approver_pis_code = #{approverPisCode} and da.is_active = true)
+                or (da.status in ('F','R','A' )and da.approver_pis_code = #{approverPisCode}))
+            </when>
+            <otherwise>
+                <if test="pisCode!=null">
+                    and(krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode} or kr.applied_pis_code=#{pisCode})
+                </if>
+                and kr.office_code=#{officeCode}
+                and da.is_active = true
+            </otherwise>
+        </choose>
+
+        <if test="searchField != null">
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and case when (kr.applied_for_others) then
+                (krob.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR krob.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD'))
+                else
+                (kr.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR kr.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')) end
+            </if>
+
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and kr.status = #{searchField.approvalStatus}
+            </if>
+
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and po.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+            <if test="isApprover !=null">
+                <if test="searchField.name!=null and searchField.name!='' and isApprover == true">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and (
+                    case
+                    WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en,
+                    ' ', e.last_name_en))
+                    else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                    OR
+                    case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, '
+                    ', e.last_name_np)
+                    else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+                </if>
+            </if>
+
+            <if test="(searchField.appliedDateEn != null and searchField.appliedDateEn != '')">
+                and kr.created_date::date BETWEEN to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD')
+
+            </if>
+
+        </if>
+        )b
+        <choose>
+            <when test="pisCode != null">
+                order by b.created_date desc
+            </when>
+            <when test="approverPisCode != null">
+                order by b.created_date desc
+            </when>
+            <otherwise>
+                order by b.e_order,b.order_no,b.current_position_app_date_bs, b.first_name_en
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="kaajFilters" resultMap="baseResults">
+        select * from(
+        select distinct kr.id as id,
+        case when(kr.applied_for_others and kr.applied_pis_code=#{pisCode})then
+        kr.applied_pis_code
+        when(kr.applied_for_others and krob.pis_code=#{pisCode}) then
+        krob.pis_code
+        else
+        kr.pis_code end
+        as pis_code,
+        case when(kr.applied_for_others)then
+        (DATE_PART('day', krob.to_date_en::timestamp - krob.from_date_en::timestamp)+1)
+        else (DATE_PART('day', kr.to_date_en::timestamp - kr.from_date_en::timestamp)+1)
+        end as totalDays,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        kr.from_date_en,
+        kr.applied_for_others as appliedForOthers,
+        case when(kr.applied_pis_code is null)then
+        kr.pis_code else
+        kr.applied_pis_code end
+        as appliedPisCode,
+        #{isApprover} as approverCheck,
+        kr.to_date_en,
+        kr.from_date_np,
+        kr.to_date_np,
+        kr.created_date,
+        kr.is_international,
+        kr.advance_amount_travel,
+        kr.remark_regarding_travel,
+        kt.name_en as kaaj_type_name_en,
+        kt.name_np as kaaj_type_name_np,
+        kr.location,
+        kr.status,
+        case
+        when(da.delegated_id IS NOT NULL) then
+        d.to_piscode else
+        da.approver_pis_code end as ra_approver_pis_code,
+        da.remarks as ra_remarks,
+        da.is_approver as is_approver,
+        da.status as ra_status,
+        case when(da.status='A') then da.last_modified_date
+        else null end as approvedDate,
+        kr.kaaj_approve_darta_no as kaajApproveDartaNo,
+        e.first_name_en
+        from kaaj_request kr
+        left join kaaj_request_on_behalf krob on
+        kr.id = krob.kaaj_request_id and krob.is_active=true
+        left join employee e on (
+        case when (kr.applied_for_others=false) then
+        (e.pis_code=kr.pis_code)
+        when (#{pisCode}!=null) then
+        case when(kr.applied_for_others=true and kr.applied_pis_code=#{pisCode}) then
+        e.pis_code=kr.applied_pis_code
+        when (kr.applied_for_others=true and krob.pis_code=#{pisCode}) then
+        e.pis_code=krob.pis_code and kr.status='A'
+        end
+        else
+        (e.pis_code=kr.applied_pis_code)
+        end
+        )
+        left join decision_approval da on kr.id = da.kaaj_request_id
+        left join kaaj_type kt on kr.kaaj_type_id = kt.id
+        left join delegation d on da.delegated_id = d.id
+        where kr.is_active = true
+        and (kr.status = da.status or da.status ='F')
+        <if test="fiscalYear != null">
+            and kr.fiscal_year = #{fiscalYear}
+        </if>
+        <choose>
+            <when test="pisCode != null and forReport ==null">
+                and((krob.pis_code =#{pisCode} and kr.status='A') or kr.pis_code = #{pisCode} or
+                kr.applied_pis_code=#{pisCode})
+                and kr.office_code=#{officeCode}
+                and da.is_active = true
+            </when>
+            <when test="approverPisCode != null and forReport ==null">
+                and kr.status != 'C'
+                and((da.status ='P' and da.approver_pis_code = #{approverPisCode} and da.is_active = true)
+               <!-- or (da.status in ('F','R','A' )and da.approver_pis_code = #{approverPisCode}))-->
+                or (da.status in ('R','A' )and da.approver_pis_code = #{approverPisCode}))
+            </when>
+            <otherwise>
+                <if test="pisCode!=null">
+                    and(krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode} or kr.applied_pis_code=#{pisCode})
+                </if>
+                and kr.office_code=#{officeCode}
+                and da.is_active = true
+            </otherwise>
+        </choose>
+
+        <if test="searchField != null">
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and case when (kr.applied_for_others) then
+                (krob.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR krob.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD'))
+                else
+                (kr.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR kr.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')) end
+            </if>
+
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and kr.status = #{searchField.approvalStatus}
+            </if>
+
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and po.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+            <if test="isApprover !=null">
+                <if test="searchField.name!=null and searchField.name!='' and isApprover == true">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and (
+                    case
+                    WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en,
+                    ' ', e.last_name_en))
+                    else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                    OR
+                    case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, '
+                    ', e.last_name_np)
+                    else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+                </if>
+            </if>
+
+            <if test="(searchField.appliedDateEn != null and searchField.appliedDateEn != '')">
+                and kr.created_date::date BETWEEN to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD')
+
+            </if>
+
+        </if>
+        )b
+        <choose>
+            <when test="pisCode != null">
+                order by b.created_date desc
+            </when>
+            <when test="approverPisCode != null">
+                order by b.created_date desc
+            </when>
+            <otherwise>
+                order by b.e_order, b.first_name_en
+            </otherwise>
+        </choose>
+    </select>
+    <!--    order by b.e_order,b.order_no,b.current_position_app_date_bs, b.first_name_en-->
+
+    <select id="kaajPaginated" resultMap="kaajBaseResult">
+        select distinct *,
+        (SELECT CONCAT(first_name_en, ' ', COALESCE(middle_name_en, ''), ' ', last_name_en) FROM employee
+            WHERE pis_code = b.approverPisCode) AS approverNameEn,
+        (SELECT CONCAT(first_name_np, ' ', COALESCE(middle_name_np, ''), ' ', last_name_np) FROM employee
+            WHERE pis_code = b.approverPisCode) AS approverNameNp
+        from (select distinct kr.id                                                                as id,
+        kr.location as location,
+        kr.created_date                                                      as createdDate,
+        kt.name_en                                                           as kaajNameEn,
+        kt.name_np                                                           as kaajNameNp,
+        (select case when (kr.status = 'P') and da.approver_pis_code = COALESCE(#{approverPisCode}, #{pisCode})
+        then (select da.status from decision_approval da where da.approver_pis_code = COALESCE(#{approverPisCode}, #{pisCode})
+                                                           and da.kaaj_request_id = kr.id order by created_date desc limit 1)
+        else kr.status end) as status,
+        (SELECT CASE WHEN COUNT(*) > 0 THEN created_date ELSE null END FROM decision_approval WHERE kaaj_request_id = kr.id AND status = 'A'
+        group by created_date order by created_date desc limit 1)  as approveDate,
+        (select d.approver_pis_code from decision_approval d where d.kaaj_request_id = kr.id order by d.created_date desc limit 1) as approverPisCode,
+        CONCAT(e.first_name_en, ' ', COALESCE(e.middle_name_en, ''), ' ', e.last_name_en) as requesterNameEn,
+        CONCAT(e.first_name_np, ' ', COALESCE(e.middle_name_np, ''), ' ', e.last_name_np) as requesterNameNp,
+        kr.applied_for_others as appliedForOthers,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4
+        else 0
+        end as e_order,
+        kr.kaaj_approve_darta_no as kaajApproveDartaNo
+        from kaaj_request kr
+        left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+        left join decision_approval da on kr.id = da.kaaj_request_id
+        left join employee e on e.pis_code = coalesce(kr.pis_code, kr.applied_pis_code)
+        left join employee app on app.pis_code = da.approver_pis_code
+        left join kaaj_type kt on kr.kaaj_type_id = kt.id
+        where kr.is_active = true
+        and (kr.status = da.status or da.status = 'F')
+        and da.in_active_status != 'INACTIVE'
+        <if test="fiscalYear != null">
+            and kr.fiscal_year = #{fiscalYear}
+        </if>
+        <choose>
+            <when test="pisCode != null and forReport ==null">
+                and((krob.pis_code =#{pisCode} and kr.status='A') or kr.pis_code = #{pisCode} or
+                kr.applied_pis_code=#{pisCode})
+                and kr.office_code=#{officeCode}
+                and da.is_active = true
+            </when>
+            <when test="approverPisCode != null and forReport ==null">
+                and kr.status != 'C'
+                and((da.status ='P' and da.approver_pis_code = #{approverPisCode} and da.is_active = true)
+                or (da.status in ('F','R','A' )and da.approver_pis_code = #{approverPisCode}))
+            </when>
+            <otherwise>
+                <if test="pisCode!=null">
+                    and(krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode} or kr.applied_pis_code=#{pisCode})
+                </if>
+                and kr.office_code=#{officeCode}
+                and da.is_active = true
+            </otherwise>
+        </choose>
+
+<!--        <if test="(currentDate != null and currentDate != '')">-->
+<!--            and case when (kr.applied_for_others) and da.status != 'P' then (krob.from_date_en >= to_date(#{currentDate}, 'YYYY-MM-DD'))-->
+<!--            when kr.applied_for_others is false and da.status != 'P' then  (kr.from_date_en >= to_date(#{currentDate}, 'YYYY-MM-DD'))-->
+<!--            else 1=1 end-->
+<!--        </if>-->
+
+        <if test="searchField != null">
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and case when (kr.applied_for_others) then
+                (krob.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR krob.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD'))
+                else
+                (kr.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR kr.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')) end
+            </if>
+
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and kr.status = #{searchField.approvalStatus}
+            </if>
+
+            <if test="isApprover !=null">
+                <if test="searchField.name!=null and searchField.name!='' and isApprover == true">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and (
+                    case
+                    WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en,
+                    ' ', e.last_name_en))
+                    else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                    OR
+                    case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, '
+                    ', e.last_name_np)
+                    else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+                </if>
+            </if>
+
+            <if test="isApprover == false">
+                <if test="searchField.name!=null and searchField.name!=''">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and(
+                    case
+                    WHEN COALESCE(app.middle_name_en, '') != '' then upper(concat(app.first_name_en, ' ', app.middle_name_en,
+                    ' ', app.last_name_en))
+                    else upper(concat(app.first_name_en, ' ', app.last_name_en)) end like upper(#{pattern_en})
+                    OR
+                    case WHEN COALESCE(app.middle_name_np, '') != '' then concat(app.first_name_np, ' ', app.middle_name_np, '
+                    ', app.last_name_np)
+                    else concat(app.first_name_np, ' ', app.last_name_np) end like #{pattern_en} )
+                </if>
+            </if>
+
+            <if test="(searchField.appliedDateEn != null and searchField.appliedDateEn != '')">
+                and kr.created_date::date BETWEEN to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD')
+            </if>
+
+        </if>
+        ) b
+        <choose>
+            <when test="pisCode != null">
+                order by b.approveDate desc
+            </when>
+            <when test="approverPisCode != null">
+                order by b.approveDate desc
+            </when>
+            <otherwise>
+                order by b.e_order, b.approveDate desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--GET KAAJ HISTORY BY PIS CODE-->
+    <select id="getKaajHistoryByPisCode" resultType="com.gerp.attendance.Pojo.KaajHistoryPojo">
+        select distinct o.name_en                                                                             as officeNameEn,
+                        o.name_np                                                                             as officeNameNp,
+                        kr.last_modified_date                                                                 as lastUpdatedDate,
+                        da.status                                                                             as status,
+                        kr.created_date                                                                       as appliedDate,
+                        da.created_date,
+                        case
+                            when e.middle_name_np IS NOT NULL
+                                then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                            else concat(e.first_name_np, ' ', e.last_name_np) end                             as approverNameNp,
+                        case
+                            when e.middle_name_en IS NOT NULL
+                                then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                            else concat(e.first_name_en, ' ', e.last_name_en) end                             as approverNameEn,
+                        case
+                            when da.status = 'A'
+                                then da.last_modified_date
+                            else null end                                                                     as approvedDate,
+                        case
+                            when kr.from_date_en is not null then kr.from_date_en
+                            else krob.from_date_en end                                                        as startDateEn,
+                        case
+                            when kr.to_date_en is not null then kr.to_date_en
+                            else krob.to_date_en end                                                          as endDateEn,
+                        case
+                            when kr.from_date_np is not null then kr.from_date_np
+                            else krob.from_date_np end                                                        as startDateNp,
+                        case
+                            when kr.to_date_np is not null then kr.to_date_np
+                            else krob.to_date_np end                                                          as endDateNp,
+                        kt.name_en                                                                            as kaajTypeEn,
+                        kt.name_np                                                                            as kaajTypeNp,
+                        kr.location                                                                           as destination
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id
+                 left join decision_approval da on kr.id = da.kaaj_request_id
+                 left join employee e on e.pis_code = da.approver_pis_code
+                 left join office o on o.code = kr.office_code
+                 left join kaaj_type kt on kr.kaaj_type_id = kt.id
+        where kr.pis_code = #{pisCode}
+           or krob.pis_code = #{pisCode}
+            and da.approver_pis_code is not null
+        order by da.created_date desc
+    </select>
+
+    <select id="filterData" resultMap="baseResultMap">
+        select * from(
+        select distinct kr.id as id,
+        case when(kr.applied_for_others)then
+        krob.pis_code else
+        kr.pis_code end
+        as pis_code,
+        krob.id as kaaj_behalf_id,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        kr.from_date_en,
+        kr.applied_for_others as appliedForOthers,
+        case when(kr.applied_pis_code is null)then
+        kr.pis_code else
+        kr.applied_pis_code end
+        as appliedPisCode,
+        kr.to_date_en,
+        kr.from_date_np,
+        kr.to_date_np,
+        kr.created_date,
+        kr.duration_type,
+        kr.purpose,
+        kr.is_international,
+        kr.advance_amount_travel,
+        kr.remark_regarding_travel,
+        kt.name_en as kaaj_type_name_en,
+        kt.name_np as kaaj_type_name_np,
+        kr.location,
+        c.code as country_id,
+        c.name_en as country_name_en,
+        c.name_np as country_name_np,
+        kr.status,
+        case
+        when(da.delegated_id IS NOT NULL) then
+        d.to_piscode else da.approver_pis_code end as ra_approver_pis_code,
+        da.remarks as ra_remarks,
+        da.is_approver as is_approver,
+        da.status as ra_status,
+        fd.name_en as designationNameEn,
+        fd.name_np as designationNameNp,
+        case when(da.status='A') then da.last_modified_date
+        else null end as approvedDate,
+        kr.kaaj_approve_darta_no as kaajApproveDartaNo,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        po.order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en,
+        case when(kr.applied_for_others)then
+        (DATE_PART('day', krob.to_date_en::timestamp - krob.from_date_en::timestamp)+1)
+        else (DATE_PART('day', kr.to_date_en::timestamp - kr.from_date_en::timestamp)+1)
+        end as totalDays,
+        case when da.delegated_id is not null then true else false end as is_delegated,
+        case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+        from kaaj_request kr
+        left join kaaj_request_on_behalf krob on
+        kr.id = krob.kaaj_request_id and krob.is_active=true
+        left join employee e on ((e.pis_code=kr.pis_code and kr.applied_for_others=false) or (e.pis_code=krob.pis_code
+        and kr.applied_for_others=true))
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position po on e.position_code = po.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on (sd.employee_pis_code=e.pis_code and sd.is_active=true)
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        inner join users u on e.pis_code = u.pis_employee_code
+        inner join users_roles ur on u.id = ur.user_id
+        inner join role_group rg on ur.role_id = rg.id
+        left join decision_approval da on kr.id = da.kaaj_request_id
+        left join kaaj_type kt on kr.kaaj_type_id = kt.id
+        left join country c on kr.country_id = c.code
+        left join delegation d on da.delegated_id = d.id
+        where kr.is_active = true
+        and (kr.status = da.status or da.status='F')
+        <if test="fiscalYear != null">
+            and kr.fiscal_year = #{fiscalYear}
+        </if>
+        <choose>
+            <when test="pisCode != null and forReport ==null">
+                and(krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode} or kr.applied_pis_code=#{pisCode})
+                and kr.office_code=#{officeCode}
+                and da.is_active = true
+            </when>
+            <when test="approverPisCode != null and forReport ==null">
+                and kr.status != 'C'
+                and((da.status ='P' and da.approver_pis_code = #{approverPisCode} and da.is_active = true)
+                or (da.status in ('F','R','A' )and da.approver_pis_code = #{approverPisCode}))
+            </when>
+            <otherwise>
+                <if test="pisCode!=null">
+                    and(krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode} or kr.applied_pis_code=#{pisCode})
+                </if>
+                and kr.office_code=#{officeCode}
+                and da.is_active = true
+            </otherwise>
+        </choose>
+
+        <if test="searchField != null">
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and case when (kr.applied_for_others) then
+                case when (krob.from_date_en is not null or krob.to_date_en is not null) then
+                (krob.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR krob.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD'))
+                end
+                else
+                (kr.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR kr.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')) end
+            </if>
+
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and kr.status = #{searchField.approvalStatus}
+            </if>
+
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and po.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+            <if test="isApprover !=null">
+                <if test="searchField.name!=null and searchField.name!='' and isApprover == true">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and (
+                    case
+                    WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en,
+                    ' ', e.last_name_en))
+                    else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                    OR
+                    case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, '
+                    ', e.last_name_np)
+                    else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+                </if>
+            </if>
+
+            <if test="(searchField.appliedDateEn != null and searchField.appliedDateEn != '')">
+                and kr.created_date::date BETWEEN to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD')
+
+            </if>
+
+        </if>
+        )b
+        <choose>
+            <when test="pisCode != null">
+                order by b.created_date desc
+            </when>
+            <when test="approverPisCode != null">
+                order by b.created_date desc
+            </when>
+            <otherwise>
+                order by b.e_order,b.order_no,b.current_position_app_date_bs, b.first_name_en
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="countPendingKaaj" resultType="Long">
+        select sum(b.countPending) from
+        (select case when (kr.status='P')then
+        coalesce(count(kr.status),0) else 0 end as countPending
+        from kaaj_request kr
+        left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active=true
+        left join decision_approval da on kr.id = da.kaaj_request_id
+        left join kaaj_type kt on kr.kaaj_type_id = kt.id
+        left join country c on kr.country_id = c.code
+        left join kaaj_vehicles kv on kr.id = kv.kaaj_id
+        left join vehicle_category vc on kv.vehicle_id = vc.id
+        left join kaaj_document_details kd on kr.id = kd.kaaj_request_id
+        left join kaaj_request_reference_documents krd on kr.id = krd.kaaj_request_id
+
+        where kr.is_active = true
+        <choose>
+            <when test="isApprover != null and isApprover == true">
+                and kr.status != 'C'
+            </when>
+            <otherwise>
+                and da.is_active = true
+            </otherwise>
+        </choose>
+
+        <if test="fiscalYear != null">
+            and kr.fiscal_year = #{fiscalYear}
+        </if>
+
+        <choose>
+            <when test="forReport != null and forReport == false">
+                <choose>
+                    <when test="isApprover != null and isApprover == true">
+                        and da.approver_pis_code = #{approverPisCode}
+                        <if test="pisCode != null and pisCode != ''">
+                            and (krob.pis_code =#{pisCode}
+                            or kr.pis_code = #{pisCode})
+                        </if>
+                    </when>
+                    <otherwise>
+                        and (krob.pis_code =#{pisCode}
+                        or kr.pis_code = #{pisCode})
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                <if test="pisCode != null and pisCode != ''">
+                    and kr.pis_code = #{pisCode}
+                </if>
+            </otherwise>
+        </choose>
+
+        <if test="searchField != null">
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and case when (kr.applied_for_others) then
+                (krob.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR krob.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD'))
+                else
+                (kr.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR kr.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')) end
+            </if>
+
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and kr.status = #{searchField.approvalStatus}
+            </if>
+        </if>
+        group by kr.status)b
+    </select>
+
+    <select id="filterDataForExcel" resultMap="baseResultMap">
+        select kr.id as id,
+        case when(kr.applied_for_others)then
+        krob.pis_code
+        else
+        kr.pis_code end as pis_code,
+        kr.from_date_en,
+        kr.to_date_en,
+        kr.from_date_np,
+        kr.to_date_np,
+        kr.duration_type,
+        kr.is_international,
+        kr.advance_amount_travel,
+        kr.remark_regarding_travel,
+        kt.name_en as kaaj_type_name_en,
+        kt.name_np as kaaj_type_name_np,
+        kr.location,
+        c.code as country_id,
+        c.name_en as country_name_en,
+        c.name_np as country_name_np,
+        kr.status,
+        da.approver_pis_code as ra_approver_pis_code,
+        da.is_approver,
+        da.remarks as ra_remarks,
+        da.status as ra_status
+        from kaaj_request kr
+        left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active=true
+        left join decision_approval da on kr.id = da.kaaj_request_id
+        left join kaaj_type kt on kr.kaaj_type_id = kt.id
+        left join country c on kr.country_id = c.code
+
+        where kr.is_active = true and da.is_active = true
+
+        <if test="fiscalYear != null">
+            and kr.fiscal_year = #{fiscalYear}
+        </if>
+
+        <if test="pisCode != null and pisCode != ''">
+            and(krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode})
+        </if>
+
+        <if test="fromDate != null and toDate != null">
+            and (
+            kr.from_date_en BETWEEN #{fromDate} AND #{toDate}
+            OR kr.to_date_en BETWEEN #{fromDate} AND #{toDate}
+            )
+        </if>
+
+        <if test="(approvalStatus != null and approvalStatus != '')">
+            and kr.status = #{searchField.approvalStatus}
+        </if>
+        order by kr.created_date desc
+    </select>
+
+    <select id="getKaajStatusList" resultType="java.lang.String">
+        (select da.status
+         from decision_approval da
+                  left join kaaj_request kr on da.kaaj_request_id = kr.id
+         where da.kaaj_request_id = #{id}
+         order by da.last_modified_date desc limit 2)
+    </select>
+
+    <select id="getEmployeeOnKaaj" resultMap="dashboardEmployeeOnKaaj">
+        select distinct *
+        from (select distinct kr.id                       as id,
+                              case
+                                  when (kr.applied_for_others) then
+                                      krob.pis_code
+                                  else
+                                      kr.pis_code end     as pis_code,
+                              kr.duration_type,
+                              case
+                                  when (kr.applied_for_others) then
+                                      krob.from_date_en
+                                  else
+                                      kr.from_date_en end as from_date_en,
+                              case
+                                  when (kr.applied_for_others) then
+                                      krob.to_date_en
+                                  else
+                                      kr.to_date_en end   as to_date_en,
+                              kr.created_date,
+                              kt.name_en                  as kaaj_type_name_en,
+                              kt.name_np                  as kaaj_type_name_np,
+                              kr.office_code
+              from kaaj_request kr
+                       left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+                       left join kaaj_type kt on kr.kaaj_type_id = kt.id
+                       left join decision_approval da on kr.id = da.kaaj_request_id
+              where kr.is_active = true
+                and da.is_active = true
+                and da.status = 'A'
+                and kr.office_code = #{officeCode}
+                and (case
+                         when (kr.applied_for_others) then
+                             (#{currentDate} BETWEEN krob.from_date_en AND krob.to_date_en)
+                         else
+                             (#{currentDate} BETWEEN kr.from_date_en AND kr.to_date_en)
+                  end)) b
+        order by b.created_date;
+    </select>
+
+    <select id="getKaajRequestByEmpPisCodeAndDateRange" resultType="Long">
+        select count(*)
+        from kaaj_request kr
+        left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active=true
+        where 1=1
+        and (krob.pis_code =#{pisCode} or kr.pis_code = #{pisCode})
+        and kr.status in
+        <foreach item='item' index='index' collection='approvalStatus' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and case when(kr.applied_for_others)then
+        (
+        krob.to_date_en >= #{toDateEn} AND krob.from_date_en <![CDATA[<=]]> #{toDateEn} or
+        krob.to_date_en >= #{fromDateEn} AND krob.from_date_en <![CDATA[<=]]>  #{fromDateEn}
+        )else
+        (
+        kr.to_date_en >= #{toDateEn} AND kr.from_date_en <![CDATA[<=]]> #{toDateEn} or
+        kr.to_date_en >= #{fromDateEn} AND kr.from_date_en <![CDATA[<=]]>  #{fromDateEn}
+        )
+        end
+    </select>
+
+    <select id="checKForPendingKaaj" resultType="java.lang.Boolean">
+        select case
+                   when (count(*) > 0) then true
+                   else false end
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+
+        where kr.status = 'P'
+          and (krob.pis_code = #{pisCode} or kr.pis_code = #{pisCode})
+          and kr.is_active = true;
+    </select>
+
+    <select id="checkForApproveKaaj" resultType="java.lang.Boolean">
+        select case
+                   when (count(*) > 0) then true
+                   else false end
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join decision_approval da on kr.id = da.kaaj_request_id
+        where kr.status = 'P'
+          and da.approver_pis_code = #{pisCode}
+          and da.is_active = true
+          and kr.is_active = true;
+    </select>
+
+    <update id="discardSelectedKaaj">
+        update
+            kaaj_request_on_behalf
+        set is_active= false
+        where kaaj_request_id = #{kaajId}
+          and pis_code = #{pisCode}
+          and is_active = true
+          and ((#{fromDateEn} BETWEEN from_date_en AND to_date_en)
+            or (#{toDateEn} BETWEEN from_date_en AND to_date_en))
+          and group_order = #{order};
+    </update>
+
+
+    <select id="selectDocument" resultType="com.gerp.attendance.Pojo.document.DocumentPojo">
+        select krrd.id                 as id,
+               krrd.document_name      as name,
+               krrd.created_date       as createdDate,
+               krrd.last_modified_date as lastUpdatedDate,
+               krrd.document_size as size
+        from kaaj_request_reference_documents krrd
+        where krrd.id = (select k.id from kaaj_request_reference_documents k where k.kaaj_request_id=#{kaajRequestId})
+    </select>
+
+    <select id="getApproverDetail" resultType="com.gerp.attendance.Pojo.KaajHistoryPojo">
+        select case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as approverNameEn,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as approverNameNp
+        from employee e
+        where e.pis_code = #{pisCode}
+    </select>
+
+    <select id="selectVehicle" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select vc.id as id, vc.name_en as name, vc.name_np as nameN
+        from vehicle_category vc
+                 inner join kaaj_vehicles kv on kv.vehicle_id = vc.id
+        where kv.kaaj_id = #{id};
+    </select>
+
+    <select id="selectEmployee" resultType="com.gerp.attendance.Pojo.EmployeeDetailPojo">
+        select case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employeeNameEn,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employeeNameNp
+        from employee e
+        where e.pis_code in (select distinct case when (kr.applied_for_others) then krob.pis_code else kr.pis_code end from kaaj_request kr
+                              left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id where kr.id = #{id})
+    </select>
+
+    <select id="selectDates" resultType="com.gerp.attendance.Pojo.DatesPojo">
+        select *,
+               (select case when b.applied_for_others then krob.duration_type else kr.duration_type end
+                from kaaj_request kr
+                         left join kaaj_request_on_behalf krob on krob.kaaj_request_id = kr.id
+                where krob.id = b.id) as durationType
+        from (select distinct case when (kr.applied_for_others) then krob.from_date_en else kr.from_date_en end as fromDateEn,
+                              case when (kr.applied_for_others) then krob.to_date_en else kr.to_date_en end     as toDateEn,
+                              case when (kr.applied_for_others) then krob.from_date_np else kr.from_date_np end as fromDateNp,
+                              case when (kr.applied_for_others) then krob.to_date_np else kr.to_date_np end     as toDateNp,
+                              kr.applied_for_others,
+                              krob.id
+              from kaaj_request kr
+                       left join kaaj_request_on_behalf krob on krob.kaaj_request_id = kr.id
+              where kr.id = #{id})b;
+    </select>
+
+    <select id="selectTotalDays" resultType="java.lang.Long">
+        select sum(b.totalDays) from (select case when (kr.applied_for_others) then (DATE_PART('day', krob.to_date_en::timestamp - krob.from_date_en::timestamp) + 1)
+          else (DATE_PART('day', kr.to_date_en::timestamp - kr.from_date_en::timestamp) + 1)
+           end  as totalDays, krob.from_date_en, krob.to_date_en from kaaj_request kr
+             left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id where kr.id = #{id})b
+    </select>
+
+    <select id="employeeDetails" resultType="com.gerp.attendance.Pojo.EmployeeDetailPojo">
+        SELECT
+            en.name AS employeeNameEn,
+            np.name AS employeeNameNp,
+            fd.name_en AS designationEn,
+            fd.name_np AS designationNp,
+            o.name_en AS officeNameEn,
+            o.name_np AS officeNameNp,
+            ss.name_en AS sectionNameEn,
+            ss.name_np AS sectionNameNp,
+            e.office_code as officeCode
+        FROM employee e
+                 LEFT JOIN (
+            SELECT
+                pis_code,
+                CONCAT(first_name_en, ' ', COALESCE(middle_name_en, ''), ' ', last_name_en) AS name
+            FROM employee
+        ) en ON e.pis_code = en.pis_code
+                 LEFT JOIN (
+            SELECT
+                pis_code,
+                CONCAT(first_name_np, ' ', COALESCE(middle_name_np, ''), ' ', last_name_np) AS name
+            FROM employee
+        ) np ON e.pis_code = np.pis_code
+                 LEFT JOIN section_designation sd ON sd.employee_pis_code = e.pis_code AND sd.is_active = TRUE
+                 LEFT JOIN section_subsection ss ON sd.section_subsection_id = ss.id
+                 LEFT JOIN functional_designation fd ON e.designation_code = fd.code
+                 LEFT JOIN office o ON e.office_code = o.code
+        WHERE e.pis_code = #{pisCode}
+    </select>
+
+</mapper>

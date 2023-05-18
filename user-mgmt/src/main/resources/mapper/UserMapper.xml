@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.usermgmt.mapper.usermgmt.UserMapper">
+    <resultMap id="baseResultMap" type="com.gerp.usermgmt.pojo.auth.UserResponsePojo">
+
+        <id property="id" column="id"/>
+        <result property="username" column="user_name"/>
+        <result property="email" column="email"/>
+        <result property="employeeEmail" column="email_address"/>
+        <result property="isKararEmployee" column="is_karar_employee"/>
+        <result property="pisEmployeeCode" column="pis_code"/>
+        <result property="name" column="name"/>
+        <result property="nameN" column="namen"/>
+        <result property="isPasswordChanged" column="is_password_changed"/>
+        <result property="status" column="is_active"/>
+        <result property="userExists" column="user_exists"/>
+        <collection property="coreDesignation" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="cd_code"/>
+            <result column="cd_name_np" property="nameN"/>
+            <result column="cd_name_en" property="name"/>
+        </collection>
+        <collection property="office" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="office_code"/>
+            <result column="office_name_np" property="nameN"/>
+            <result column="office_name_en" property="name"/>
+        </collection>
+        <collection property="section"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="section_id" property="id"/>
+            <result column="section_code" property="code"/>
+            <result column="section_name_en" property="name"/>
+            <result column="section_name_np" property="nameN"/>
+        </collection>
+    </resultMap>
+    <resultMap id="userInfoResultMap"
+               type="com.gerp.usermgmt.pojo.auth.UserResponsePojo">
+        <result column="id" property="id"/>
+        <result column="user_name" property="username"/>
+        <result column="email" property="email"/>
+        <result column="gender" property="gender"/>
+        <result column="pis_employee_code" property="pisEmployeeCode"/>
+        <result column="employee_code" property="employeeCode"/>
+        <result column="name" property="name"/>
+        <result column="namen" property="nameN"/>
+        <result column="office_code" property="officeCode"/>
+        <result column="is_password_changed" property="isPasswordChanged"/>
+        <result column="is_active" property="status"/>
+        <result column="join_date_en" property="joinDateEn"/>
+        <result column="end_date_en" property="endDateEn"/>
+        <result column="profile_pic" property="profilePic" />
+
+
+        <collection property="roleIds" ofType="Long">
+            <result column="role_id"/>
+        </collection>
+
+        <collection property="roles" ofType="String">
+            <result column="role_group_name"/>
+        </collection>
+
+        <collection property="rolesNp" ofType="String">
+            <result column="role_group_name_np"/>
+        </collection>
+
+
+
+        <collection property="office"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="office_code" property="code"/>
+            <result column="office_name_en" property="name"/>
+            <result column="office_name_np" property="nameN"/>
+        </collection>
+
+        <collection property="coreDesignation"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="position_code" property="code"/>
+            <result column="position_name_en" property="name"/>
+            <result column="position_name_np" property="nameN"/>
+        </collection>
+
+        <collection property="functionalDesignation"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="functional_designation_id" property="code"/>
+            <result column="functional_designation_name_en" property="name"/>
+            <result column="functional_designation_name_np" property="nameN"/>
+        </collection>
+        <collection property="employeeServiceStatus"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="employee_service_status_id" property="code"/>
+            <result column="employee_service_status_name_en" property="name"/>
+            <result column="employee_service_status_name_np" property="nameN"/>
+        </collection>
+
+        <collection property="section"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <result column="section_id" property="id"/>
+            <result column="section_name_en" property="name"/>
+            <result column="section_name_np" property="nameN"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="roleLogDetailResultMap" type="com.gerp.usermgmt.pojo.RoleLogDetailPojo">
+
+        <result property="id" column="id"></result>
+        <result property="name" column="role_group_name"></result>
+        <result property="key" column="role_group_key"></result>
+        <result property="officeCode" column="office_code"></result>
+        <result property="roleType" column="role_type"></result>
+    </resultMap>
+
+    <select id="getUserInfo" resultMap="userInfoResultMap">
+        select u.id,
+               u.user_name,
+               e.email_address as email,
+               e.gender,
+               ejd.join_date_en as  join_date_en,
+               ejd.end_date_en as end_date_en,
+               rg.id as role_id,
+               rg.role_group_name,
+               rg.role_group_name_np,
+               u.pis_employee_code,
+               e.employee_code,
+               e.profile_pic,
+               case
+                   when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as name,
+               case
+                   when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as namen,
+               u.office_code,
+               u.is_password_changed,
+               u.is_active,
+               o.code                                                    as office_code,
+               o.name_en                                                 as office_name_en,
+               o.name_np                                                 as office_name_np,
+               p.code                                                    as position_code,
+               p.name_en                                                 as position_name_en,
+               p.name_np                                                 as position_name_np,
+               ss.id                                                     as section_id,
+               ss.name_en                                                as section_name_en,
+               ss.name_np                                                as section_name_np,
+               fd.name_en                                         as functional_designation_name_en,
+               fd.name_np                                         as functional_designation_name_np,
+               fd.code                                         as functional_designation_code,
+               ess.code                                        as employee_service_status_id,
+               ess.name_en                                        as employee_service_status_name_en,
+               ess.name_np                                        as employee_service_status_name_np
+        from users u
+                 left join users_roles ur on u.id = ur.user_id
+                 left join role_group rg on ur.role_id = rg.id
+                 left join employee e on u.pis_employee_code = e.pis_code
+                 left join employee_joining_date ejd on (ejd.employee_pis_code=e.pis_code and ejd.is_active=true)
+                 left join position p on e.position_code = p.code
+                 left join office o on e.office_code = o.code
+                 left join section_designation sd on e.pis_code = sd.employee_pis_code
+            and sd.is_active = true
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join employee_service_status ess on ess.code = e.employee_service_status_code
+        where u.id = #{id}
+    </select>
+
+    <select id="filterData" resultMap="baseResultMap">
+        select u.id,
+        case when e.employee_service_status_code = '04' then true else false end as is_karar_employee,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as name,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as namen,
+        e.pis_code,
+        u.is_active,
+        p.code                                                    as cd_code,
+        p.name_en                                                 as cd_name_en,
+        p.name_np                                                 as cd_name_np,
+        ss.id                                                     as section_id,
+        ss.name_en                                                as section_name_en,
+        ss.name_np                                                as section_name_np,
+        o.code                                                    as office_code,
+        o.name_en                                                 as office_name_en,
+        o.name_np                                                 as office_name_np,
+        case when u.id is null then false else true end                as user_exists,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        case  when fd.designation_type = 'SPECIAL_DESIGNATION' then 0
+        else 1
+        end                                                             as designation_order
+        from employee e
+        left join functional_designation fd on e.designation_code = fd.code
+        left join users u on u.pis_employee_code = e.pis_code
+        left join position p on e.position_code = p.code
+        left join section_designation sd on e.pis_code = sd.employee_pis_code
+        and sd.is_active = true
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join office o on e.office_code = o.code
+
+        <if test="searchField != null">
+            <if test="(searchField.getOfficeHeadOnly !=null or searchField.role !=null)">
+                inner join users_roles ur on u.id = ur.user_id
+                inner join role_group rg on ur.role_id = rg.id
+            </if>
+        </if>
+
+        where 1=1
+
+        <if test="searchField != null">
+            <if test="(searchField.officeCode != null and searchField.officeCode != '')">
+                and e.office_code = #{searchField.officeCode}
+            </if>
+            <if test="(searchField.selfCreatedUser != null and searchField.selfCreatedUser != '' and searchField.selfCreatedUser == true)">
+                and u.created_by = #{searchField.loggedInUser}
+            </if>
+            <if test="(searchField.getOfficeHeadOnly !=null)">
+                and rg.role_group_key = 'OFFICE_ADMINISTRATOR'
+            </if>
+            <if test="(searchField.role !=null and searchField.getOfficeHeadOnly == null)">
+                and rg.id = #{searchField.role}
+            </if>
+            <if test="(searchField.status != null)">
+                and (u.is_active = #{searchField.status} or case when false=#{searchField.status} then u.id is null else false end )
+            </if>
+
+            <if test="(searchField.positionCode != null and searchField.positionCode != '')">
+                and p.code = #{searchField.positionCode}
+            </if>
+
+            <if test="(searchField.sectionId != null and searchField.sectionId != '')">
+                and ss.id = #{searchField.sectionId}
+            </if>
+
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                and e.pis_code = #{searchField.pisCode}
+            </if>
+
+            <if test="(searchField.name != null and searchField.name != '')">
+                <bind name="name_p" value="'%' + searchField.name + '%'" />
+                and(
+                case
+                WHEN  COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en))
+                else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{name_p})
+                OR
+                case WHEN  COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                else concat(e.first_name_np, ' ', e.last_name_np) end like #{name_p})
+
+            </if>
+
+            <if test="(searchField.nameEn != null and searchField.nameEn != '')">
+                <bind name="name_en_p" value="'%' + searchField.nameEn + '%'" />
+                and upper(concat(e.first_name_en,' ',e.middle_name_en,' ',e.last_name_en)) like upper(#{name_en_p})
+            </if>
+
+            <if test="(searchField.nameNp != null and searchField.nameNp != '')">
+                <bind name="name_np_p" value="'%' + searchField.nameNp + '%'" />
+                and upper(concat(e.first_name_np,' ',e.middle_name_np,' ',e.last_name_np)) like #{name_np_p}
+            </if>
+
+        </if>
+
+        order by designation_order,fd.order_no,e_order ,p.order_no,e.current_position_app_date_bs,name
+    </select>
+
+    <select id="getRoleDetails" resultMap="roleLogDetailResultMap">
+
+        select rg.id,
+        rg.role_group_name,
+        rg.role_group_key,
+        rg.office_code,
+        rg.role_type
+        from role_group rg
+            where rg.id in
+        <foreach collection="roleIds" item="roleId"  open=" (" separator= "," close=") ">
+            #{roleId}
+        </foreach>
+    </select>
+    <select id="getAllPisCodeByModule" resultType="java.lang.String">
+
+        select distinct u.pis_employee_code
+        from users u join employee e on u.pis_employee_code = e.pis_code
+                     join users_roles ur on u.id = ur.user_id
+                     join role_group rg on ur.role_id = rg.id
+                     join role_group_screen_module_privilege rgsmp on rgsmp.role_group_id = ur.role_id
+                     join module m on rgsmp.module_id = m.id
+        where u.office_code = #{officeCode} and m.module_key = #{moduleKey};
+    </select>
+    <resultMap id="rolePojoResultMap" type="com.gerp.usermgmt.pojo.auth.RolePojo">
+        <result property="id" column="role_id"></result>
+        <result property="name" column="role_name"></result>
+    </resultMap>
+    <select id="getAllByRolePojosByPisCode" resultMap="rolePojoResultMap">
+        select rg.role_group_name as role_name,
+               rg.id as role_id
+        from users u left join users_roles ur on u.id = ur.user_id
+            left join role_group rg on ur.role_id = rg.id
+        where u.pis_employee_code = #{pisCode};
+
+    </select>
+
+
+</mapper>

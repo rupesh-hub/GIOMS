@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.tms.mapper.CommitteeMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.tms.pojo.response.CommitteeWiseProjectResponsePojo">
+        <id property="id" column="c_id"/>
+        <result property="committeeName" column="committee_name"/>
+        <result property="committeeNameNp" column="committee_name_np"/>
+
+        <collection property="projectResponsePojoList" resultMap="projectResponse"/>
+    </resultMap>
+    <resultMap id="projectResponse" type="com.gerp.tms.pojo.response.ProjectResponsePojo">
+
+        <id property="id" column="p_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="code" column="code"/>
+        <result property="priority" column="priority"/>
+        <result property="isCommittee" column="is_Committee"/>
+        <result property="description" column="description"/>
+        <result property="startDate" column="start_Date"/>
+        <result property="endDate" column="end_Date"/>
+        <result property="startDateNp" column="start_Date_Np"/>
+        <result property="endDateNp" column="end_Date_Np"/>
+        <result property="isCompleted" column="is_completed"/>
+        <result property="completedDate" column="completed_date"/>
+        <result property="createdDate" column="created_date"/>
+
+    </resultMap>
+
+    <select id="getCommitteeWiseProject" resultMap="baseResultMap">
+        select *,c.id as c_id, p.id as p_id
+        from committee c
+        left join project p on p.committee_id = c.id
+        where
+        p.committee_id = #{committeeId}
+        order BY c.id desc ;
+    </select>
+
+</mapper>

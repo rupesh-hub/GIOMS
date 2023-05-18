@@ -1,0 +1,1773 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.dartachalani.mapper.MemoMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.dartachalani.dto.MemoResponsePojo">
+
+        <id property="id" column="id"/>
+        <result property="subject" column="subject"/>
+        <result property="content" column="content"/>
+        <result property="pisCode" column="mm_pis_code"/>
+        <result property="officeCode" column="mm_office_code"/>
+        <result property="referenceNo" column="mm_reference_no"/>
+        <result property="documentMasterId" column="document_master_id"/>
+        <result property="isDraft" column="is_draft"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="status" column="status"/>
+        <result property="aPisCode" column="a_pis_code"/>
+        <result property="signature" column="mm_signature"/>
+        <result property="signatureIsActive" column="mm_signature_is_active"/>
+        <result property="pdf" column="mm_pdf"/>
+        <result property="tippaniNo" column="mm_tippani_no"/>
+        <result property="sectionCode" column="mm_section_code"/>
+        <result property="designationCode" column="mm_designation_code"/>
+        <result property="referenceIsEditable" column="a_is_editable"/>
+        <result property="isImportant" column="mm_is_important"/>
+        <result property="delegatedId" column="mm_delegated_id"/>
+        <result property="hash_content" column="mm_hash_content"/>
+        <result property="templateHeaderId" column="template_header_id"/>
+        <result property="templateFooterId" column="template_footer_id"/>
+
+        <collection property="contents" ofType="com.gerp.dartachalani.dto.MemoContentPojo">
+            <result property="id" column="cnt_id"/>
+            <result property="content" column="cnt_content"/>
+            <result property="pisCode" column="pis_code"/>
+            <result property="officeCode" column="office_code"/>
+            <result property="createdDate" column="cnt_created_date"/>
+            <result property="isActive" column="cnt_is_active"/>
+            <result property="editable" column="cnt_editable"/>
+            <result property="isExternal" column="cnt_is_external"/>
+            <result property="isExternalEditable" column="is_external_cnt"/>
+            <result property="signature" column="cnt_signature"/>
+            <result property="signatureIsActive" column="cnt_signature_is_active"/>
+            <result property="sectionCode" column="cnt_section_code"/>
+            <result property="designationCode" column="cnt_designation_code"/>
+            <result property="delegatedId" column="cnt_delegated_id"/>
+            <result property="hashContent" column="cnt_hash_content"/>
+        </collection>
+
+        <collection property="forwards" ofType="com.gerp.dartachalani.dto.ForwardResponsePojo">
+            <result property="id" column="mf_id"/>
+            <result property="receiverPisCode" column="receiver_pis_code"/>
+            <result property="receiverSectionId" column="receiver_section_id"/>
+            <result property="senderPisCode" column="sender_pis_code"/>
+            <result property="senderSectionId" column="sender_section_id"/>
+            <result property="description" column="description"/>
+            <result property="createdDate" column="mf_created_date"/>
+            <result property="status" column="completion_status"/>
+            <result property="isActive" column="mf_is_active"/>
+            <result property="isSuggestion" column="mf_suggestion"/>
+        </collection>
+
+        <collection property="document" ofType="com.gerp.dartachalani.dto.document.DocumentPojo">
+            <result property="id" column="doc_id"/>
+            <result property="documentId" column="document_id"/>
+            <result property="name" column="document_name"/>
+            <result property="fileSize" column="file_size"/>
+            <result property="pisCode" column="mdd_pis_code"/>
+            <result property="editable" column="mdd_editable"/>
+            <result property="isActive" column="mdd_is_active"/>
+            <result property="delegatedId" column="mdd_delegated_id"/>
+        </collection>
+
+        <collection property="approval" ofType="com.gerp.dartachalani.dto.MemoApprovalPojo">
+            <result property="id" column="ma_id"/>
+            <result property="status" column="ma_status"/>
+            <result property="approverPisCode" column="ma_approver_pis_code"/>
+            <result property="officeCode" column="ma_office_code"/>
+            <result property="senderPisCode" column="ma_sender_pis_code"/>
+            <result property="remarks" column="remarks"/>
+            <result property="createdDate" column="ma_created_date"/>
+            <result property="isActive" column="ma_is_active"/>
+            <result property="reverted" column="reverted"/>
+            <result property="isExternal" column="ma_is_external"/>
+            <result property="isBack" column="ma_is_back"/>
+            <result property="suggestion" column="ma_suggestion"/>
+            <result property="logId" column="ma_log"/>
+            <result property="isSeen" column="ma_is_seen"/>
+            <result property="isImportant" column="ma_is_important"/>
+            <result property="delegatedId" column="ma_delegated_id"/>
+            <result property="isTransferred" column="ma_is_transferred"/>
+        </collection>
+
+        <collection property="suggestion" ofType="com.gerp.dartachalani.dto.MemoApprovalPojo">
+            <result property="id" column="ms_id"/>
+            <result property="status" column="ms_status"/>
+            <result property="approverPisCode" column="ms_approver_pis_code"/>
+            <result property="officeCode" column="ms_office_code"/>
+            <result property="senderPisCode" column="ms_sender_pis_code"/>
+            <result property="remarks" column="ms_remarks"/>
+            <result property="createdDate" column="ms_created_date"/>
+            <result property="isActive" column="ms_is_active"/>
+            <result property="reverted" column="ms_reverted"/>
+            <result property="logId" column="ms_log"/>
+            <result property="isSeen" column="ms_is_seen"/>
+            <result property="firstSender" column="ms_first_sender"/>
+            <result property="isImportant" column="ms_is_important"/>
+            <result property="delegatedId" column="ms_delegated_id"/>
+            <result property="isTransferred" column="ms_is_transferred"/>
+        </collection>
+
+    </resultMap>
+
+    <resultMap id="referenceMemoResponse" type="com.gerp.dartachalani.dto.ReferenceMemoResponse">
+
+        <id property="id" column="id"/>
+        <result property="subject" column="subject"/>
+        <result property="referenceNo" column="mm_reference_no"/>
+        <result property="isActive" column="is_active"/>
+        <result property="status" column="status"/>
+        <result property="aPisCode" column="a_pis_code"/>
+        <result property="approvedDate" column="approved_date"/>
+        <result property="createdDate" column="created_date"/>
+
+        <collection property="document" ofType="com.gerp.dartachalani.dto.document.DocumentPojo">
+            <result property="id" column="doc_id"/>
+            <result property="documentId" column="document_id"/>
+            <result property="name" column="document_name"/>
+            <result property="fileSize" column="file_size"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="getAllMemo" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mf.id as mf_id,
+        mf.receiver_pis_code,
+        mf.receiver_section_id,
+        mf.sender_pis_code,
+        mf.sender_section_id,
+        mf.description,
+        mf.completion_status,
+        mf.is_active as mf_is_active,
+        mdd.document_id,
+        mdd.document_name
+        FROM memo mm
+        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        WHERE mm.is_active = true and mm.pis_code = #{pisCode} and mm.section_code = #{sectionCode}
+        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC
+    </select>
+
+    <select id="getAllMemoOffice" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mf.id as mf_id,
+        mf.receiver_pis_code,
+        mf.receiver_section_id,
+        mf.sender_pis_code,
+        mf.sender_section_id,
+        mf.description,
+        mf.completion_status,
+        mf.is_active as mf_is_active,
+        mdd.document_id,
+        mdd.document_name
+        FROM memo mm
+        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        WHERE mm.is_active = true and mm.office_code = #{officeCode} and mm.status = 'A'
+        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC
+    </select>
+
+    <select id="getDrafts" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mf.id as mf_id,
+        mf.receiver_pis_code,
+        mf.receiver_section_id,
+        mf.sender_pis_code,
+        mf.sender_section_id,
+        mf.description,
+        mf.completion_status,
+        mf.is_active as mf_is_active,
+        mdd.document_id,
+        mdd.document_name
+        FROM memo mm
+        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        WHERE mm.is_active = true AND mm.is_draft = true and mm.pis_code = #{pisCode} and mm.section_code = #{sectionCode}
+        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC
+    </select>
+
+    <select id="getSaved" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mf.id as mf_id,
+        mf.receiver_pis_code,
+        mf.receiver_section_id,
+        mf.sender_pis_code,
+        mf.sender_section_id,
+        mf.description,
+        mf.completion_status,
+        mf.is_active as mf_is_active,
+        mdd.document_id,
+        mdd.document_name,
+        ma.id as ma_id,
+        ma.status as ma_status,
+        ma.created_date as ma_created_date,
+        ma.remarks,
+        ma.is_active as ma_is_active,
+        ma.approver_pis_code as ma_approver_pis_code,
+        ma.sender_pis_code as ma_sender_pis_code,
+        ma.reverted
+        FROM memo mm
+        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+        WHERE mm.is_active = true AND mm.is_draft = false and mm.pis_code = #{pisCode} and mm.section_code = #{sectionCode}
+        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC, ma.id DESC
+    </select>
+
+    <select id="getMemoById" resultMap="baseResultMap">
+        SELECT mm.id,
+               mm.subject,
+               mm.content,
+               mm.pis_code as mm_pis_code,
+               mm.reference_no as mm_reference_no,
+               mm.office_code as mm_office_code,
+               mm.section_code as mm_section_code,
+               mm.designation_code as mm_designation_code,
+               mm.is_draft,
+               mm.is_active,
+               mm.document_master_id,
+               mm.created_date,
+               mm.status,
+               mm.signature as mm_signature,
+               mm.signature_is_active as mm_signature_is_active,
+               mm.pdf as mm_pdf,
+               mm.tippani_no as mm_tippani_no,
+               mm.is_important as mm_is_important,
+               mm.delegated_id as mm_delegated_id,
+               mm.hash_content as mm_hash_content,
+               mm.template_header_id,
+               mm.template_footer_id,
+               cnt.id as cnt_id,
+               cnt.content as cnt_content,
+               cnt.pis_code,
+               cnt.office_code,
+               cnt.created_date as cnt_created_date,
+               cnt.is_active as cnt_is_active,
+               cnt.editable as cnt_editable,
+               cnt.is_external as cnt_is_external,
+               cnt.signature as cnt_signature,
+               cnt.signature_is_active as cnt_signature_is_active,
+               cnt.section_code as cnt_section_code,
+               cnt.designation_code as cnt_designation_code,
+               cnt.is_external_editable as is_external_cnt,
+               cnt.delegated_id as cnt_delegated_id,
+               cnt.hash_content as cnt_hash_content,
+               mf.id as mf_id,
+               mf.receiver_pis_code,
+               mf.receiver_section_id,
+               mf.sender_pis_code,
+               mf.sender_section_id,
+               mf.description,
+               mf.created_date as mf_created_date,
+               mf.completion_status,
+               mf.is_active as mf_is_active,
+               cmt.id as cmt_id,
+               cmt.comment,
+               cmt.created_date as cmt_created_date,
+               cmt.is_active as cmt_is_active,
+               mdd.document_id,
+               mdd.document_name,
+               mdd.id as doc_id,
+               mdd.document_size as file_size,
+               mdd.pis_code as mdd_pis_code,
+               mdd.editable as mdd_editable,
+               mdd.is_active as mdd_is_active,
+               ma.id as ma_id,
+               ma.status as ma_status,
+               ma.created_date as ma_created_date,
+               ma.remarks,
+               ma.is_active as ma_is_active,
+               ma.approver_pis_code as ma_approver_pis_code,
+               ma.approver_office_code as ma_office_code,
+               ma.sender_pis_code as ma_sender_pis_code,
+               ma.reverted,
+               ma.is_external as ma_is_external,
+               ma.is_important as ma_is_important,
+               ma.suggestion as ma_suggestion,
+               ma.log as ma_log,
+               ma.is_seen as ma_is_seen,
+               ma.is_back as ma_is_back,
+               ma.delegated_id as ma_delegated_id,
+               ma.is_transferred as ma_is_transferred,
+               ms.id as ms_id,
+               ms.is_active as ms_is_active,
+               ms.approver_pis_code as ms_approver_pis_code,
+               ms.approver_office_code as ms_office_code,
+               ms.sender_pis_code as ms_sender_pis_code,
+               ms.created_date as ms_created_date,
+               ms.remarks as ms_remarks,
+               ms.log as ms_log,
+               ms.status as ms_status,
+               ms.is_seen as ms_is_seen,
+               ms.first_sender as ms_first_sender,
+               ms.reverted as ms_reverted,
+               ms.is_important as ms_is_important,
+               ms.delegated_id as ms_delegated_id,
+               ms.is_transferred as ms_is_transferred,
+               ms.is_active as ms_is_active
+        FROM memo mm
+            LEFT JOIN memo_forward mf ON mm.id = mf.memo_id
+            LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+            LEFT JOIN memo_content cnt ON mm.id = cnt.memo_id
+            LEFT JOIN memo_comment cmt ON mf.id = cmt.memo_forward_id
+            LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+            LEFT JOIN memo_suggestion ms ON mm.id = ms.memo_id
+        WHERE mm.id = #{id}
+        ORDER BY mf.id DESC, mdd.id ASC, cnt.id ASC, cmt.id DESC, ma.id DESC, ms.id DESC
+    </select>
+
+    <select id="getMemoByParentId" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mf.id as mf_id,
+        mf.receiver_pis_code,
+        mf.receiver_section_id,
+        mf.sender_pis_code,
+        mf.sender_section_id,
+        mf.description,
+        mf.completion_status,
+        mf.is_active as mf_is_active,
+        mdd.document_id,
+        mdd.document_name
+        FROM memo mm
+        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        WHERE mm.is_active = true AND mm.parent_id = #{parentId}
+        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC
+    </select>
+
+    <select id="getMemoByReceiverPisCode" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mf.id as mf_id,
+        mf.receiver_pis_code,
+        mf.receiver_section_id,
+        mf.sender_pis_code,
+        mf.sender_section_id,
+        mf.description,
+        mf.completion_status,
+        mf.is_active as mf_is_active,
+        mdd.document_id,
+        mdd.document_name
+        FROM memo mm
+        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        WHERE mm.is_active = true AND mf.is_active = true AND mf.receiver_pis_code = #{receiverPisCode}
+        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC
+    </select>
+
+    <!--    <select id="getMemoReceiverInProgress" resultMap="baseResultMap">-->
+    <!--        SELECT mm.id,-->
+    <!--        mm.subject,-->
+    <!--        mm.content,-->
+    <!--        mm.pis_code as mm_pis_code,-->
+    <!--        mm.reference_no as mm_reference_no,-->
+    <!--        mm.is_draft,-->
+    <!--        mm.is_active,-->
+    <!--        mm.document_master_id,-->
+    <!--        mm.created_date,-->
+    <!--        mm.status,-->
+    <!--        mf.id as mf_id,-->
+    <!--        mf.receiver_pis_code,-->
+    <!--        mf.receiver_section_id,-->
+    <!--        mf.sender_pis_code,-->
+    <!--        mf.sender_section_id,-->
+    <!--        mf.description,-->
+    <!--        mf.completion_status,-->
+    <!--        mf.is_active as mf_is_active,-->
+    <!--        mdd.document_id,-->
+    <!--        mdd.document_name-->
+    <!--        FROM memo mm-->
+    <!--        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id-->
+    <!--        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id-->
+    <!--        WHERE mm.is_active = true AND mf.is_active = true AND mf.receiver_pis_code = #{receiverPisCode} AND mf.completion_status = 'IP'-->
+    <!--        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC-->
+    <!--    </select>-->
+
+    <!--    <select id="getMemoReceiverFinalized" resultMap="baseResultMap">-->
+    <!--        SELECT mm.id,-->
+    <!--        mm.subject,-->
+    <!--        mm.content,-->
+    <!--        mm.pis_code as mm_pis_code,-->
+    <!--        mm.reference_no as mm_reference_no,-->
+    <!--        mm.is_draft,-->
+    <!--        mm.is_active,-->
+    <!--        mm.document_master_id,-->
+    <!--        mm.created_date,-->
+    <!--        mm.status,-->
+    <!--        mf.id as mf_id,-->
+    <!--        mf.receiver_pis_code,-->
+    <!--        mf.receiver_section_id,-->
+    <!--        mf.sender_pis_code,-->
+    <!--        mf.sender_section_id,-->
+    <!--        mf.description,-->
+    <!--        mf.completion_status,-->
+    <!--        mf.is_active as mf_is_active,-->
+    <!--        mdd.document_id,-->
+    <!--        mdd.document_name-->
+    <!--        FROM memo mm-->
+    <!--        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id-->
+    <!--        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id-->
+    <!--        WHERE mm.is_active = true AND mf.is_active = true AND mf.receiver_pis_code = #{receiverPisCode} AND mf.completion_status = 'FN'-->
+    <!--        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC-->
+    <!--    </select>-->
+
+
+    <select id="getMemoReceiverInProgress" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.office_code as mm_office_code,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mdd.document_id,
+        mdd.document_name,
+        ma.id as ma_id,
+        ma.status as ma_status,
+        ma.created_date as ma_created_date,
+        ma.remarks,
+        ma.is_active as ma_is_active,
+        ma.approver_pis_code as ma_approver_pis_code,
+        ma.sender_pis_code as ma_sender_pis_code,
+        ma.reverted
+        FROM memo mm
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+        WHERE mm.is_active = true AND mm.pis_code = #{receiverPisCode} and mm.status = 'P'
+        ORDER BY mm.id DESC, ma.id DESC, mdd.id ASC
+    </select>
+
+
+    <select id="getMemoReceiverFinalized" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.office_code as mm_office_code,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mdd.document_id,
+        mdd.document_name,
+        ma.id as ma_id,
+        ma.status as ma_status,
+        ma.created_date as ma_created_date,
+        ma.remarks,
+        ma.is_active as ma_is_active,
+        ma.approver_pis_code as ma_approver_pis_code,
+        ma.sender_pis_code as ma_sender_pis_code,
+        ma.reverted
+        FROM memo mm
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+        WHERE mm.is_active = true AND mm.pis_code = #{receiverPisCode} and mm.status = 'A'
+        ORDER BY mm.id DESC, ma.id DESC, mdd.id ASC
+    </select>
+
+    <select id="getAllMemoForwarded" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mf.id as mf_id,
+        mf.receiver_pis_code,
+        mf.receiver_section_id,
+        mf.sender_pis_code,
+        mf.sender_section_id,
+        mf.description,
+        mf.completion_status,
+        mf.is_active as mf_is_active,
+        mdd.document_id,
+        mdd.document_name
+        FROM memo mm
+        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        WHERE mm.is_active = true and mf.is_active = true and mm.pis_code = #{pisCode}
+        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC
+    </select>
+
+    <select id="getAllMemoInProgress" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mf.id as mf_id,
+        mf.receiver_pis_code,
+        mf.receiver_section_id,
+        mf.sender_pis_code,
+        mf.sender_section_id,
+        mf.description,
+        mf.completion_status,
+        mf.is_active as mf_is_active,
+        mdd.document_id,
+        mdd.document_name
+        FROM memo mm
+        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        WHERE mm.is_active = true AND mf.is_active = true AND mf.completion_status = 'IP' AND mf.sender_pis_code = #{senderPisCode}
+        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC
+    </select>
+
+    <select id="getAllMemoFinalized" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mf.id as mf_id,
+        mf.receiver_pis_code,
+        mf.receiver_section_id,
+        mf.sender_pis_code,
+        mf.sender_section_id,
+        mf.description,
+        mf.completion_status,
+        mf.is_active as mf_is_active,
+        mdd.document_id,
+        mdd.document_name
+        FROM memo mm
+        LEFT JOIN memo_forward mf ON mm.id = mf.memo_id
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        WHERE mm.is_active = true AND mf.is_active = true AND mf.completion_status = 'FN' AND mf.sender_pis_code = #{senderPisCode}
+        ORDER BY mm.id DESC, mf.id DESC, mdd.id ASC
+    </select>
+
+    <select id="getAllMemoForApproval" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.office_code as mm_office_code,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mdd.document_id,
+        mdd.document_name,
+        ma.id as ma_id,
+        ma.status as ma_status,
+        ma.created_date as ma_created_date,
+        ma.remarks,
+        ma.is_active as ma_is_active,
+        ma.approver_pis_code as ma_approver_pis_code,
+        ma.sender_pis_code as ma_sender_pis_code,
+        ma.reverted,
+        ma.is_external as ma_is_external
+        FROM memo mm
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+        WHERE mm.is_active = true AND ma.approver_pis_code = #{approverPisCode} and ma.approver_pis_code != mm.pis_code and ma.approver_section_code = #{approverSectionCode}
+        ORDER BY mm.id DESC, ma.id DESC, mdd.id ASC
+    </select>
+
+    <select id="getAllMemoForApprovalForwarded" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        mdd.document_id,
+        mdd.document_name,
+        ma.id as ma_id,
+        ma.status as ma_status,
+        ma.created_date as ma_created_date,
+        ma.remarks,
+        ma.is_active as ma_is_active,
+        ma.approver_pis_code as ma_approver_pis_code,
+        ma.sender_pis_code as ma_sender_pis_code,
+        ma.reverted,
+        ma.is_external as ma_is_external
+        FROM memo mm
+        LEFT JOIN memo_document_details mdd ON mm.id = mdd.memo_id
+        LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+        WHERE mm.is_active = true AND ma.sender_pis_code = #{senderPisCode} and ms.sender_section_code = #{senderSectionCode}
+        ORDER BY mm.id DESC, ma.id DESC, mdd.id ASC
+    </select>
+
+    <select id="filterData" resultMap="baseResultMap">
+        select * from (
+        select distinct t.*,
+        <choose>
+            <when test="searchField.isDraft != null and searchField.isDraft">
+                1 as row_num
+            </when>
+            <otherwise>
+                row_number () over(partition by t.id order by
+                <choose>
+                    <when test="searchField.senderPisCode != null">
+                        t.c_d
+                    </when>
+                    <when test="searchField.suggestionPisCode != null and searchField.suggestionPisCode != 'null'">
+                        <choose>
+                            <when test="searchField.favorite != null and searchField.favorite">
+                                t.l_m_d
+                            </when>
+                            <otherwise>
+                                t.c_d
+                            </otherwise>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        t.l_m_d
+                    </otherwise>
+                </choose>
+                desc nulls last) as row_num
+            </otherwise>
+        </choose>
+        from
+        (SELECT DISTINCT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.section_code as mm_section_code,
+        mm.reference_no as mm_reference_no,
+        mm.office_code as mm_office_code,
+        mm.is_draft,
+        mm.is_active,
+        mm.created_date,
+        mm.status,
+        mm.last_modified_date,
+        mm.tippani_no as mm_tippani_no,
+        mm.is_important as mm_is_important,
+        mm.delegated_id as mm_delegated_id,
+        ma.last_modified_date as l_m_d,
+        ma.created_date as c_d
+        FROM memo mm
+        LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+        LEFT JOIN draft_share ds on mm.id = ds.memo_id
+        WHERE mm.is_active = true
+
+        <choose>
+            <when test="searchField.isApprover != null and searchField.isApprover">
+                <if test="searchField.pisCode != null and searchField.appSectionCode != null">
+                    and ((mm.pis_code in( #{searchField.pisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    )
+                    and mm.section_code = #{searchField.appSectionCode}) or
+                    (ma.approver_pis_code in (
+                    #{searchField.pisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    ) and ma.approver_section_code = #{searchField.appSectionCode}))
+                </if>
+            </when>
+            <otherwise>
+                <!--                <if test="searchField.approverPisCode != null">-->
+                <!--                    and ma.approver_pis_code = #{searchField.approverPisCode} and mm.pis_code != ma.approver_pis_code-->
+                <!--                    <if test="searchField.approverSectionCode != null">-->
+                <!--                        and ma.approver_section_code = #{searchField.approverSectionCode}-->
+                <!--                    </if>-->
+                <!--                    <if test="searchField.isActive != null">-->
+                <!--                        and ma.is_active = #{searchField.isActive}-->
+                <!--                    </if>-->
+                <!--                </if>-->
+                <if test="searchField.senderPisCode != null and searchField.senderSectionCode != null">
+                    and (ma.sender_pis_code in (#{searchField.senderPisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    ) and
+                    ma.sender_section_code = #{searchField.senderSectionCode})
+                </if>
+                <if test="searchField.suggestionPisCode != null and searchField.suggestionSectionCode != null">
+                    and (
+                    ma.approver_pis_code in (#{searchField.suggestionPisCode}
+                    <if test="!previousPisCode.isEmpty()">,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    ) and ma.approver_section_code =
+                    #{searchField.suggestionSectionCode}
+                    <if test="isActive != null">and ma.is_active = #{isActive}
+                    </if>
+                    <if test="searchField.isImportant != null">
+                        and (ma.is_important = #{searchField.isImportant} or mm.is_important =
+                        #{searchField.isImportant})
+                    </if>
+                    )
+                </if>
+            </otherwise>
+        </choose>
+
+        <if test="pisCode != null">
+            and mm.pis_code in (#{pisCode}
+            <if test="!previousPisCode.isEmpty()">
+                ,
+                <foreach item="item" index="index" collection="previousPisCode"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            )
+            <if test="searchField.sectionCode">
+                and mm.section_code = #{searchField.sectionCode}
+            </if>
+        </if>
+
+        <if test="officeCode != null">
+            and (mm.office_code = #{officeCode} or ma.approver_office_code =
+            #{officeCode})
+        </if>
+
+
+        <if test="searchField.isExternal != null">
+            and ma.is_external = #{searchField.isExternal}
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and mm.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.status != null">
+            and mm.status = #{searchField.status}
+        </if>
+
+        <if test="searchField.isDraft != null">
+            and mm.is_draft = #{searchField.isDraft}
+            <if test="creatorPisCode != null">
+                and ((mm.pis_code = #{creatorPisCode} and mm.section_code = #{searchField.sectionCode}) or (ds.receiver_pis_code = #{creatorPisCode} and ds.is_active =
+                true and ds.receiver_section_code = #{searchField.sectionCode}))
+            </if>
+        </if>
+
+        <if test="searchField.subject != null">
+            and mm.subject ILIKE CONCAT('%', #{searchField.subject},'%')
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and mm.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.tippaniNo != null">
+            and mm.tippani_no = #{searchField.tippaniNo}
+        </if>
+
+        <choose>
+            <when test="searchField.isArchive != null">
+                and mm.is_archive = #{searchField.isArchive}
+            </when>
+            <otherwise>
+                and mm.is_archive = false
+            </otherwise>
+        </choose>
+
+        union all
+        SELECT DISTINCT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.section_code as mm_section_code,
+        mm.reference_no as mm_reference_no,
+        mm.office_code as mm_office_code,
+        mm.is_draft,
+        mm.is_active,
+        mm.created_date,
+        mm.status,
+        mm.last_modified_date,
+        mm.tippani_no as mm_tippani_no,
+        mm.is_important as mm_is_important,
+        mm.delegated_id as mm_delegated_id,
+        ms.last_modified_date as l_m_d,
+        ms.created_date as c_d
+        FROM memo mm
+        LEFT JOIN memo_suggestion ms on mm.id = ms.memo_id
+        LEFT JOIN draft_share ds on mm.id = ds.memo_id
+        WHERE mm.is_active = true
+        <choose>
+            <when test="searchField.isApprover != null and searchField.isApprover">
+                <if test="searchField.pisCode != null and searchField.appSectionCode != null">
+                    and ((mm.pis_code in( #{searchField.pisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    )
+                    and mm.section_code = #{searchField.appSectionCode}) or
+                    (ms.approver_pis_code in ( #{searchField.pisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    )and ms.approver_section_code =
+                    #{searchField.appSectionCode}))
+                </if>
+            </when>
+            <otherwise>
+                <!--                <if test="searchField.approverPisCode != null">-->
+                <!--                    and ma.approver_pis_code = #{searchField.approverPisCode} and mm.pis_code != ma.approver_pis_code-->
+                <!--                    <if test="searchField.approverSectionCode != null">-->
+                <!--                        and ma.approver_section_code = #{searchField.approverSectionCode}-->
+                <!--                    </if>-->
+                <!--                    <if test="searchField.isActive != null">-->
+                <!--                        and ma.is_active = #{searchField.isActive}-->
+                <!--                    </if>-->
+                <!--                </if>-->
+                <if test="searchField.senderPisCode != null and searchField.senderSectionCode != null">
+                    and (ms.sender_pis_code in (#{searchField.senderPisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    )
+                    and ms.sender_section_code =
+                    #{searchField.senderSectionCode})
+                </if>
+                <if test="searchField.suggestionPisCode != null and searchField.suggestionSectionCode != null">
+                    and (ms.approver_pis_code in (#{searchField.suggestionPisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    ) and ms.approver_section_code =
+                    #{searchField.suggestionSectionCode}
+                    <if test="isActive != null">and ms.is_active = #{isActive}
+                    </if>
+                    <if test="searchField.isImportant != null">
+                        and (ms.is_important = #{searchField.isImportant} or mm.is_important =
+                        #{searchField.isImportant})
+                    </if>
+                    )
+                </if>
+            </otherwise>
+        </choose>
+
+        <if test="pisCode != null">
+            and mm.pis_code in (#{pisCode}
+            <if test="!previousPisCode.isEmpty()">
+                ,
+                <foreach item="item" index="index" collection="previousPisCode"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            )
+        </if>
+
+        <if test="officeCode != null">
+            and (mm.office_code = #{officeCode} or ms.approver_office_code = #{officeCode})
+        </if>
+
+        <if test="searchField.sectionCode">
+            and (mm.section_code = #{searchField.sectionCode} or ds.receiver_section_code = #{searchField.sectionCode})
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and mm.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.status != null">
+            and mm.status = #{searchField.status}
+        </if>
+
+        <if test="searchField.isDraft != null">
+            and mm.is_draft = #{searchField.isDraft}
+            <if test="creatorPisCode != null">
+                and (mm.pis_code = #{creatorPisCode} or (ds.receiver_pis_code = #{creatorPisCode} and ds.is_active =
+                true))
+            </if>
+        </if>
+
+        <if test="searchField.subject != null">
+            and mm.subject ILIKE CONCAT('%', #{searchField.subject},'%')
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and mm.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.tippaniNo != null">
+            and mm.tippani_no = #{searchField.tippaniNo}
+        </if>
+
+        <choose>
+            <when test="searchField.isArchive != null">
+                and mm.is_archive = #{searchField.isArchive}
+            </when>
+            <otherwise>
+                and mm.is_archive = false
+            </otherwise>
+        </choose>
+
+        ) t
+
+        union all
+        SELECT DISTINCT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.section_code as mm_section_code,
+        mm.reference_no as mm_reference_no,
+        mm.office_code as mm_office_code,
+        mm.is_draft,
+        mm.is_active,
+        mm.created_date,
+        mm.status,
+        mm.last_modified_date,
+        mm.tippani_no as mm_tippani_no,
+        mm.is_important as mm_is_important,
+        mm.delegated_id as mm_delegated_id,
+        mm.last_modified_date_imp as l_m_d,
+        mm.last_modified_date_imp as c_d,
+        1 as row_num
+        FROM memo mm
+        LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+        LEFT JOIN memo_suggestion ms on mm.id = ms.memo_id
+        WHERE mm.is_active = true and #{searchField.favourite} = true and mm.is_important = true and mm.is_archive =
+        false
+
+        <if test="searchField.suggestionPisCode != null and searchField.suggestionSectionCode != null">
+            and mm.pis_code in (#{searchField.suggestionPisCode}
+            <if test="!previousPisCode.isEmpty()">,
+                <foreach item="item" index="index" collection="previousPisCode"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            ) and mm.section_code =
+            #{searchField.suggestionSectionCode}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and mm.is_important = #{searchField.isImportant}
+        </if>
+
+        <if test="officeCode != null">
+            and (mm.office_code = #{officeCode} or ms.approver_office_code = #{officeCode} or ma.approver_office_code =
+            #{officeCode})
+        </if>
+        ) test where test.row_num = 1
+
+        <choose>
+            <when test="searchField.orderBy != null">
+                order by
+                <choose>
+                    <when test="searchField.orderBy == 3">
+                        test.subject
+                    </when>
+                    <when test="searchField.orderBy == 4">
+                        test.status
+                    </when>
+                    <when test="searchField.orderBy == 5">
+                        test.created_date
+                    </when>
+                    <when test="searchField.orderBy == 6">
+                        test.mm_tippani_no
+                    </when>
+                    <otherwise>
+                        test.created_date
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="searchField.orderType == 0">
+                        ASC
+                    </when>
+                    <otherwise>
+                        DESC
+                    </otherwise>
+                </choose>
+                nulls last
+            </when>
+            <otherwise>
+                order by
+                <choose>
+                    <when test="searchField.status != null and searchField.status.equals('A')">
+                        test.last_modified_date
+                    </when>
+                    <when test="searchField.suggestionPisCode != null and searchField.suggestionPisCode != 'null'">
+                        <choose>
+                            <when test="searchField.favorite != null and searchField.favorite">
+                                test.l_m_d
+                            </when>
+                            <otherwise>
+                                test.c_d
+                            </otherwise>
+                        </choose>
+                    </when>
+                    <when test="searchField.isDraft != null">
+                        test.created_date
+                    </when>
+                    <when test="searchField.senderPisCode != null">
+                        test.status desc, test.c_d
+                    </when>
+                    <otherwise>
+                        test.l_m_d
+                    </otherwise>
+                </choose>
+                desc nulls last
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getArchiveTippani" resultMap="baseResultMap">
+        SELECT DISTINCT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.section_code as mm_section_code,
+        mm.reference_no as mm_reference_no,
+        mm.office_code as mm_office_code,
+        mm.is_draft,
+        mm.is_active,
+        mm.created_date,
+        mm.status,
+        mm.last_modified_date,
+        mm.tippani_no as mm_tippani_no,
+        mm.is_important as mm_is_important,
+        mm.delegated_id as mm_delegated_id
+        FROM memo mm
+        LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+        LEFT JOIN memo_suggestion ms on mm.id = ms.memo_id
+        WHERE mm.is_active = false and mm.office_code = #{officeCode} and mm.section_code = #{sectionCode}
+        and mm.pis_code
+        in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        <choose>
+            <when test="searchField != null and searchField.orderBy != null">
+                order by
+                <choose>
+                    <when test="searchField.orderBy == 3">
+                        subject
+                    </when>
+                    <when test="searchField.orderBy == 4">
+                        status
+                    </when>
+                    <when test="searchField.orderBy == 5">
+                        created_date
+                    </when>
+                    <when test="searchField.orderBy == 6">
+                        mm_tippani_no
+                    </when>
+                    <otherwise>
+                        created_date
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="searchField.orderType == 0">
+                        ASC
+                    </when>
+                    <otherwise>
+                        DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                order by last_modified_date desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getReferenceMemos" resultMap="referenceMemoResponse">
+        WITH RECURSIVE a AS (
+        SELECT mr.referenced_memo_id,mr.memo_id, mr.pis_code, mr.is_editable, mr.created_date
+        FROM memo_reference mr
+        WHERE mr.memo_id= #{memoId} and mr.is_active = true and mr.is_attach = false
+        UNION ALL
+        SELECT d.referenced_memo_id,d.memo_id, d.pis_code, d.is_editable, d.created_date
+        FROM memo_reference d
+            INNER JOIN a ON a.referenced_memo_id = d.memo_id where d.is_active = true and d.memo_id is not null and d.is_attach = false
+        )
+        SELECT mm.id,
+               mm.subject,
+               mm.reference_no as mm_reference_no,
+               mm.is_active,
+               mm.last_modified_date as approved_date,
+               mm.status,
+               a.pis_code as a_pis_code,
+               mdd.document_id ,
+               mdd.document_name,
+               mdd.document_size as file_size
+        FROM a
+        INNER JOIN memo mm ON mm.id=a.referenced_memo_id
+        left join memo_document_details mdd on mdd.memo_id = a.referenced_memo_id
+        where mm.is_active = true and mm.is_archive = false and mm.is_draft = false and mm.status = 'A'
+        order by a.created_date desc
+    </select>
+
+    <select id="getReferenceMemosAll" resultMap="referenceMemoResponse">
+        SELECT mm.id,
+               mm.subject,
+               mm.reference_no as mm_reference_no,
+               mm.is_active,
+               mm.last_modified_date as approved_date,
+               mm.created_date as created_date,
+               mm.status,
+               tt.pis_code as a_pis_code,
+               mdd.document_id ,
+               mdd.document_name,
+               mdd.document_size as file_size from (
+       select * from (
+       WITH RECURSIVE a AS (
+        SELECT mr.referenced_memo_id,mr.memo_id, mr.pis_code, mr.is_editable, mr.created_date
+        FROM memo_reference mr
+        WHERE mr.memo_id  = #{memoId} and mr.is_active = true and mr.referenced_memo_id is not null and mr.is_attach = false
+        UNION ALL
+        SELECT d.referenced_memo_id,d.memo_id, d.pis_code, d.is_editable, d.created_date
+        FROM memo_reference d
+            INNER JOIN a ON a.referenced_memo_id  = d.memo_id where d.is_active = true and d.memo_id is not null and d.is_attach = false
+        )select * from a
+        ) t
+        UNION ALL
+        select * from(
+        WITH RECURSIVE a AS (
+        SELECT mr.memo_id  as referenced_memo_id ,mr.memo_id, mr.pis_code, mr.is_editable, mr.created_date
+        FROM memo_reference mr
+        WHERE mr.referenced_memo_id = #{memoId} and mr.is_active = true and mr.referenced_memo_id is not null and mr.is_attach = false
+        UNION ALL
+        SELECT d.memo_id  as referenced_memo_id,d.memo_id , d.pis_code, d.is_editable, d.created_date
+        FROM memo_reference d
+            INNER JOIN a ON a.memo_id = d.referenced_memo_id where d.is_active = true and d.memo_id is not null and d.is_attach = false
+        )select * from a)
+        t
+        union all
+        SELECT #{memoId} as referenced_memo_id ,#{memoId} as memo_id, null, false, null
+        )tt
+        INNER JOIN memo mm ON mm.id=tt.referenced_memo_id
+        left join memo_document_details mdd on mdd.memo_id = tt.referenced_memo_id
+        where mm.is_active = true and mm.is_archive = false and mm.is_draft = false and mm.status = 'A'
+        order by tt.referenced_memo_id desc
+    </select>
+
+    <select id="getAllMemoSuggestion" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.office_code as mm_office_code,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        ms.id as ms_id,
+        ms.created_date as ms_created_date,
+        ms.approver_pis_code as ms_approver_pis_code,
+        ms.sender_pis_code as ms_sender_pis_code
+        FROM memo mm
+        LEFT JOIN memo_suggestion ms ON mm.id = ms.memo_id
+        WHERE mm.is_active = true AND ms.approver_pis_code = #{approverPisCode} AND ms.approver_section_code = #{approverSectionCode}
+        ORDER BY mm.id DESC, ms.id DESC
+    </select>
+
+    <select id="getAllMemoForwardSuggestion" resultMap="baseResultMap">
+        SELECT mm.id,
+        mm.subject,
+        mm.content,
+        mm.pis_code as mm_pis_code,
+        mm.reference_no as mm_reference_no,
+        mm.office_code as mm_office_code,
+        mm.is_draft,
+        mm.is_active,
+        mm.document_master_id,
+        mm.created_date,
+        mm.status,
+        ms.id as ms_id,
+        ms.created_date as ms_created_date,
+        ms.approver_pis_code as ms_approver_pis_code,
+        ms.sender_pis_code as ms_sender_pis_code
+        FROM memo mm
+        LEFT JOIN memo_suggestion ms ON mm.id = ms.memo_id
+        WHERE mm.is_active = true AND ms.sender_pis_code = #{senderPisCode} AND ms.sender_section_code = #{senderSectionCode}
+        ORDER BY mm.id DESC, ms.id DESC
+    </select>
+
+    <resultMap id="referenceResultMap" type="com.gerp.dartachalani.dto.DartaChalaniGenericPojo">
+        <id property="id" column="id"/>
+        <result property="subject" column="subject"/>
+        <result property="createdDate" column="created_date"/>
+    </resultMap>
+
+    <select id="getDataForReference" resultMap="referenceResultMap">
+        SELECT DISTINCT mm.id,
+        mm.subject,
+        mm.created_date
+        FROM memo mm
+        LEFT JOIN memo_approval ma ON mm.id = ma.memo_id
+        LEFT JOIN memo_suggestion ms ON mm.id = ms.memo_id
+        WHERE mm.is_active = true and mm.office_code = #{officeCode} and mm.status = 'A' and mm.is_draft = false and
+        mm.is_archive = false
+
+        <if test="searchField.fiscalYearCode != null">
+            and mm.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.subject != null">
+            and mm.subject ILIKE CONCAT('%', #{searchField.subject},'%')
+        </if>
+
+        <if test="searchField.sectionCode != null">
+            and
+            (
+            (mm.pis_code = #{pisCode} and mm.section_code = #{searchField.sectionCode})
+            or
+            (ma.approver_pis_code = #{pisCode} and ma.approver_section_code = #{searchField.sectionCode})
+            )
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and mm.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+        <if test="searchField.tippaniNo != null">
+            and mm.tippani_no = #{searchField.tippaniNo}
+        </if>
+        ORDER BY mm.id DESC
+    </select>
+
+    <select id="getTippaniReportData" resultMap="baseResultMap">
+        SELECT DISTINCT mm.id,
+        mm.created_date,
+        mm.tippani_no as mm_tippani_no,
+        mm.reference_no as mm_reference_no,
+        mm.subject,
+        mm.office_code as mm_office_code,
+        mm.pis_code as mm_pis_code,
+        mm.status,
+        mm.section_code as mm_section_code
+        FROM memo mm
+        left join memo_approval ma on mm.id = ma.memo_id
+        left join memo_suggestion ms on mm.id = ms.memo_id
+        where (ms.approver_office_code = #{officeCode} or ma.approver_office_code = #{officeCode}) and mm.is_active =
+        true
+
+        <if test=" searchField != null and searchField.fromDate != null and searchField.toDate != null">
+            and mm.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField != null and searchField.status != null">
+            and mm.status = #{searchField.status}
+        </if>
+
+        <if test="searchField != null and searchField.tippaniNo != null">
+            and mm.tippani_no = #{searchField.tippaniNo}
+        </if>
+
+        <if test="searchField != null and searchField.creatorOfficeCode != null">
+            and mm.office_code = #{searchField.creatorOfficeCode}
+        </if>
+
+        <if test="searchField != null and searchField.sectionCodeLists != null">
+            and mm.section_code in
+            <foreach item="item" index="index" collection="searchField.sectionCodeLists"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+    </select>
+
+    <select id="checkIsCreator" resultType="boolean">
+        select case when count(*)>0 then false else true end
+        from memo m
+        where
+        m.id = #{id}
+        and m.section_code = #{sectionCode}
+        and m.is_active = true
+        and m.office_code = #{officeCode}
+        and m.pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+    </select>
+
+    <select id="getMemoActive" resultType="boolean">
+        select case when count(*)>0 then true else false end from memo_approval ma where ma.memo_id = #{id}
+        and ma.is_active = true and ma.approver_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and ma.approver_section_code = #{sectionCode}
+    </select>
+
+    <select id="getLatestMemoInReferenceLoop" resultType="Long">
+         WITH recursive q AS (select mr.memo_id, mr.created_date
+                                                     from memo_reference mr
+                                                     where mr.referenced_memo_id = #{memoId} and mr.referenced_memo_id is not null and mr.is_attach = false and mr.is_active = true
+                                                    UNION ALL
+                                                    select mr2.memo_id, mr2.created_date
+                                                     from memo_reference mr2
+                                                              join q on mr2.referenced_memo_id = q.memo_id where mr2.referenced_memo_id is not null and mr2.is_attach = false and mr2.is_active = true
+                                )
+                                SELECT q.memo_id from q
+                               where q.memo_id  != #{memoId} order by q.created_date desc limit 1;
+    </select>
+
+    <select id="getActivityLogWithReferenceTippaniLog" resultType="com.gerp.dartachalani.dto.MemoApprovalPojo">
+        SELECT
+        ma.id,
+        ma.status,
+        ma.created_date,
+        ma.remarks,
+        ma.is_active,
+        ma.approver_pis_code,
+        ma.approver_office_code,
+        ma.sender_pis_code,
+        ma.delegated_id,
+        ma.is_transferred,
+        'approval' as type,
+        ma.sender_office_code as officeCode
+        FROM memo mm
+        RIGHT JOIN memo_approval ma ON mm.id = ma.memo_id
+        WHERE mm.is_active = true and mm.is_archive = false and mm.is_draft = false
+        <if test="referencedMemoId == null">
+            and mm.id in (WITH recursive q AS (select mr.referenced_memo_id , mr.created_date
+            from memo_reference mr
+            where mr.memo_id = #{memoId}
+            UNION ALL
+            select mr2.referenced_memo_id, mr2.created_date
+            from memo_reference mr2
+            join q on mr2.memo_id = q.referenced_memo_id
+            )
+            SELECT q.referenced_memo_id from q
+            where q.referenced_memo_id != #{memoId}
+            union all
+            select #{memoId} as referenced_memo_id)
+        </if>
+        <if test="referencedMemoId != null">
+            and mm.id = #{referencedMemoId}
+        </if>
+        <if test="fiscalYearCode != null">
+            and mm.fiscal_year_code = #{fiscalYearCode}
+        </if>
+        union all
+        SELECT
+        ms.id,
+        ms.status,
+        ms.created_date,
+        ms.remarks,
+        ms.is_active,
+        ms.approver_pis_code,
+        ms.approver_office_code,
+        ms.sender_pis_code,
+        ms.delegated_id,
+        ms.is_transferred,
+        'suggestion' as type,
+        ms.sender_office_code as officeCode
+        FROM memo mm
+        RIGHT JOIN memo_suggestion ms ON mm.id = ms.memo_id
+        WHERE mm.is_active = true and mm.is_archive = false and mm.is_draft = false
+        <if test="referencedMemoId == null">
+            and mm.id in (WITH recursive q AS (select mr.referenced_memo_id , mr.created_date
+            from memo_reference mr
+            where mr.memo_id = #{memoId} and mr.referenced_memo_id is not null and mr.is_attach = false
+            UNION ALL
+            select mr2.referenced_memo_id, mr2.created_date
+            from memo_reference mr2
+            join q on mr2.memo_id = q.referenced_memo_id where mr2.referenced_memo_id is not null and mr2.is_attach = false
+            )
+            SELECT q.referenced_memo_id from q
+            where q.referenced_memo_id != #{memoId}
+            union all
+            select #{memoId} as referenced_memo_id)
+        </if>
+        <if test="referencedMemoId != null">
+            and mm.id = #{referencedMemoId}
+        </if>
+        <if test="fiscalYearCode != null">
+            and mm.fiscal_year_code = #{fiscalYearCode}
+        </if>
+        order by created_date desc
+    </select>
+
+    <select id="getActivityLogWithReferenceTippaniLogAll" resultType="com.gerp.dartachalani.dto.MemoApprovalPojo">
+        SELECT
+        ma.id,
+        ma.status,
+        ma.created_date,
+        ma.remarks,
+        ma.is_active,
+        ma.approver_pis_code,
+        ma.approver_office_code,
+        ma.sender_pis_code,
+        ma.delegated_id,
+        ma.is_transferred,
+        'approval' as type,
+        ma.sender_office_code as officeCode,
+        ma.reverted,
+        ma.memo_id,
+        false as isExternal,
+        ma.is_back as isBack
+        FROM memo mm
+        RIGHT JOIN memo_approval ma ON mm.id = ma.memo_id
+        WHERE mm.is_active = true and mm.is_archive = false and mm.is_draft = false
+        <if test="referencedMemoId == null">
+            and mm.id in ((WITH recursive q AS (select mr.referenced_memo_id
+            from memo_reference mr
+            where mr.memo_id = #{memoId} and mr.referenced_memo_id is not null and mr.is_attach = false and mr.is_active = true
+            UNION ALL
+            select mr2.referenced_memo_id
+            from memo_reference mr2
+            join q on mr2.memo_id = q.referenced_memo_id where mr2.referenced_memo_id is not null and mr2.is_attach = false and mr2.is_active = true
+            )
+            SELECT q.referenced_memo_id from q
+            where q.referenced_memo_id !=#{memoId}
+            union all
+            select #{memoId} as referenced_memo_id)
+            UNION ALL
+            (WITH recursive q AS (select mr.memo_id
+            from memo_reference mr
+            where mr.referenced_memo_id = #{memoId} and mr.referenced_memo_id is not null and mr.is_attach = false and mr.is_active = true
+            UNION ALL
+            select mr2.memo_id
+            from memo_reference mr2
+            join q on mr2.referenced_memo_id = q.memo_id where mr2.referenced_memo_id is not null and mr2.is_attach = false and mr2.is_active = true
+            )
+            SELECT q.memo_id as referenced_memo_id from q
+            where q.memo_id !=#{memoId}))
+        </if>
+        <if test="referencedMemoId != null">
+            and mm.id = #{referencedMemoId}
+        </if>
+        <if test="fiscalYearCode != null">
+            and mm.fiscal_year_code = #{fiscalYearCode}
+        </if>
+        union all
+        SELECT
+        ms.id,
+        ms.status,
+        ms.created_date,
+        ms.remarks,
+        ms.is_active,
+        ms.approver_pis_code,
+        ms.approver_office_code,
+        ms.sender_pis_code,
+        ms.delegated_id,
+        ms.is_transferred,
+        'suggestion' as type,
+        ms.sender_office_code as officeCode,
+        ms.reverted,
+        ms.memo_id,
+        true as isExternal,
+        false as isBack
+        FROM memo mm
+        RIGHT JOIN memo_suggestion ms ON mm.id = ms.memo_id
+        WHERE mm.is_active = true and mm.is_archive = false and mm.is_draft = false
+        <if test="referencedMemoId == null">
+            and mm.id in ((WITH recursive q AS (select mr.referenced_memo_id
+            from memo_reference mr
+            where mr.memo_id = #{memoId} and mr.referenced_memo_id is not null and mr.is_attach = false and mr.is_active = true
+            UNION ALL
+            select mr2.referenced_memo_id
+            from memo_reference mr2
+            join q on mr2.memo_id = q.referenced_memo_id where mr2.referenced_memo_id is not null and mr2.is_attach = false and mr2.is_active = true
+            )
+            SELECT q.referenced_memo_id from q
+            where q.referenced_memo_id !=#{memoId}
+            union all
+            select #{memoId} as referenced_memo_id)
+            UNION ALL
+            (WITH recursive q AS (select mr.memo_id
+            from memo_reference mr
+            where mr.referenced_memo_id = #{memoId} and mr.referenced_memo_id is not null and mr.is_attach = false and mr.is_active = true
+            UNION ALL
+            select mr2.memo_id
+            from memo_reference mr2
+            join q on mr2.referenced_memo_id = q.memo_id where mr2.referenced_memo_id is not null and mr2.is_attach = false and mr2.is_active = true
+            )
+            SELECT q.memo_id as referenced_memo_id from q
+            where q.memo_id !=#{memoId}))
+        </if>
+        <if test="referencedMemoId != null">
+            and mm.id = #{referencedMemoId}
+        </if>
+        <if test="fiscalYearCode != null">
+            and mm.fiscal_year_code = #{fiscalYearCode}
+        </if>
+
+        order by created_date desc
+    </select>
+
+    <select id="getActivityLog" resultType="com.gerp.dartachalani.dto.MemoApprovalPojo">
+        SELECT
+               ma.id,
+               ma.status,
+               ma.created_date,
+               ma.remarks,
+               ma.is_active,
+               ma.approver_pis_code,
+               ma.approver_office_code,
+               ma.sender_pis_code,
+               ma.delegated_id,
+               ma.is_transferred,
+               'approval' as type
+        FROM memo mm
+            RIGHT JOIN memo_approval ma ON mm.id = ma.memo_id
+        WHERE mm.id = #{memoId}
+            union all
+            SELECT
+               ms.id,
+               ms.status,
+               ms.created_date,
+               ms.remarks,
+               ms.is_active,
+               ms.approver_pis_code,
+               ms.approver_office_code,
+               ms.sender_pis_code,
+               ms.delegated_id,
+               ms.is_transferred,
+               'suggestion' as type
+        FROM memo mm
+            RIGHT JOIN memo_suggestion ms ON mm.id = ms.memo_id
+        WHERE mm.id = #{memoId} order by created_date desc
+    </select>
+
+    <select id="getMemoSubjectSearchList" resultType="com.gerp.dartachalani.dto.IdSubjectDto">
+         select  m.id, m.subject  from (
+                               WITH recursive q AS (select mr.referenced_memo_id , mr.created_date
+                                                     from memo_reference mr
+                                                     where mr.memo_id  = #{memoId} and mr.referenced_memo_id is not null and mr.is_attach = false and mr.is_active = true
+                                                    UNION ALL
+                                                    select mr2.referenced_memo_id, mr2.created_date
+                                                     from memo_reference mr2
+                                                              join q on mr2.memo_id = q.referenced_memo_id where mr2.referenced_memo_id is not null and mr2.is_attach = false
+                                                               and mr2.is_active = true
+                                )
+                                SELECT q.referenced_memo_id, q.created_date  from q
+                               where q.referenced_memo_id  != #{memoId}
+                               union all
+                               select #{memoId} as referenced_memo_id, null as created_date
+                               ) t inner join memo m on m.id = t.referenced_memo_id
+                               where m.is_active = true and m.is_archive = false and m.is_draft = false
+                               order by t.created_date desc;
+    </select>
+
+    <select id="getMemoSubjectSearchListAll" resultType="com.gerp.dartachalani.dto.IdSubjectDto">
+          select  m.id, m.subject, tt.created_date  from(
+                              select * from (
+                               WITH recursive q AS (select mr.referenced_memo_id , mr.created_date
+                                                     from memo_reference mr
+                                                     where mr.memo_id  = #{memoId} and mr.referenced_memo_id is not null and mr.is_attach = false and mr.is_active = true
+                                                    UNION ALL
+                                                    select mr2.referenced_memo_id, mr2.created_date
+                                                     from memo_reference mr2
+                                                              join q on mr2.memo_id = q.referenced_memo_id where mr2.referenced_memo_id is not null and mr2.is_attach = false
+                                                               and mr2.is_active = true
+                                )
+                                SELECT q.referenced_memo_id, q.created_date  from q
+                               where q.referenced_memo_id  != #{memoId}
+                               union all
+                               select #{memoId} as referenced_memo_id, null as created_date
+                               ) t
+                               union all
+                               select * from(
+        						WITH RECURSIVE a AS (
+        						SELECT mr.memo_id  as referenced_memo_id, mr.created_date
+        						FROM memo_reference mr
+        						WHERE mr.referenced_memo_id = #{memoId} and mr.is_active = true and mr.referenced_memo_id is not null and mr.is_attach = false
+        						UNION ALL
+        						SELECT d.memo_id  as referenced_memo_id, d.created_date
+        						FROM memo_reference d
+            					INNER JOIN a ON a.referenced_memo_id = d.referenced_memo_id where d.is_active = true and d.referenced_memo_id is not null and d.is_attach = false
+        						)select * from a)
+        						t
+        						) tt inner join memo m on m.id = tt.referenced_memo_id
+        						where m.is_active = true and m.is_archive = false and m.is_draft = false
+        						order by tt.referenced_memo_id desc;
+    </select>
+
+    <select id="getMemoReferenceDocuments" resultType="com.gerp.dartachalani.dto.MemoReferenceDoc">
+        SELECT
+        mdd.memo_id,
+        mdd.document_id,
+        mdd.document_name as name,
+        mdd.document_size as file_size,
+        mdd.pis_code,
+        mdd.delegated_id
+        from (
+        select * from (
+        WITH RECURSIVE a AS (
+        SELECT mr.referenced_memo_id,mr.memo_id
+        FROM memo_reference mr
+        WHERE mr.memo_id = #{memoId} and mr.is_active = true and mr.is_attach = false and referenced_memo_id is not null
+        UNION ALL
+        SELECT d.referenced_memo_id,d.memo_id
+        FROM memo_reference d
+        INNER JOIN a ON a.referenced_memo_id = d.memo_id where d.is_active = true and d.referenced_memo_id is not null and d.is_attach = false
+        )select * from a
+        ) t
+        UNION ALL
+        select * from(
+        WITH RECURSIVE a AS (
+        SELECT mr.memo_id as referenced_memo_id ,mr.memo_id
+        FROM memo_reference mr
+        WHERE mr.referenced_memo_id = #{memoId} and mr.is_active = true and mr.is_attach = false and referenced_memo_id is not null
+        UNION ALL
+        SELECT d.memo_id as referenced_memo_id,d.memo_id
+        FROM memo_reference d
+        INNER JOIN a ON a.memo_id = d.referenced_memo_id where d.is_active = true and d.referenced_memo_id is not null and d.is_attach = false
+        )select * from a)
+        t
+        union all
+        SELECT #{memoId} as referenced_memo_id ,#{memoId} as memo_id
+        )tt
+        INNER JOIN memo mm ON mm.id=tt.referenced_memo_id
+        inner join memo_document_details mdd on mdd.memo_id = tt.referenced_memo_id
+        <if test="referenceMemoId != null">
+            where mdd.memo_id = #{referenceMemoId}
+        </if>
+        order by tt.referenced_memo_id desc
+    </select>
+
+    <select id="getSystemFiles" resultType="com.gerp.dartachalani.dto.systemFiles.SystemFilesDto">
+        select * from (
+        select m.id, m.subject , m.last_modified_date as approvedDate, mr.pis_code, mr.delegated_id, 'tippani' as letterType, mr.created_date
+        from memo_reference mr
+        inner join memo m on mr.referenced_memo_id = m.id
+        where mr.memo_id = #{referenceMemoId} and mr.is_active = true and mr.referenced_memo_id is not null and mr.is_attach = true and m.is_active = true and m.is_archive = false
+        union all
+        select dl.id, dl.subject , dl.last_modified_date as approvedDate, mr.pis_code, mr.delegated_id, 'chalani' as letterType, mr.created_date
+        from memo_reference mr
+        inner join dispatch_letter dl on mr.chalani_reference_id = dl.id
+        where mr.memo_id = #{referenceMemoId} and mr.is_active = true and mr.chalani_reference_id is not null and mr.is_attach = true and dl.is_active = true and dl.is_archive = false
+        union all
+        select rl.id, rl.subject , rl.last_modified_date as approvedDate, mr.pis_code, mr.delegated_id, 'darta' as letterType, mr.created_date
+        from memo_reference mr
+        inner join received_letter rl on mr.darta_reference_id = rl.id
+        where mr.memo_id = #{referenceMemoId} and mr.is_active = true and mr.darta_reference_id is not null and mr.is_attach = true and rl.is_active = true
+        ) t order by t.created_date desc;
+    </select>
+
+    <select id="getMemoReferencedFrom" resultType="Long">
+        select referenced_memo_id from memo_reference mr where mr.memo_id = #{memoId} and mr.referenced_memo_id is not null and mr.is_attach = false limit 1;
+    </select>
+
+    <select id="getFirstSuggestionDetail" resultType="com.gerp.dartachalani.dto.SenderApproverDto">
+        select ms.sender_pis_code as sender , ms.approver_pis_code  as approver
+        from memo_suggestion ms
+        where ms.memo_id = #{memoId}
+        order by created_date limit 1;
+    </select>
+</mapper>

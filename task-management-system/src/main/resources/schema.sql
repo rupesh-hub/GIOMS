@@ -1,0 +1,1 @@
+-- initial query to be run

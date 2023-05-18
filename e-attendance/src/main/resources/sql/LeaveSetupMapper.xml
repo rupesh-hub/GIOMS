@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.LeaveSetupMapper">
+
+    <select id="getAllLeaveSetup" resultType="com.gerp.attendance.Pojo.LeaveSetupPojo">
+    select ls.id,
+    ls.allowed_days_fy,
+    ls.maximum_allowed_accumulation,
+    ls.unlimited_allowed_accumulation,
+    ls.total_allowed_repetition_fy,
+    ls.total_allowed_repetition,
+    ls.office_code,
+    ls.order_value,
+    ls.total_allowed_days,
+    ls.leave_approval_days,
+    ls.maximum_leave_limit_at_once,
+    ls.grace_period,
+    ls.documentation_submission_day,
+    ls.minimum_year_of_services,
+    ls.allowed_monthly,
+    ls.name_en,
+    ls.is_active,
+    ls.short_name_en as shortNameEn,
+    ls.short_name_np as shortNameNp,
+    ls.name_np
+    from leave_setup ls
+    where ls.office_code in
+        <foreach item='item' index='index' collection='officeCode' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+    order by order_value;
+    </select>
+    </mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.EmployeeIrregularAttendanceMapper">
+
+    <select id="getIrregularAttendance" resultType="com.gerp.attendance.Pojo.EmployeeIrregularAttendancePojo">
+      select eia.id,eia.office_code,eia.latest_update_date from employee_irregular_attendance eia where eia.pis_code=#{pisCode} and eia.fiscal_year_code=#{fiscalYear}
+      and eia.shift_id=#{shiftId} and eia.office_code=#{officeCode} and eia.month=#{month} limit 1;
+
+    </select>
+
+<!--    <update id="updateIrregularAttendance">-->
+<!--        update employee_irregular_attendance-->
+<!--    set irregular_days_count=irregular_days_count+1,-->
+<!--        latest_update_date=#{latestUpdateDate}-->
+<!--    where id=#{id};-->
+<!--    </update>-->
+
+
+    <update id="updateIrregularAttendance">
+    update employee_irregular_attendance
+    set
+    irregular_days_count= case
+                           when (#{checkin} > #{shiftCheckin} and #{shiftCheckout} > #{checkout}) then
+                               case when(to_timestamp(EXTRACT(epoch FROM #{checkin} - #{shiftCheckin}))::time > #{officeLateLimit}
+                                and to_timestamp(EXTRACT(epoch FROM #{shiftCheckout} - #{checkout}))::time > #{officeEarlyLimit} )
+                                 and latest_update_date!=#{latestUpdateDate} then
+                                     irregular_days_count+1 else irregular_days_count
+                                   end
+
+                           when(#{checkin} > #{shiftCheckin}) then
+                               case when(to_timestamp(EXTRACT(epoch FROM #{checkin} - #{shiftCheckin}))::time > #{officeLateLimit}) and latest_update_date!=#{latestUpdateDate}then
+                                        irregular_days_count+1 else irregular_days_count
+                                   end
+
+                           when(#{shiftCheckout} > #{checkout})then
+                               case when(to_timestamp(EXTRACT(epoch FROM #{shiftCheckout} - #{checkout}))::time > #{officeEarlyLimit}) and latest_update_date!=#{latestUpdateDate} then
+                                      irregular_days_count+1 else irregular_days_count
+                                   end
+                           else irregular_days_count end,
+
+        latest_update_date=case
+                           when (#{checkin} > #{shiftCheckin} and #{shiftCheckout} > #{checkout}) then
+                               case when(to_timestamp(EXTRACT(epoch FROM #{checkin} - #{shiftCheckin}))::time > #{officeLateLimit}
+                                and to_timestamp(EXTRACT(epoch FROM #{shiftCheckout} - #{checkout}))::time > #{officeEarlyLimit} )
+                                 and latest_update_date!=#{latestUpdateDate} then
+                                    #{latestUpdateDate} else latest_update_date
+                                   end
+
+                           when(#{checkin} > #{shiftCheckin}) then
+                               case when(to_timestamp(EXTRACT(epoch FROM #{checkin} - #{shiftCheckin}))::time > #{officeLateLimit}) and latest_update_date!=#{latestUpdateDate}then
+                                        #{latestUpdateDate} else latest_update_date
+                                   end
+
+                           when(#{shiftCheckout} > #{checkout})then
+                               case when(to_timestamp(EXTRACT(epoch FROM #{shiftCheckout} - #{checkout}))::time > #{officeEarlyLimit}) and latest_update_date!=#{latestUpdateDate} then
+                                      #{latestUpdateDate} else latest_update_date
+                                   end
+                           else latest_update_date end
+        where id=#{id};
+    </update>
+</mapper>

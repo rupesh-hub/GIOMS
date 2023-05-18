@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.tms.mapper.ReportMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.tms.pojo.response.ReportProjectTaskDetailsPojo">
+        <id property="taskId" column="taskId"/>
+        <result property="activityCode" column="activitycode"/>
+        <result property="projectName" column="project_name"/>
+        <result property="taskName" column="taskname"/>
+        <result property="startDateEn" column="stratdateen"/>
+        <result property="startDateNp" column="stratdatenp"/>
+        <result property="endDateEn" column="enddateen"/>
+        <result property="endDateNp" column="enddatenp"/>
+        <result property="status" column="status"/>
+
+        <collection property="progressReportDetails" resultMap="progressTask"/>
+    </resultMap>
+    <resultMap id="approvalReport" type="com.gerp.tms.pojo.response.ApprovalReportDetailPojo">
+       <id property="id" column="id"/>
+        <result property="taskId" column="t_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="activityCode" column="activity_id"/>
+        <result property="status" column="approval_status"/>
+        <result property="taskName" column="task_name"/>
+        <result property="empPiscode" column="created_by"/>
+    </resultMap>
+
+
+    <resultMap id="monitoring" type="com.gerp.tms.pojo.response.MonitoringReportsPojo">
+        <id property="projectId" column="projectid"/>
+        <result property="projectName" column="projectname"/>
+        <result property="activityCode" column="activitycode"/>
+        <result property="budgetExpenditure" column="exbudget"/>
+        <result property="responsibleUnit" column="reponsiblecode" typeHandler="com.gerp.tms.converter.OfficeDetailTyeHandler"/>
+        <collection property="progressReportDetails" resultMap="progressTask"/>
+        <collection property="supportingOffices" resultMap="supportOffice"/>
+    </resultMap>
+    <resultMap id="progressTask" type="com.gerp.tms.pojo.response.ProgressReportDetailsPojo">
+        <id property="id" column="prdId"/>
+        <result property="taskId" column="taskid"/>
+        <result property="taskName" column="taskname"/>
+        <result property="deadLine" column="end_date" typeHandler="com.gerp.tms.converter.DeadLineTyeHandler"/>
+        <result property="remarks" column="taskremarks"/>
+        <result property="employeePisCode" column="created_by"/>
+        <result property="allocatedBudgets" column="totalbudget"/>
+        <collection property="monthsRemarks" resultMap="monthRemarks"/>
+    </resultMap>
+
+    <resultMap id="supportOffice" type="com.gerp.tms.pojo.authorization.SupportOfficePojo">
+        <id property="id" column="supportId"/>
+        <result property="supportingPisOfficeCode" column="officeCode" typeHandler="com.gerp.tms.converter.OfficeDetailTyeHandler"/>
+    </resultMap>
+
+    <resultMap id="monthRemarks" type="com.gerp.tms.pojo.response.MonthsRemarksPojo">
+        <id property="id" column="monthReId"/>
+        <result property="remarks" column="monthRemarks"/>
+        <result property="status" column="monthlyStatus"/>
+        <result property="budget" column="monthlyBudget"/>
+        <association property="month" resultMap="month"/>
+    </resultMap>
+
+    <resultMap id="month" type="com.gerp.tms.pojo.response.MonthsResponsePojo">
+        <id property="id" column="monthsId"/>
+        <result property="nameEn" column="monthNameEn"/>
+        <result property="nameNp" column="monthNameNp"/>
+    </resultMap>
+
+    <select id="getMonitoring" resultMap="monitoring">
+select
+       p.id as projectId,
+        p.project_name as projectName,
+       t.id as taskId,
+        t.task_name as taskName,
+       t.end_date_np as end_date,
+       mr.id as monthReId,
+        mr.remarks as monthRemarks,
+       m.id as monthsId,
+       m.name_np as monthNameNp,
+       m.name_en as monthNameEn,
+       prd.id as prdId,
+       prd.remarks as taskRemarks,
+       prd.budget as exBudget,
+       al.activity_level_ucd as activityCode,
+       so.supporting_pis_office_code as officeCode,
+       so.id as supportId,
+       aa.amount as totalBudget,
+       aa.responsible_code as reponsibleCode
+from project p
+left join task t on p.id = t.project_id
+left join progress_report_detail prd on  prd.task_id =t.id
+left join monthly_remarks mr on mr.progress_report_detail_id = prd.id
+left join months m on m.id = mr.month_id
+left join activity_level al on p.activity_id = al.id
+left join authorization_activity aa on al.id = aa.activity_level_id
+left join support_office so on aa.id = so.authorization_activity_id
+where office_id = #{officeCode}
+    </select>
+
+
+    <select id="getApprovalDetails" resultMap="monitoring">
+select
+       p.id as projectId,
+        p.project_name as projectName,
+       t.id as taskId,
+        t.task_name as taskName,
+       t.end_date_np as end_date,
+       mr.id as monthReId,
+        mr.remarks as monthRemarks,
+       m.id as monthsId,
+       m.name_np as monthNameNp,
+       m.name_en as monthNameEn,
+       prd.id as prdId,
+       prd.remarks as taskRemarks,
+       prd.budget as exBudget,
+       al.activity_level_ucd as activityCode,
+       so.supporting_pis_office_code as officeCode,
+       so.id as supportId,
+       prd.created_by,
+       aa.amount as totalBudget,
+       aa.responsible_code as reponsibleCode
+from project p
+left join task t on p.id = t.project_id
+left join progress_report_detail prd on  prd.task_id =t.id
+left join monthly_remarks mr on mr.progress_report_detail_id = prd.id
+left join months m on m.id = mr.month_id
+left join activity_level al on p.activity_id = al.id
+left join authorization_activity aa on al.id = aa.activity_level_id
+left join support_office so on aa.id = so.authorization_activity_id
+where prd.id = #{id}::INTEGER
+    </select>
+    <select id="getProjectTaskDetail" resultMap="baseResultMap">
+        select
+        t.id as taskId,
+        t.start_date as stratDateEn,
+         t.task_name as taskName,
+         p.project_name as project_name,
+        t.start_date_np as stratDateNp,
+        t.end_date_np as endDateNp,
+        t.end_date as endDateEn,
+        tps.status_name as status,
+        mr.id as monthReId,
+        mr.remarks as monthRemarks,
+        mr.status as monthlyStatus,
+        mr.budget as monthlyBudget,
+       m.id as monthsId,
+       m.name_np as monthNameNp,
+       m.name_en as monthNameEn,
+       prd.id as prdId,
+       prd.remarks as taskRemarks,
+       prd.budget as exBudget,
+        al.activity_level_ucd as activityCode
+         from task t
+        left join project p on p.id = t.project_id
+        left join activity_level al on al.id = p.activity_id
+        left join task_progress_status tps on tps.id = t.progress_status_id
+        left join progress_report_detail prd on  prd.task_id =t.id
+        left join monthly_remarks mr on mr.progress_report_detail_id = prd.id
+        left join months m on m.id = mr.month_id
+        where  t.id = #{taskId}::INTEGER and prd.created_by = #{pisCode}::VARCHAR
+    </select>
+
+    <select id="getToBeApprovalTask" resultMap="approvalReport">
+        select p.project_name, t.task_name,prd.created_by,prd.approval_status,t.id as t_id,p.activity_id, prd.id
+        from task t
+inner join progress_report_detail prd on t.id = prd.task_id
+inner join project p on t.project_id = p.id
+where prd.approver_code = #{pisCode}::VARCHAR
+<if test="status != null ">
+   and prd.approval_status = #{status}::VARCHAR
+</if>
+    </select>
+
+
+</mapper>

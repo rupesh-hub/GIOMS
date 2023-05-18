@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.AdministrativeBodyMapper">
+    <resultMap id="administrativeBodyPojo"
+               type="com.gerp.usermgmt.pojo.organization.administrative.AdministrativeBodyPojo">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name_np" property="nameNp"/>
+        <result column="name_en" property="nameEn"/>
+        <collection property="administrativeLevel"
+                    ofType="com.gerp.usermgmt.pojo.organization.administrative.AdministrativeLevelPojo">
+            <id property="id" column="administration_level_id"/>
+            <result column="administration_level_name_np" property="nameNp"/>
+            <result column="administration_level_name_en" property="nameEn"/>
+            <result column="administration_level_code" property="code"/>
+        </collection>
+    </resultMap>
+
+    <select id="getById" resultMap="administrativeBodyPojo">
+        select a.id,a.code, a.name_np , a.name_en ,
+        al.id as administration_level_id,
+         al.name_np as administration_level_name_np , al.name_en as administration_level_name_en, al.code as administration_level_code
+         from administrative_body a
+         left join administration_level al on a.administration_level_id=al.id where a.id =#{id}
+    </select>
+
+    <select id="getAll" resultType="com.gerp.usermgmt.pojo.organization.administrative.AdministrativeBodyPojo">
+        select a.id,a.code, a.name_np , a.name_en ,
+        al.id as administration_level_id,
+         al.name_np as administration_level_name_np , al.name_en as administration_level_name_en, al.code as administration_level_code
+         from administrative_body a
+         left join administration_level al on a.administration_level_id=al.id
+    </select>
+</mapper>

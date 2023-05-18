@@ -1,0 +1,1543 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.LeavePolicyMapper">
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.LeavePolicyPojo">
+    </resultMap>
+
+    <select id="getPolicyByNameAndEmpCode" resultMap="baseResultMap">
+
+        select case
+                   when (lp.total_allowed_days >= #{days} and lp.max_allowed_accumulation >= #{days} and
+                         ((select count(*)
+                           from leave_request lr
+                                    inner join leave_request_detail lrd on lrd.leave_request_id = lr.id
+                                    inner join leave_policy lp on lp.id = lrd.leave_policy_id
+                           where
+                               <!--emp_pis_code = #{pisCode}-->
+                            case
+                            when lr.applied_for_others = true
+                            then
+                            lrd.pis_code = #{pisCode}
+                            else
+                            lr.emp_pis_code = #{pisCode}
+                            end
+                             and lrd.status = 'A')
+        <![CDATA[ < lp.total_allowed_repetition)]]>) then true
+                   else false end AS validateRequest
+        from leave_policy lp
+        where lp.id = #{id}
+
+    </select>
+
+    <select id="validateLeave" resultType="java.lang.Boolean">
+        select case
+                   when (lp.total_allowed_repetition!=0 and lp.total_allowed_repetition_fy!=0) then
+                       (case
+                            when (
+                                        (select count(*)
+                                         from leave_request_detail lrd
+                                                  left join leave_request lr on lrd.leave_request_id = lr.id
+                                         where lrd.leave_policy_id = #{policyId}
+                                           and
+                                             <!--lr.emp_pis_code = #{pisCode}-->
+                                            case
+                                            when lr.applied_for_others = true
+                                            then
+                                            lrd.pis_code = #{pisCode}
+                                            else
+                                            lr.emp_pis_code = #{pisCode}
+                                            end
+                                           and lrd.status = 'P'
+                                           and lr.year = #{year}) <![CDATA[<]]> (lp.total_allowed_repetition_fy)
+                                    and
+                                        lp.total_allowed_repetition > (select count(*)
+                                                                       from leave_request_detail lrd
+                                                                                left join leave_request lr on lrd.leave_request_id = lr.id
+                                                                       where lrd.leave_policy_id = #{policyId}
+                                                                         and
+                                                                          <!-- lr.emp_pis_code = #{pisCode}-->
+                                                                            case
+                                                                            when lr.applied_for_others = true
+                                                                            then
+                                                                            lrd.pis_code = #{pisCode}
+                                                                            else
+                                                                            lr.emp_pis_code = #{pisCode}
+                                                                            end
+                                                                         and lrd.status = 'P'
+                                                                         and lr.year = #{year})
+                                )
+                                then true
+                            else false end
+                           )
+
+
+                   when (lp.total_allowed_repetition_fy !=0) then
+                       (case
+                            when (
+                                    (select count(*)
+                                     from leave_request_detail lrd
+                                              left join leave_request lr on lrd.leave_request_id = lr.id
+                                     where lrd.leave_policy_id = #{policyId}
+                                       and
+                                         <!--lr.emp_pis_code = #{pisCode}-->
+                                        case
+                                        when lr.applied_for_others = true
+                                        then
+                                        lrd.pis_code = #{pisCode}
+                                        else
+                                        lr.emp_pis_code = #{pisCode}
+                                        end
+                                       and lrd.status = 'P'
+                                       and lr.year = #{year}) <![CDATA[<]]> (lp.total_allowed_repetition_fy)
+                                )
+                                then true
+                            else false end
+                           )
+
+                   when (lp.total_allowed_repetition !=0) then
+                       (case
+                            when (lp.total_allowed_repetition<![CDATA[ >]]> (select count(*)
+                                                                             from leave_request_detail lrd
+                                                                                      left join leave_request lr on lrd.leave_request_id = lr.id
+                                                                             where lrd.leave_policy_id = #{policyId}
+                                                                               and
+                                                                               <!--  lr.emp_pis_code = #{pisCode}-->
+                                                                                case
+                                                                                when lr.applied_for_others = true
+                                                                                then
+                                                                                lrd.pis_code = #{pisCode}
+                                                                                else
+                                                                                lr.emp_pis_code = #{pisCode}
+                                                                                end
+                                                                                 and lrd.status = 'P'
+                                                                               and lr.year = #{year}))
+                                then true
+                            else false end
+                           )
+                   end as checkdata
+
+        from leave_policy lp
+        where lp.id = #{policyId}
+    </select>
+
+
+    <select id="checkForGender" resultType="java.lang.Boolean">
+        select case when (l.gender = e.gender) then true else false end as checkGender
+        from (select gender
+              from leave_policy lp
+              where lp.id = #{policyId}) l,
+             (select gender from employee e where pis_code = #{pisCode}) e;
+    </select>
+
+
+    <select id="getRepetitionValidation" resultType="java.lang.Boolean">
+        select case
+                   when (lp.total_allowed_repetition!=0 and lp.total_allowed_repetition_fy!=0) then
+                       (case
+                            when (
+                                        (select count(*)
+                                         from leave_request_detail lrd
+                                                  left join leave_request lr on lrd.leave_request_id = lr.id
+                                         where lrd.leave_policy_id = #{policyId}
+                                           and
+                                            <!-- lr.emp_pis_code = #{pisCode}-->
+                                           case
+                                           when lr.applied_for_others = true
+                                           then
+                                           lrd.pis_code = #{pisCode}
+                                           else
+                                           lr.emp_pis_code = #{pisCode}
+                                           end
+                                           and lrd.status = 'P'
+                                           and lr.year = #{year}) <![CDATA[<]]> (lp.total_allowed_repetition_fy) and
+                                        (lp.total_allowed_repetition > rl.repetition)
+                                )
+                                then true
+                            else false end
+                           )
+
+                   when (lp.total_allowed_repetition_fy !=0) then
+                       (case
+                            when (
+                                    (select count(*)
+                                     from leave_request_detail lrd
+                                              left join leave_request lr on lrd.leave_request_id = lr.id
+                                     where lrd.leave_policy_id = #{policyId}
+                                       and
+                                        <!-- lr.emp_pis_code = #{pisCode}-->
+                                        case
+                                        when lr.applied_for_others = true
+                                        then
+                                        lrd.pis_code = #{pisCode}
+                                        else
+                                        lr.emp_pis_code = #{pisCode}
+                                        end
+                                       and lr.year = #{year}
+                                       and lrd.status = 'P') <![CDATA[<]]> (lp.total_allowed_repetition_fy)
+                                )
+                                then true
+                            else false end
+                           )
+
+                   when (lp.total_allowed_repetition !=0) then
+                       (case
+                            when (lp.total_allowed_repetition<![CDATA[ >]]> rl.repetition)
+                                then true
+                            else false end
+                           )
+                   end as checkdata
+
+        from leave_policy lp
+                 left join remaining_leave rl on lp.id = rl.leave_policy_id
+        where rl.pis_code = #{pisCode}
+          and rl.leave_policy_id = #{policyId}
+          and rl.year = #{year};
+    </select>
+
+
+    <select id="getMaximumDays" resultType="java.lang.Long">
+        select case
+                   when (lp.total_allowed_days_fy!=0) then
+                       lp.total_allowed_days_fy
+
+                   when (lp.total_allowed_days !=0) then
+                       lp.total_allowed_days
+                   end as maxdays
+
+        from leave_policy lp
+        where lp.id = #{policyId}
+    </select>
+
+    <select id="getHomeLeaveAllowedDays" resultType="java.lang.Double">
+        select case when
+        ((#{accumulatedDays}+(count(*)/12))>#{maximumAllocatedDays} and #{maximumAllocatedDays}!=0) then
+        (#{accumulatedDays}+(count(*)/12))
+        else (#{accumulatedDays}+(count(*)/12)) end
+        from
+        (select ea.date_en
+        from employee_attendance ea
+        where
+        ea.attendance_status in ('DEVICE','KAAJ','MA')
+        and
+        ea.pis_code=#{pisCode}
+        and ea.date_en between #{empJoinDate} and current_date
+        and ea.office_code=#{officeCode}
+
+        union distinct
+        select ea.date_en
+        from employee_attendance ea
+        where
+        ea.is_holiday=true
+        and ea.date_en between #{empJoinDate} and current_date
+        and ea.pis_code=#{pisCode}
+        and ea.office_code=#{officeCode}
+        union distinct
+        select distinct generate_series(l.fromDate,
+        l.toDate, '1 day'::interval)::date i from
+        (select
+        case when (#{empJoinDate}>=lrd.from_date_en) then #{empJoinDate} else lrd.from_date_en end as fromDate,
+        case when(lrd.to_date_en >= current_date ) then current_date else lrd.to_date_en end as toDate
+        from leave_request lr
+        left join leave_request_detail lrd
+        on lr.id=lrd.leave_request_id
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        left join leave_setup ls on lp.leave_setup_id = ls.id
+        where lr.is_holiday=false
+        and lrd.status in
+        <foreach item="item" index="index" collection="leaveStatus"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="leaveId!=null">
+            and lrd.id not in (#{leaveId})
+        </if>
+        and trim(lower(ls.name_en)) in
+        ('casual leave','sick leave','festival leave','maternity leave','paternity leave','mourning leave','obsequies
+        leave')
+        and lrd.from_date_en between #{empJoinDate} and current_date
+        and
+        <!--lr.emp_pis_code=#{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        )l)d;
+    </select>
+
+    <!--    <select id="getHomeLeaveAllowedDays" resultType="Long">-->
+    <!--     select case when-->
+    <!--             ((#{accumulatedDays}+(count(*)/12))>#{maximumAllocatedDays} and #{maximumAllocatedDays}!=0) then #{maximumAllocatedDays}-->
+    <!--         else (#{accumulatedDays}+(count(*)/12)) end-->
+    <!--      from-->
+    <!--    (select ea.date_en-->
+    <!--     from employee_attendance ea-->
+    <!--     where-->
+    <!--             ea.attendance_status in ('DEVICE','KAAJ','MA')-->
+    <!--       and-->
+    <!--             ea.pis_code=#{pisCode}-->
+    <!--       and ea.date_en between #{empJoinDate} and current_date-->
+    <!--       and ea.office_code=#{officeCode}-->
+
+    <!--     union distinct-->
+    <!--     select ea.date_en-->
+    <!--     from employee_attendance ea-->
+    <!--     where-->
+    <!--             ea.is_holiday=true-->
+    <!--        and ea.date_en between #{empJoinDate} and current_date-->
+    <!--       and ea.pis_code=#{pisCode}-->
+    <!--       and ea.office_code=#{officeCode}-->
+    <!--     union distinct-->
+    <!--     select distinct generate_series(l.fromDate,-->
+    <!--                                     l.toDate, '1 day'::interval)::date i from-->
+    <!--         (select-->
+    <!--              case when (#{empJoinDate}>=lrd.from_date_en) then #{empJoinDate} else lrd.from_date_en end as fromDate,-->
+    <!--              case when(lrd.to_date_en >= current_date ) then current_date else lrd.to_date_en end as toDate-->
+    <!--          from leave_request lr-->
+    <!--                   left join leave_request_detail lrd-->
+    <!--                             on lr.id=lrd.leave_request_id-->
+    <!--                   left join leave_policy lp on lrd.leave_policy_id = lp.id-->
+    <!--                   left join leave_setup ls on lp.leave_setup_id = ls.id-->
+    <!--          where lr.is_holiday=false-->
+    <!--        and lrd.status in-->
+    <!--        <foreach item="item" index="index" collection="leaveStatus"-->
+    <!--                 open="(" separator="," close=")">-->
+    <!--            #{item}-->
+    <!--        </foreach>-->
+    <!--      and lower(ls.name_en) in-->
+    <!--      ('casual leave','sick leave','maternity leave','paternity leave','mourning leave')-->
+    <!--   and lr.emp_pis_code=#{pisCode})l)d;-->
+    <!--    </select>-->
+
+
+    <select id="getHomeLeaveWithAdditional" resultType="com.gerp.attendance.Pojo.HomeLeavePojo">
+        select
+            case when(((count(*)+#{homeLeaveAdditional})%12)=0 ) then
+        0
+        else ((count(*)+#{homeLeaveAdditional})%12) end as additionalLeave,
+      (count(*)+#{homeLeaveAdditional})/12 as homeLeaveAccumulated
+        from
+        (select distinct ea.date_en
+        from employee_attendance ea
+        where
+        ea.attendance_status in ('DEVICE','KAAJ','MA')
+        and
+        ea.pis_code=#{pisCode}
+        and ea.date_en between #{empJoinDate} and #{latestDate}
+        <!--and ea.office_code=#{officeCode}-->
+
+        union distinct
+        select ea.date_en
+        from employee_attendance ea
+        where
+        ea.is_holiday=true
+        and ea.pis_code=#{pisCode}
+        and ea.date_en between #{empJoinDate} and #{latestDate}
+        <!--and ea.office_code=#{officeCode}-->
+        union distinct
+        select distinct generate_series(l.fromDate,
+        l.toDate, '1 day'::interval)::date i from
+        (select
+        case when (#{empJoinDate}>=lrd.from_date_en) then #{empJoinDate} else lrd.from_date_en end as fromDate,
+        case when(lrd.to_date_en >= #{latestDate}) then #{latestDate} else lrd.to_date_en end as toDate
+        from leave_request lr
+        left join leave_request_detail lrd
+        on lr.id=lrd.leave_request_id
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        left join leave_setup ls on lp.leave_setup_id = ls.id
+        where lr.is_holiday=false
+        and lrd.status='A'
+        and lrd.from_date_en between #{empJoinDate} and #{latestDate}
+        and trim(lower(ls.name_en)) in
+        ('casual leave','sick leave','festival leave','maternity leave','paternity leave','mourning leave','obsequies leave')
+        and
+        <!--lr.emp_pis_code=#{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        )l)d;
+    </select>
+
+    <select id="getHomeLeave" resultType="java.lang.Double">
+        select (count(*) + #{homeLeaveAdditional}) / 12
+        from (select ea.date_en
+              from employee_attendance ea
+              where ea.attendance_status in ('DEVICE', 'KAAJ', 'MA')
+                and ea.pis_code = #{pisCode}
+                and ea.date_en between #{empJoinDate} and #{latestDate}
+                <!--and ea.office_code = #{officeCode}-->
+
+              union
+              distinct
+              select ea.date_en
+              from employee_attendance ea
+              where
+                  ea.is_holiday= true
+                and ea.pis_code=#{pisCode}
+                and ea.date_en between #{empJoinDate}
+                and #{latestDate}
+                <!--and ea.office_code=#{officeCode}-->
+              union
+              distinct
+              select distinct generate_series(l.fromDate,
+                  l.toDate, '1 day':: interval):: date i
+              from
+                  (select
+                  case when (#{empJoinDate}>=lrd.from_date_en) then #{empJoinDate} else lrd.from_date_en end as fromDate,
+                  case when (lrd.to_date_en >= #{latestDate} ) then #{latestDate} else lrd.to_date_en end as toDate
+                  from leave_request lr
+                  left join leave_request_detail lrd
+                  on lr.id=lrd.leave_request_id
+                  left join leave_policy lp on lrd.leave_policy_id = lp.id
+                  left join leave_setup ls on lp.leave_setup_id = ls.id
+                  where lr.is_holiday= false
+                  and lrd.status='A'
+                  and lrd.from_date_en between #{empJoinDate} and #{latestDate}
+                  and trim (lower (ls.name_en)) in
+                  ('casual leave', 'sick leave', 'festival leave', 'maternity leave', 'paternity leave', 'mourning leave', 'obsequies leave')
+                  and
+              <!--lr.emp_pis_code=#{pisCode}-->
+                case
+                when lr.applied_for_others = true
+                then
+                lrd.pis_code = #{pisCode}
+                else
+                lr.emp_pis_code = #{pisCode}
+                end
+                  ) l) d;
+    </select>
+
+    <select id="getHomeLeaveAllowedDaysForNew" resultType="java.lang.Double">
+        select case when
+        (((#{empJoinDays}-count(*))/12)>#{maximumAllocatedDays} and #{maximumAllocatedDays}!=0) then
+        #{maximumAllocatedDays}
+        else (#{empJoinDays}-count(*))/12 end
+        from
+        (select ea.date_en
+        from employee_attendance ea
+        where
+        ea.attendance_status in ('DEVICE','KAAJ','MA')
+        and
+        ea.pis_code=#{pisCode}
+        and ea.date_en between #{empJoinDate} and current_date
+        <!--and ea.office_code=#{officeCode}-->
+
+        union distinct
+        select ea.date_en
+        from employee_attendance ea
+        where
+        ea.is_holiday=true
+        and ea.date_en between #{empJoinDate} and current_date
+        and ea.pis_code=#{pisCode}
+        and ea.office_code=#{officeCode}
+        union distinct
+        select distinct generate_series(l.fromDate,
+        l.toDate, '1 day'::interval)::date i from
+        (select
+        case when (#{empJoinDate}>=lrd.from_date_en) then #{empJoinDate} else lrd.from_date_en end as fromDate,
+        case when(lrd.to_date_en >= current_date ) then current_date else lrd.to_date_en end as toDate
+        from leave_request lr
+        left join leave_request_detail lrd
+        on lr.id=lrd.leave_request_id
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        left join leave_setup ls on lp.leave_setup_id = ls.id
+        where lr.is_holiday=false
+        and lrd.status in
+        <foreach item="item" index="index" collection="leaveStatus"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and trim(lower(ls.name_en)) in
+        ('casual leave','sick leave','festival leave','maternity leave','paternity leave','mourning leave','obsequies
+        leave')
+        and lrd.from_date_en between #{empJoinDate} and current_date
+        and
+        <!--lr.emp_pis_code=#{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        )l)d;
+    </select>
+
+    <select id="getMaxDays" resultType="java.lang.Double">
+        select case
+                   when (lp.total_allowed_days_fy!=0) then
+                       (case
+                            when (rl.accumulated_leave_fy is not null and rl.accumulated_leave_fy !=0)
+                                then (coalesce(sum(rl.accumulated_leave_fy), 0) +
+                                      coalesce(sum(lp.total_allowed_days_fy - rl.leave_taken_fy), 0))
+
+
+                            when (rl.accumulated_leave_fy is null or rl.accumulated_leave_fy = 0)
+                                then (coalesce(sum(lp.total_allowed_days_fy), 0) -
+                                      coalesce(sum(rl.leave_taken_fy), 0)) end
+                           )
+
+                   when (lp.total_allowed_days !=0) then
+                           coalesce(sum(lp.total_allowed_days), 0) - coalesce(sum(rl.leave_taken), 0)
+                   end as maxdays
+
+        from leave_policy lp
+                 left join remaining_leave rl on lp.id = rl.leave_policy_id
+        where rl.leave_policy_id = #{policyId}
+          and rl.pis_code = #{pisCode}
+          and rl.year = #{year}
+          and rl.is_active = true
+        group by lp.total_allowed_days_fy, lp.carry_forward, lp.total_allowed_days, rl.accumulated_leave_fy,
+                 rl.accumulated_leave_fy;
+    </select>
+
+    <select id="checkForTotalAllowed" resultType="java.lang.Boolean">
+        select case when (coalesce(sum((lrd.actual_leave_days))) + 0) is null then
+        true
+        when (coalesce(sum((lrd.actual_leave_days))) + coalesce((#{days}),0) <![CDATA[<=]]>
+        #{maxDays}) then true else false end
+        As "allowedDays"
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        where
+            <!--lr.emp_pis_code= #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+
+          and lp.id= #{policyId} and lrd.status='P'
+        <if test="leaveId !=null">
+            and lrd.id not in (#{leaveId})
+        </if>
+        and (lrd.from_date_en between #{fromDateEn} and #{toDateEn}
+        or lrd.to_date_en between #{fromDateEn} and #{toDateEn});
+    </select>
+    <!--    todo above code remove sum-->
+    <!--    select case when (coalesce(sum((lrd.actual_leave_days))) + coalesce(sum(0),0)) is null then-->
+    <!--    true-->
+    <!--    when (coalesce(sum((lrd.actual_leave_days))) + coalesce(sum(#{days}),0) <![CDATA[<=]]>-->
+    <!--    todo above code remove sum-->
+    <select id="checkForTravelDays" resultType="java.lang.Long">
+        select count(*)
+        from leave_request lr
+                 left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        where lr.year = #{year}
+          and lrd.leave_policy_id = #{policyId}
+
+          and
+            <!--lr.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+          and lrd.status in ('A', 'P')
+          and lrd.travel_days is not null
+    </select>
+
+    <!--    <select id="getDeductHoliday" resultType="int">-->
+    <!--    select COALESCE(SUM(pcns.periodicHoliday),0) + COALESCE(SUM(phc.specificHoliday),0) + COALESCE(SUM(sh.dayorder),0)  from-->
+    <!--   (select count(*) as periodicHoliday from-->
+    <!--(select i::date as dates,extract(dow from i::date) as dayOrder from-->
+    <!--    (select distinct  generate_series(b.fromDate,-->
+    <!--                                                   b.toDate, '1 day'::interval) i from-->
+    <!--(select case when (#{fromDate}>=ph.from_date_en) then #{fromDate} else ph.from_date_en end as fromDate,-->
+    <!--       case when(ph.to_date_en >=#{toDate}) then #{toDate} else ph.to_date_en end as toDate-->
+    <!--       from-->
+    <!--    public_holiday puh left join-->
+    <!--    periodic_holiday ph on puh.id = ph.public_holiday_id-->
+    <!--where puh.is_active=true and ph.fiscal_year_code=#{fiscalYear} and ph.is_active=true and-->
+    <!--      ph.is_specific_holiday=false and-->
+    <!--        puh.office_code in-->
+    <!--        <foreach item="item" index="index" collection="officeCode"-->
+    <!--                 open="(" separator="," close=")">-->
+    <!--            #{item}-->
+    <!--        </foreach>-->
+    <!--    and ((ph.from_date_en between #{fromDate} and #{toDate})-->
+    <!--    or(ph.to_date_en between #{fromDate} and #{toDate})))as b) as f) as p  where p.dayOrder not in (-->
+    <!--        select distinct sdc.day_order as dayorder-->
+    <!--        from-->
+    <!--            shift s left join-->
+    <!--            shift_day_config sdc on s.id = sdc.shift_id where sdc.is_weekend=true and-->
+    <!--                sdc.shift_id in-->
+    <!--        <foreach item="item" index="index" collection="shiftId"-->
+    <!--                 open="(" separator="," close=")">-->
+    <!--            #{item}-->
+    <!--        </foreach>-->
+    <!--    ))as pcns,-->
+    <!--        (select count(*) as specificHoliday from-->
+    <!--        (select i::date as dates,extract(dow from i::date) as dayOrder from-->
+    <!--        (select distinct  generate_series(b.fromDate,-->
+    <!--        b.toDate, '1 day'::interval) i from-->
+    <!--        (select-->
+    <!--         c.from_date_en as fromDate, c.to_date_en as toDate-->
+    <!--        from-->
+    <!--        public_holiday puh left join-->
+    <!--        periodic_holiday ph on puh.id = ph.public_holiday_id-->
+    <!--        left join (-->
+    <!--        select lrd.periodic_holiday_id as periodicHolidayId,lrd.from_date_en,lrd.to_date_en-->
+    <!--        from-->
+    <!--        leave_request_detail lrd left join-->
+    <!--        leave_request lr on lrd.leave_request_id = lr.id-->
+    <!--        where lr.is_holiday=true and lr.emp_pis_code=#{pisCode} and lrd.status='A'-->
+    <!--        )as c on c.periodicHolidayId=ph.id-->
+    <!--        where puh.is_active=true and ph.fiscal_year_code=#{fiscalYear} and ph.is_active=true and-->
+    <!--        ph.is_specific_holiday=true and-->
+    <!--        puh.office_code in-->
+    <!--        <foreach item="item" index="index" collection="officeCode"-->
+    <!--                 open="(" separator="," close=")">-->
+    <!--            #{item}-->
+    <!--        </foreach>-->
+    <!--        and ((ph.from_date_en between #{fromDate} and #{toDate})-->
+    <!--        or(ph.to_date_en between #{fromDate} and #{toDate}))) as b) as f) as p  where p.dayOrder not in (-->
+    <!--        select distinct sdc.day_order as dayorder-->
+    <!--        from-->
+    <!--        shift s left join-->
+    <!--        shift_day_config sdc on s.id = sdc.shift_id where sdc.is_weekend=true and-->
+    <!--        sdc.shift_id in-->
+    <!--        <foreach item="item" index="index" collection="shiftId"-->
+    <!--                 open="(" separator="," close=")">-->
+    <!--            #{item}-->
+    <!--        </foreach>-->
+    <!--        ))as phc,-->
+    <!--        (select count(distinct sdc.day_order) as dayorder-->
+    <!--        from-->
+    <!--        shift s left join-->
+    <!--        shift_day_config sdc on s.id = sdc.shift_id where sdc.is_weekend=true and-->
+    <!--        sdc.shift_id in-->
+    <!--        <foreach item="item" index="index" collection="shiftId"-->
+    <!--                 open="(" separator="," close=")">-->
+    <!--            #{item}-->
+    <!--        </foreach>-->
+    <!--        )as sh;-->
+    <!--    </select>-->
+
+
+    <select id="getDeductHoliday" resultType="int">
+        select COALESCE(SUM(pcns.periodicHoliday),0) + COALESCE(SUM(phc.specificHoliday),0) +
+        COALESCE(SUM(sh.dayorder),0) from
+        (select count(*) as periodicHoliday from
+        (select i::date as dates,extract(dow from i::date) as dayOrder from
+        (select distinct generate_series(b.fromDate,
+        b.toDate, '1 day'::interval) i from
+        (select case when (#{fromDate}>=ph.from_date_en) then #{fromDate} else ph.from_date_en end as fromDate,
+        case when(ph.to_date_en >=#{toDate}) then #{toDate} else ph.to_date_en end as toDate
+        from
+        public_holiday puh left join
+        periodic_holiday ph on puh.id = ph.public_holiday_id
+        where puh.is_active=true and ph.fiscal_year_code=#{fiscalYear} and ph.is_active=true and
+        ph.is_specific_holiday=false and
+        puh.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and ((ph.from_date_en between #{fromDate} and #{toDate})
+        or(ph.to_date_en between #{fromDate} and #{toDate})))as b) as f) as p where p.dayOrder not in (
+        select distinct sdc.day_order as dayorder
+        from
+        shift s left join
+        shift_day_config sdc on s.id = sdc.shift_id where sdc.is_weekend=true and
+        sdc.shift_id in
+        <foreach item="item" index="index" collection="shiftId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ))as pcns,
+        (select count(*) as specificHoliday from
+        (select i::date as dates,extract(dow from i::date) as dayOrder from
+        (select distinct generate_series(b.fromDate,
+        b.toDate, '1 day'::interval) i from
+        (select
+        c.from_date_en as fromDate, c.to_date_en as toDate
+        from
+        public_holiday puh left join
+        periodic_holiday ph on puh.id = ph.public_holiday_id
+        left join (
+        select lrd.periodic_holiday_id as periodicHolidayId,lrd.from_date_en,lrd.to_date_en
+        from
+        leave_request_detail lrd left join
+        leave_request lr on lrd.leave_request_id = lr.id
+        where lr.is_holiday=true
+          and
+            <!--  lr.emp_pis_code=#{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+          and lrd.status='A'
+        )as c on c.periodicHolidayId=ph.id
+
+        where puh.is_active=true and ph.fiscal_year_code=#{fiscalYear} and ph.is_active=true and
+        ph.is_specific_holiday=true and
+        puh.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and ((ph.from_date_en between #{fromDate} and #{toDate})
+        or(ph.to_date_en between #{fromDate} and #{toDate}))) as b) as f) as p where p.dayOrder not in (
+        select distinct sdc.day_order as dayorder
+        from
+        shift s left join
+        shift_day_config sdc on s.id = sdc.shift_id where sdc.is_weekend=true and
+        sdc.shift_id in
+        <foreach item="item" index="index" collection="shiftId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ))as phc,
+        (select count(distinct sdc.day_order) as dayorder
+        from
+        shift s left join
+        shift_day_config sdc on s.id = sdc.shift_id where sdc.is_weekend=true and
+        sdc.shift_id in
+        <foreach item="item" index="index" collection="shiftId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and sdc.day_order in (
+        select extract(dow from i::date) from generate_series(#{fromDate},
+        #{toDate}, '1 day'::interval) i
+        )
+        )as sh;
+    </select>
+
+    <select id="getPreviousLeave" resultType="java.lang.Long">
+        select count(*)
+        from leave_request lr
+                 inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                 left join leave_policy lp on lrd.leave_policy_id = lp.id
+        where
+--             lr.emp_pis_code = #{pisCode}
+            case
+        when lr.applied_for_others = true
+        then
+            lrd.pis_code = #{pisCode}
+            else
+            lr.emp_pis_code = #{pisCode}
+        end
+          and lp.id = #{policyId};
+    </select>
+
+
+    <select id="getNewAccumulatedLeave" resultType="java.lang.Double">
+        select case
+                   when (b.maximumAccumulated) then
+                       case
+                           when (b.allowedAccumulation!=0) then
+                               case
+                                   when ((coalesce(b.accumulatedLeaveFy, 0) + coalesce(b.accumulatedLeave, 0) +
+                                          coalesce(b.additionalLeave, 0)) <![CDATA[<=]]> b.allowedAccumulation)
+                                       then (coalesce(b.accumulatedLeaveFy, 0) + coalesce(b.accumulatedLeave, 0) +
+                                             coalesce(b.additionalLeave, 0))
+                                   else b.allowedAccumulation end
+                           else b.allowedAccumulation end
+
+                   when (b.unlimitedAccumulated) then
+                       (coalesce(b.accumulatedLeaveFy, 0) +
+                        (coalesce(b.totalAllowedDays, 0) - coalesce(b.leaveTakenFy, 0)))
+                   else 0 end
+                   as newAccumulatedLeave
+        from (select rl.accumulated_leave_fy           as accumulatedLeaveFy,
+                     rl.accumulated_leave              as accumulatedLeave,
+                     rl.leave_taken_fy                 as leaveTakenFy,
+                     rl.home_leave_additional          as additionalLeave,
+                     rl.remaining_leave                as totalLeaveTaken,
+                     lp.total_allowed_days_fy          as totalAllowedDays,
+                     lp.carry_forward                  as carryForward,
+                     lp.max_allowed_accumulation       as allowedAccumulation,
+                     ls.maximum_allowed_accumulation   as maximumAccumulated,
+                     ls.unlimited_allowed_accumulation as unlimitedAccumulated
+
+              from remaining_leave rl
+                       left join leave_policy lp on rl.leave_policy_id = lp.id
+                       left join leave_setup ls on lp.leave_setup_id = ls.id
+              where rl.pis_code = #{pisCode}
+                and rl.leave_policy_id = #{policyId}
+                and rl.year = #{year}
+                and rl.is_active = true
+                and lp.is_active = true
+                and ls.is_active = true) as b;
+    </select>
+
+    <select id="getPrevAccumulatedLeave" resultType="com.gerp.attendance.Pojo.PrevLeavePolicyPojo">
+        select (coalesce(b.additionalLeave, 0)) as preAdditionalDay,
+            case
+                   when (b.maximumAccumulated) then
+                       case
+                           when (b.allowedAccumulation!=0) then
+                               case
+                                   when ((coalesce(b.accumulatedLeaveFy, 0) + coalesce(b.accumulatedLeave, 0)) <![CDATA[<=]]> b.allowedAccumulation)
+                                       then (coalesce(b.accumulatedLeaveFy, 0) + coalesce(b.accumulatedLeave, 0) )
+                                   else b.allowedAccumulation end
+                           else b.allowedAccumulation end
+
+                   when (b.unlimitedAccumulated) then
+                       (coalesce(b.accumulatedLeaveFy, 0) +
+                        (coalesce(b.totalAllowedDays, 0) - coalesce(b.leaveTakenFy, 0)))
+                   else 0 end
+                   as preAccumulatedLeave,
+               case
+                   when (b.maximumAccumulated) then
+                       case
+                           when (b.allowedAccumulation!=0) then
+                               case
+                                   when ((coalesce(b.accumulatedLeaveFy, 0) + coalesce(b.accumulatedLeave, 0) ) > b.allowedAccumulation)
+                                       then (coalesce(b.accumulatedLeaveFy, 0) + coalesce(b.accumulatedLeave, 0))-b.allowedAccumulation
+                                   else 0 end
+                           else 0 end
+                   else 0 end
+                   as preExtraAccumulatedLeave
+        from (select rl.accumulated_leave_fy           as accumulatedLeaveFy,
+                     rl.accumulated_leave              as accumulatedLeave,
+                     rl.leave_taken_fy                 as leaveTakenFy,
+                     rl.home_leave_additional          as additionalLeave,
+                     rl.remaining_leave                as totalLeaveTaken,
+                     lp.total_allowed_days_fy          as totalAllowedDays,
+                     lp.carry_forward                  as carryForward,
+                     lp.max_allowed_accumulation       as allowedAccumulation,
+                     ls.maximum_allowed_accumulation   as maximumAccumulated,
+                     ls.unlimited_allowed_accumulation as unlimitedAccumulated
+
+              from remaining_leave rl
+                       left join leave_policy lp on rl.leave_policy_id = lp.id
+                       left join leave_setup ls on lp.leave_setup_id = ls.id
+              where rl.pis_code = #{pisCode}
+                and rl.leave_policy_id = #{policyId}
+                and rl.year = #{year}
+                and rl.is_active = true
+                and lp.is_active = true
+                and ls.is_active = true) as b;
+    </select>
+
+    <!--    <select id="getNewAccumulatedLeave" resultType="java.lang.Double">-->
+    <!--    select  case-->
+    <!--    when (b.maxAccumulation!=0)-->
+    <!--    then-->
+    <!--    case when((b.accumulatedLeave+(b.totalAllowedDays-b.leaveTakenFy)) <![CDATA[<=]]> b.maxAccumulation)-->
+    <!--    then (b.accumulatedLeave+(b.totalAllowedDays-b.leaveTakenFy)) else b.maxAccumulation end-->
+    <!--    else (b.accumulatedLeave+(b.totalAllowedDays-b.leaveTakenFy))-->
+    <!--    end as newAccumulatedLeave-->
+
+    <!--    from-->
+    <!--    (select rl.accumulated_leave_fy as accumulatedLeave,-->
+    <!--    rl.leave_taken_fy as leaveTakenFy,-->
+    <!--    ls.unlimited_allowed_accumulation as unlimitedAccumulation,-->
+    <!--    case when(ls.unlimited_allowed_accumulation or ls.maximum_allowed_accumulation) then-->
+    <!--    case when ((sum(DATE_PART('day', '2021-01-21'::timestamp -'2021-01-01'::timestamp)+1)-sum(DATE_PART('day', '2021-01-02'::timestamp -'2021-01-01'::timestamp)+1))<![CDATA[<=]]>lp.total_allowed_days_fy)-->
+    <!--    then (sum(DATE_PART('day', '2021-01-21'::timestamp -'2021-01-01'::timestamp)+1)-sum(DATE_PART('day', '2021-01-02'::timestamp -'2021-01-01'::timestamp)+1))-->
+    <!--    else lp.total_allowed_days_fy end-->
+    <!--    else lp.total_allowed_days_fy end as totalAllowedDays,-->
+    <!--    lp.max_allowed_accumulation as maxAccumulation-->
+    <!--    from remaining_leave rl-->
+    <!--    left join leave_policy lp on rl.leave_policy_id = lp.id-->
+    <!--    left join leave_setup ls on lp.leave_setup_id = ls.id-->
+    <!--    where  rl.pis_code=#{pisCode} and rl.leave_policy_id=#{policyId} and rl.fiscal_year= #{fiscalYear} and rl.is_active=true-->
+    <!--    group by rl.accumulated_leave_fy, rl.leave_taken_fy, ls.unlimited_allowed_accumulation, lp.max_allowed_accumulation,ls.maximum_allowed_accumulation,lp.total_allowed_days_fy) as b-->
+    <!--    </select>-->
+
+    <select id="getAllLeavePolicyByOffice" resultType="com.gerp.attendance.Pojo.LeavePolicyResponsePojo">
+        select lp.id,
+        lp.total_allowed_days_fy,
+        lp.max_allowed_accumulation,
+        lp.total_allowed_repetition_fy,
+        ls.id as leave_setup_id,
+        ls.name_en as leaveNameEn,
+        ls.name_np as leaveNameNp
+        from leave_policy lp
+        left join leave_setup ls on ls.id = lp.leave_setup_id where lp.is_active=true
+        and lp.contract_leave=false
+        and office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by ls.order_value
+    </select>
+
+
+    <select id="getAllKararEmployee" resultType="com.gerp.attendance.Pojo.LeavePolicyResponsePojo">
+        select lp.id,
+        lp.total_allowed_days_fy,
+        lp.max_allowed_accumulation,
+        lp.total_allowed_repetition_fy,
+        ls.id as leave_setup_id,
+        ls.name_en as leaveNameEn,
+        ls.name_np as leaveNameNp
+        from leave_policy lp
+        left join leave_setup ls on ls.id = lp.leave_setup_id where lp.is_active=true and
+        lp.contract_leave=true
+        and office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by ls.order_value
+    </select>
+
+
+    <select id="getAllLeavePolicyDetail" resultType="com.gerp.attendance.Pojo.LeavePolicyResponsePojo">
+        select lp.id,
+        lp.max_allowed_accumulation,
+        lp.total_allowed_repetition_fy,
+        ls.id as leave_setup_id,
+        ls.name_en as leaveNameEn,
+        ls.name_np as leaveNameNp,
+        lp.total_allowed_days as total_allowed_days,
+        lp.total_allowed_days_fy as total_allowed_days_fy,
+        lp.total_allowed_repetition as total_allowed_repetition,
+        case when exists (select * from remaining_leave where pis_code=#{pisCode} and leave_policy_id=lp.id and
+        year=#{year})
+        then
+        (select case
+        when(lp.total_allowed_days_fy !=0)then
+        rl.leave_taken_fy
+        when(lp.total_allowed_days !=0)then
+        rl.leave_taken
+        when(lp.total_allowed_repetition_fy !=0 or lp.total_allowed_repetition!=0)then
+        rl.repetition
+        end from remaining_leave rl where pis_code=#{pisCode} and leave_policy_id=lp.id and year=#{year})
+
+        else 0
+        end as leave_taken,
+        case when exists (select * from remaining_leave where pis_code=#{pisCode} and leave_policy_id=lp.id and
+        is_active=true)
+        then (select rl.remaining_leave from remaining_leave rl where pis_code=#{pisCode} and leave_policy_id=lp.id and
+        year=#{year} and is_active=true)
+        else (
+        case
+        when(lp.total_allowed_days_fy !=0)then
+        lp.total_allowed_days_fy
+        when(lp.total_allowed_days !=0)then
+        lp.total_allowed_days
+        when(lp.total_allowed_repetition !=0)then
+        lp.total_allowed_repetition
+        when(lp.total_allowed_repetition_fy !=0)then
+        lp.total_allowed_repetition_fy
+        end
+        )
+        end as remaining_leave
+
+        from leave_policy lp
+        left join leave_setup ls on ls.id = lp.leave_setup_id
+        where lp.is_active=true and lp.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by lp.created_date
+    </select>
+
+
+    <select id="checkForParentLeavePolicy" resultType="java.lang.Long">
+        select count(*) from leave_policy lp
+        where lp.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and leave_setup_id=#{leaveSetupId};
+    </select>
+
+    <select id="getEmpJoinDate" resultType="java.lang.String">
+        select case
+                   when (#{pisCode} LIKE '%KR_%') then
+                       ejd.join_date_np
+                   else
+                       e.cur_office_join_dt_np end as employeeJoinDate
+        from employee e
+                 left join employee_joining_date ejd on (e.pis_code = ejd.employee_pis_code and ejd.is_active = true)
+        where e.pis_code = #{pisCode};
+    </select>
+
+    <select id="getEmpEndDate" resultType="java.lang.String">
+        select ejd.end_date_np
+        from employee_joining_date ejd
+        where ejd.employee_pis_code = #{pisCode}
+          and ejd.is_active = true;
+    </select>
+
+    <select id="getLeavePolicy" resultType="com.gerp.attendance.Pojo.LeavePolicyLeavePojo">
+        select distinct ls.name_en as leaveNameEn,ls.name_np as leaveNameNp,lp.id as leavePolicyId
+        from leave_setup ls
+        left join leave_policy lp on ls.id = lp.leave_setup_id
+        where ls.is_active=true and lp.is_active=true
+        <if test="employeeStatus!=null">
+            and lp.contract_leave=false
+        </if>
+    </select>
+
+    <select id="getLeavePolicyByLeaveSetup" resultType="com.gerp.attendance.Pojo.LeavePolicyLeavePojo">
+        select distinct ls.name_en as leaveNameEn, ls.name_np as leaveNameNp, lp.id as leavePolicyId
+        from leave_setup ls
+                 left join leave_policy lp on ls.id = lp.leave_setup_id
+        where ls.is_active = true
+          and lp.is_active = true
+          and lp.leave_setup_id = #{leaveSetupId}
+    </select>
+
+
+    <select id="getAllLeave" resultType="java.lang.Double">
+        select rl.remaining_leave
+        from remaining_leave rl
+        where rl.pis_code = #{pisCode}
+          and rl.is_active = true
+          and rl.leave_policy_id = #{leavePolicyId}
+    </select>
+
+    <select id="getLeaveStatusList" resultType="java.lang.String">
+        select da.status
+        from decision_approval da
+                 left join leave_request_detail lrd on da.leave_request_detail_id = lrd.id
+        where da.leave_request_detail_id = #{id}
+        order by da.last_modified_date desc limit 2
+    </select>
+
+    <select id="leaveStatusByLeaveReqId" resultType="java.lang.String">
+        select da.status
+        from decision_approval da
+        where da.leave_request_detail_id = #{leaveReqId}
+        order by da.last_modified_date desc;
+    </select>
+
+    <select id="checkNewYear" resultType="java.lang.Boolean">
+        select case
+                   when (a.nepali_year = b.nepali_year)
+                       then false
+                   else true end as newYear
+        from (select nepali_year
+              from date_list dl
+              where dl.eng_date = current_date) as a,
+             (select nepali_year
+              from date_list dl
+              where dl.eng_date = current_date - 1) as b;
+    </select>
+
+    <select id="currentYear" resultType="java.lang.Integer">
+        select distinct nepali_year
+        from date_list dl
+        where dl.eng_date = current_date;
+    </select>
+
+
+    <!--    <select id="getTotalDays" resultType="java.lang.Double">-->
+    <!--select (extract(month from age(d.latestMonth,#{empJoinDate}))*#{allowedForMonth})-d.dayCounts as totaldays-->
+    <!--from-->
+    <!--(select b.dayCount as dayCounts,-->
+    <!--     case when (b.leaveMonth!=null) then-->
+    <!--            case when (#{toDate}>b.leaveMonth) then-->
+    <!--                     #{toDate} else b.leaveMonth-->
+    <!--             end-->
+    <!--     else  #{toDate}-->
+    <!--           end as latestMonth from-->
+
+    <!--(select-->
+    <!--        case when(max(lrd.to_date_en)!=null )then-->
+    <!--                (max(lrd.to_date_en))::date-->
+    <!--     end as leaveMonth,-->
+    <!--      lrd.actual_leave_days as dayCount-->
+    <!--        &#45;&#45;         coalesce(sum((SELECT DATE_PART('day', lrd.to_date_en::timestamp - lrd.from_date_en::timestamp ) days)+1), 0) as dayCount-->
+    <!-- from leave_request lr-->
+    <!--    left join leave_request_detail lrd on lr.id = lrd.leave_request_id-->
+    <!--where lr.emp_pis_code=#{pisCode} and lr.office_code=#{officeCode} and lrd.status in-->
+    <!--        <foreach item="item" index="index" collection="leaveStatus"-->
+    <!--                 open="(" separator="," close=")">-->
+    <!--            #{item}-->
+    <!--        </foreach>-->
+    <!-- ) b)d;-->
+    <!--    </select>-->
+
+    <!--    <select id="getTotalDays" resultType="java.lang.Double">-->
+    <!--    select-->
+    <!--    case when(#{newEmployee}) then-->
+    <!--          case when((count(distinct split_part(ea.date_np, '-',2))*#{allowedForMonth})>0)-->
+    <!--          then (count(distinct split_part(ea.date_np, '-',2))*#{allowedForMonth})-->
+    <!--          else 0 end-->
+    <!--     else-->
+    <!--       case-->
+    <!--           when(((count(distinct split_part(ea.date_np, '-',2)))*#{allowedForMonth})>0)-->
+    <!--           then ((count(distinct split_part(ea.date_np, '-',2)))*#{allowedForMonth})-->
+    <!--           else 0 end-->
+    <!--     end-->
+    <!--    from-->
+    <!--    employee_attendance ea-->
+    <!--        where-->
+    <!--        split_part(ea.date_np, '-',2) in (-->
+    <!--        select distinct case when( length(cast(dl.nepali_month as text) )>1) then-->
+    <!--        cast(dl.nepali_month as text)-->
+    <!--        else-->
+    <!--        cast(concat('0',dl.nepali_month) as text) end-->
+    <!--        from date_list dl-->
+    <!--        where-->
+    <!--        dl.eng_date between #{empJoinDate} and  #{toDate})-->
+    <!--        and ea.pis_code=#{pisCode}-->
+    <!--        and ea.attendance_status in ('MA','KAAJ','DEVICE')-->
+    <!--        <if test="forTransfer ==null">-->
+    <!--            and ea.office_code=#{officeCode}-->
+    <!--        </if>-->
+    <!--    </select>-->
+
+    <select id="getTotalDays" resultType="java.lang.Double">
+        select
+        case when(#{newEmployee}) then
+        case when((count(distinct split_part(ea.date_np, '-',2))*#{allowedForMonth})>0)
+        then (count(distinct split_part(ea.date_np, '-',2))*#{allowedForMonth})
+        else 0 end
+        else
+        case
+        when(((count(distinct split_part(ea.date_np, '-',2)))*#{allowedForMonth})>0)
+        then ((count(distinct split_part(ea.date_np, '-',2)))*#{allowedForMonth})
+        else 0 end
+        end
+        from
+        employee_attendance ea
+        where ea.pis_code=#{pisCode}
+        and ea.date_en between #{empJoinDate} and #{toDate}
+        and ea.attendance_status in ('MA','KAAJ','DEVICE')
+        <if test="forTransfer ==null">
+            and ea.office_code=#{officeCode}
+        </if>
+    </select>
+
+    <select id="getMonthlyAllowedDays" resultType="java.lang.Double">
+        select
+        case when(#{newEmployee}) then
+        case
+        when(((count(distinct split_part(ea.date_np, '-',2)))*#{allowedForMonth}))>0
+        then ((count(distinct split_part(ea.date_np, '-',2)))*#{allowedForMonth})
+        else 0 end
+        end
+        from
+        employee_attendance ea
+        where
+        split_part(ea.date_np, '-',2) in (
+        select distinct case when(length(cast(dl.nepali_month as text) )>1) then
+        cast(dl.nepali_month as text)
+        else
+        cast(concat('0',dl.nepali_month) as text) end
+        from date_list dl
+        where
+        dl.eng_date between #{empJoinDate} and #{toDate})
+        and ea.pis_code=#{pisCode}
+        <if test="forTransfer ==null">
+            and ea.office_code=#{officeCode}
+        </if>
+    </select>
+
+
+    <select id="getMonthlyTotalDays" resultType="java.lang.Double">
+        select case
+                   when (#{countPrevious}) then
+                       case
+                           when ((count(distinct split_part(ea.date_np, '-', 2))) * #{allowedForMonth} > 0) then
+                                   (count(distinct split_part(ea.date_np, '-', 2))) * #{allowedForMonth}
+
+                           else 0 end
+                   else
+                       case
+                           when ((count(distinct split_part(ea.date_np, '-', 2)) - 1) * #{allowedForMonth} > 0) then
+                                   (count(distinct split_part(ea.date_np, '-', 2)) - 1) * #{allowedForMonth}
+
+                           else 0 end
+                   end
+        from employee_attendance ea
+        where split_part(ea.date_np, '-', 2) in (select distinct case
+                                                                     when (length(cast(dl.nepali_month as text)) > 1)
+                                                                         then
+                                                                         cast(dl.nepali_month as text)
+                                                                     else
+                                                                         cast(concat('0', dl.nepali_month) as text) end
+                                                 from date_list dl
+                                                 where dl.eng_date between #{empJoinDate} and #{toDate})
+          and ea.pis_code = #{pisCode}
+          and ea.attendance_status in ('MA', 'KAAJ', 'DEVICE')
+          and ea.office_code = #{officeCode}
+    </select>
+    <!--// corrected one-->
+    <!--    <select id="getMaxMonth" resultType="com.gerp.attendance.Pojo.MonthDetailPojo">-->
+    <!--   select max(da.nep_date) as toDateEn,-->
+    <!--   min(da.nep_date) as fromDateEn,-->
+    <!--   da.nepali_month as month-->
+    <!--    from-->
+    <!--    date_list  da where da.nepali_month in-->
+    <!--(select distinct max(dl.nepali_month)-->
+    <!--from date_list dl-->
+    <!--where-->
+    <!--    dl.eng_date between #{fromDate} and #{toDate})-->
+    <!--and da.nepali_year=#{year} group by da.nepali_month;-->
+    <!--    </select>-->
+
+    <select id="getMaxMonth" resultType="com.gerp.attendance.Pojo.MonthDetailPojo">
+        select max(b.nep_date) as toDateEn, min(b.nep_date) as fromDateEn
+        from (select distinct dl.nep_date
+              from date_list dl
+              where dl.eng_date between #{fromDate} and #{toDate}) b;
+    </select>
+
+    <select id="getMonthInKarar" resultType="java.lang.Integer">
+        select count(distinct dl.nepali_month)
+        from date_list dl
+        where dl.eng_date between #{fromDate} and #{toDate};
+    </select>
+
+    <select id="getAccurateMonthDate" resultType="com.gerp.attendance.Pojo.MonthStatusPojo">
+        select case
+                   when (((dl.eng_date) > #{nepaliDate}) and ((select count(*)
+                                                               from employee_attendance ea
+                                                               where ea.date_en between #{fromDate} and #{nepaliDate}
+                                                                 and ea.attendance_status in ('MA', 'KAAJ', 'DEVICE')
+                                                                 and ea.pis_code = #{pisCode}) > 0)) then
+                       #{toDate}
+                   when (((dl.eng_date) > #{nepaliDate}) and ((select count(*)
+                                                               from employee_attendance ea
+                                                               where ea.date_en between #{fromDate} and #{nepaliDate}
+                                                                 and ea.attendance_status in ('MA', 'KAAJ', 'DEVICE')
+                                                                 and ea.pis_code = #{pisCode})
+    <![CDATA[ <= ]]> 0)) then
+                       #{fromDate}
+                   else
+                       #{toDate}
+                   end           as dateEn,
+               case
+                   when (((dl.eng_date) > #{nepaliDate}) and ((select count(*)
+                                                               from employee_attendance ea
+                                                               where ea.date_en between #{fromDate} and #{nepaliDate}
+                                                                 and ea.attendance_status in ('MA', 'KAAJ', 'DEVICE')
+                                                                 and ea.pis_code = #{pisCode}) > 0)) then
+                       false
+                   when (((dl.eng_date) > #{nepaliDate}) and ((select count(*)
+                                                               from employee_attendance ea
+                                                               where ea.date_en between #{fromDate} and #{nepaliDate}
+                                                                 and ea.attendance_status in ('MA', 'KAAJ', 'DEVICE')
+                                                                 and ea.pis_code = #{pisCode})<![CDATA[ <=]]> 0)) then
+                       true
+                   else
+                       false end as countPrevious
+        from date_list dl
+        where dl.nep_date = (select max(dll.nep_date)
+                             from date_list dll
+                             where dll.nepali_month = #{month}
+                               and dll.nepali_year = #{year});
+    </select>
+
+    <select id="getTotalMonthlyDays" resultType="java.lang.Double">
+        select b.actualDay + c.leaveTaken
+        from (select case
+                         when (sum(lrd.actual_leave_days) is not null) then sum(lrd.actual_leave_days)
+                         else 0 end as actualDay
+
+              from leave_request lr
+                       left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+              where
+                  lr.office_code = #{officeCode}
+                and
+                  <!--lr.emp_pis_code = #{pisCode}-->
+                  case
+                    when lr.applied_for_others = true
+                    then
+                    lrd.pis_code = #{pisCode}
+                  else
+                  lr.emp_pis_code = #{pisCode}
+                  end
+                and lr.year = #{year}
+                and lrd.is_active = true
+                and lrd.status = 'P'
+                and lrd.leave_policy_id = #{policyId}) b,
+             (select case
+                         when (sum(rl.remaining_leave) is not null) then sum(rl.remaining_leave)
+                         else 0 end as leaveTaken
+              from remaining_leave rl
+              where rl.leave_policy_id = #{policyId}
+                and rl.pis_code = #{pisCode}
+                and rl.year = #{year}
+                and rl.office_code = #{officeCode}
+                and rl.is_active = true) c;
+
+    </select>
+
+
+    <select id="getTotalAllowedDays" resultType="java.lang.Long">
+        select sum(totalAllowedDays) from(
+        select
+        case
+        when(lp.total_allowed_days_fy!=0)then
+        (case when(lp.carry_forward =true)
+        then (coalesce(sum(lp.max_allowed_accumulation),0) + coalesce(sum(lp.total_allowed_days_fy),0))
+
+
+        when(lp.carry_forward =false)
+        then (coalesce(sum(lp.total_allowed_days_fy),0)) end
+
+        )
+
+        when(lp.total_allowed_days !=0) then
+        coalesce(sum(lp.total_allowed_days),0)
+
+        when(lp.total_allowed_repetition_fy !=0 and lp.total_allowed_repetition!=0)then
+        coalesce(sum(lp.maximum_leave_limit_at_once),0)*lp.total_allowed_repetition
+
+        when(lp.total_allowed_repetition_fy !=0)then
+        coalesce(sum(lp.maximum_leave_limit_at_once),0)*lp.total_allowed_repetition_fy
+
+        when(lp.total_allowed_repetition !=0)then
+        coalesce(sum(lp.maximum_leave_limit_at_once),0)*lp.total_allowed_repetition
+
+        else 0 end as totalAllowedDays, lp.id
+
+        from leave_policy lp where
+        lp.gender in ((select e.gender from employee e where e.pis_code=#{pisCode}),'A')
+        and
+        lp.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by
+        lp.total_allowed_days_fy,lp.carry_forward,lp.total_allowed_days,lp.total_allowed_repetition,lp.total_allowed_repetition_fy,lp.id)as
+        ta;
+    </select>
+
+    <select id="checkForMinimumService" resultType="java.lang.Boolean">
+        select case
+                   when (DATE_PART('Year', to_date(#{currentDate}, 'YYYY-MM-DD')::timestamp - e.cur_office_join_dt_en::timestamp) >=
+                         #{minimumYearService}) then
+                       true
+                   else false end as minimumService
+        from employee e
+        where e.pis_code = #{pisCode};
+    </select>
+
+    <select id="getHomeLeaveAccumulatedLeave" resultType="java.lang.Double">
+        select sum(b.newValue) / 12 as totalAccumulatedValue
+        from (select l.from_date_en,
+                     l.to_date_en,
+                     l.is_holiday,
+                     case
+                         when (l.count_public_holiday = false and l.is_holiday = false) then
+                             (select coalesce(sum((select count(*) as shiftweekend
+                                                   from ((select i::date as dates, extract(dow from i) as days
+
+                                                          from generate_series(l.from_date_en,
+                                                                               l.to_date_en, '1 day'::interval) i) as dr
+                                                       inner join
+                                                       (select distinct sdc.day_order as dayorder
+                                                        from shift_day_config sdc
+                                                        where sdc.shift_id = 3
+                                                          and is_weekend = true) e on dr.days = e.dayorder)) +
+                                                  (select distinct count(*) as holiday
+                                                   from (select i::date as dates, extract(dow from i) as days
+                                                         from (select distinct generate_series(b.fromDate,
+                                                                                               b.toDate,
+                                                                                               '1 day'::interval) i
+                                                               from (select case
+                                                                                when (l.from_date_en >= ph.from_date_en)
+                                                                                    then l.from_date_en
+                                                                                else ph.from_date_en end as fromDate,
+                                                                            case
+                                                                                when (ph.to_date_en >= l.to_date_en)
+                                                                                    then l.to_date_en
+                                                                                else ph.to_date_en end   as toDate,
+                                                                            puh.office_code              as officeCode
+                                                                     from public_holiday puh
+                                                                              left join
+                                                                          periodic_holiday ph on puh.id = ph.public_holiday_id
+                                                                     where ((ph.from_date_en between l.from_date_en and l.to_date_en)
+                                                                         or
+                                                                            (ph.to_date_en between l.from_date_en and l.to_date_en))) as b
+                                                               group by b.fromdate, b.toDate) as f)
+                                                            as c
+                                                   where c.days not in
+                                                         (select distinct sdc.day_order as dayorder
+                                                          from shift_day_config sdc
+                                                          where sdc.shift_id = 3
+                                                            and is_weekend = true))
+                                                  ), 0))
+                         when (l.count_public_holiday = false and l.is_holiday = true) then
+                             (select coalesce(sum((select count(*) as shiftweekend
+                                                   from ((select i::date as dates, extract(dow from i) as days
+                                                          from generate_series(l.from_date_en,
+                                                                               l.to_date_en, '1 day'::interval) i) as dr
+                                                       inner join
+                                                       (select distinct sdc.day_order as dayorder
+                                                        from shift_day_config sdc
+                                                        where sdc.shift_id = 3
+                                                          and is_weekend = true) e on dr.days = e.dayorder)) +
+                                                  (select distinct count(*) as holiday
+                                                   from (select i::date as dates, extract(dow from i) as days
+                                                         from (select distinct generate_series(b.fromDate, b.toDate, '1 day'::interval) i
+                                                               from (select case
+                                                                                when (l.from_date_en >= ph.from_date_en)
+                                                                                    then l.from_date_en
+                                                                                else ph.from_date_en end as fromDate,
+                                                                            case
+                                                                                when (ph.to_date_en >= l.to_date_en)
+                                                                                    then l.to_date_en
+                                                                                else ph.to_date_en end   as toDate,
+                                                                            puh.office_code              as officeCode
+                                                                     from public_holiday puh
+                                                                              left join
+                                                                          periodic_holiday ph on puh.id = ph.public_holiday_id
+                                                                     where ((ph.from_date_en between l.from_date_en and l.to_date_en)
+                                                                         or
+                                                                            (ph.to_date_en between l.from_date_en and l.to_date_en))
+                                                                       and ph.is_specific_holiday = false) as b
+                                                               group by b.fromdate, b.toDate) as f)
+                                                            as c
+                                                   where c.days not in
+                                                         (select distinct sdc.day_order as dayorder
+                                                          from shift_day_config sdc
+                                                          where sdc.shift_id = 3
+                                                            and is_weekend = true))), 0))
+                         else
+                             (select coalesce(sum((SELECT DATE_PART('day', to_date_en::timestamp - from_date_en::timestamp) days) + 1), 0))
+                         end as newValue
+              from (select case
+                               when (#{fromDate} >= lrd.from_date_en) then #{fromDate}
+                               else lrd.from_date_en end                                                 as fromDate,
+                           case when (#{toDate} >= lrd.to_date_en) then #{toDate}else lrd.to_date_en end as toDate,
+                           lrd.from_date_en,
+                           lrd.to_date_en,
+                           lp.count_public_holiday,
+                           lr.is_holiday
+                    from leave_request lr
+                             left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                             left join leave_policy lp on lp.id = lrd.leave_policy_id
+                             left join leave_setup ls on ls.id = lp.leave_setup_id
+                    where
+                        <!--lr.emp_pis_code = #{pisCode}-->
+                        case
+                        when lr.applied_for_others = true
+                        then
+                        lrd.pis_code = #{pisCode}
+                        else
+                        lr.emp_pis_code = #{pisCode}
+                        end
+                      and lr.year = #{year}
+                      and ls.name_en in
+                          ('Casual Leave', 'Home Leave', 'Obsequies Leave', 'Festival Leave', 'Maternity Leave',
+                           'Paternity leave')
+                      and ((lrd.from_date_en between #{fromDate} and #{toDate})
+                        or (lrd.to_date_en between #{fromDate} and #{toDate}))) l
+              group by l.from_date_en, l.to_date_en, l.count_public_holiday, l.is_holiday) b;
+    </select>
+
+    <!--    <select id="getPresentDays" resultType="Long">-->
+    <!--    select count(*) from employee_attendance ea where #{toDate}>=ea.date_en and ea.date_en>=#{fromDate} and ea.pis_code=#{pisCode} and ea.checkin is not null;-->
+    <!--    </select>-->
+
+    <select id="getKararEmployeeJoin" resultType="com.gerp.attendance.Pojo.EmployeeJoinDatePojo">
+        select case
+                   when (#{pisCode} LIKE '%KR_%') then
+                       ejd.join_date_np
+                   else
+                       e.cur_office_join_dt_np end as employeeJoinDate,
+               ejd.end_date_np                     as employeeEndDate
+        from employee e
+                 left join employee_joining_date ejd on e.pis_code = ejd.employee_pis_code
+        where e.pis_code = #{pisCode}
+          and ejd.is_active = true;
+    </select>
+
+    <select id="findKararPeriod" resultType="com.gerp.attendance.Pojo.EmployeeJoinDatePojo">
+        select case
+                   when (#{pisCode} LIKE '%KR_%') then
+                       ejd.join_date_en
+                   else
+                       e.cur_office_join_dt_en end as fromDateEn,
+               ejd.end_date_en                     as toDateEn
+        from employee e
+                 left join employee_joining_date ejd on e.pis_code = ejd.employee_pis_code
+        where e.pis_code = #{pisCode}
+          and ((#{fromDateEn} between ejd.join_date_en and ejd.end_date_en)
+            or (#{toDateEn} between ejd.join_date_en and ejd.end_date_en));
+    </select>
+
+    <select id="yearStartAndEnd" resultType="com.gerp.attendance.Pojo.EmployeeJoinDatePojo">
+        select max(dl.eng_date) as toDateEn,
+               min(dl.eng_date) as fromDateEn
+        from date_list dl
+        where dl.nepali_year = #{year};
+    </select>
+
+    <select id="homeLeaveTaken" resultType="java.lang.Double">
+        select coalesce(sum(lrd.actual_leave_days), 0)
+        from leave_request
+                 left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+        where lrd.status = 'A'
+          and (lrd.from_date_en between #{fromDate} and #{toDate})
+          and
+            <!--leave_request.emp_pis_code = #{pisCode}-->
+        case
+        when leave_request.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+            else
+        leave_request.emp_pis_code = #{pisCode}
+        end
+          and lrd.leave_policy_id = #{leavePolicyId};
+    </select>
+
+    <select id="leaveTakenInPeriod" resultType="java.lang.Double">
+        select coalesce(sum(lrd.actual_leave_days), 0)
+        from leave_request
+                 left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+        where lrd.status = 'A'
+          and (lrd.from_date_en between #{fromDate} and #{toDate}
+            or lrd.to_date_en between #{fromDate} and #{toDate})
+          and
+            <!--leave_request.emp_pis_code = #{pisCode}-->
+        case
+        when leave_request.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        leave_request.emp_pis_code = #{pisCode}
+        end
+        and lrd.leave_policy_id = #{leavePolicyId};
+    </select>
+
+    <select id="leaveTakenInPeriod" resultType="java.lang.Double">
+        select coalesce(sum(lrd.actual_leave_days), 0)
+        from leave_request
+                 left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+        where lrd.status = 'A'
+          and (lrd.from_date_en between #{fromDate} and #{toDate}
+            or lrd.to_date_en between #{fromDate} and #{toDate})
+          and
+            <!--leave_request.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        leave_request.emp_pis_code = #{pisCode}
+        end          and lrd.leave_policy_id = #{leavePolicyId};
+    </select>
+
+    <select id="totalMonth" resultType="java.lang.Integer">
+        select count(distinct dl.nepali_month)
+        from date_list dl
+        where dl.eng_date between #{fromDate} and #{toDate};
+    </select>
+
+</mapper>

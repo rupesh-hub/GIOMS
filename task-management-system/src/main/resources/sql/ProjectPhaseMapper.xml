@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.tms.mapper.ProjectPhaseMapper">
+
+    <resultMap id="phaseDetailsWithMembers" type="com.gerp.tms.pojo.response.PhaseMemberResponsePojo">
+        <id column="p_id" property="id"/>
+        <result property="phaseName" column="phase_name"/>
+        <result property="phaseNameNp" column="phase_name_np"/>
+
+        <collection property="memberDetailsResponsePojos" resultMap="projectPhaseMembers"/>
+    </resultMap>
+
+    <resultMap id="projectPhaseMembers" type="com.gerp.tms.pojo.response.MemberDetailsResponsePojo">
+
+        <id property="memberId" column="member_id"/>
+
+    </resultMap>
+
+    <resultMap id="projectPhase" type="com.gerp.tms.model.project.ProjectPhase">
+        <id property="id" column="pp_id"/>
+        <collection property="phaseMemberList" resultMap="phaseMember"/>
+    </resultMap>
+    <resultMap id="phaseMember" type="com.gerp.tms.model.phase.PhaseMember">
+        <id property="id" column="pm_id"/>
+        <result property="memberId" column="member_id"/>
+    </resultMap>
+
+
+    <select id="getProjectPhaseMembers" resultMap="phaseDetailsWithMembers">
+        select *, p.id as p_id
+        from project_phase pp
+        left join phase_member pm on pm.project_phase_id = pp.id
+        left join phase p on p.id = pp.phase_id
+        where
+        pp.project_id = #{projectId}::INTEGER
+        <if test="phaseId != null">
+            and pp.phase_id = #{phaseId}
+        </if> ;
+    </select>
+
+    <select id="getProjectIdAndPhaseId" resultMap="projectPhase">
+        select pp.id as pp_id , pm.id as pm_id , pm.member_id as member_id
+        from project_phase pp
+            left join phase_member pm on pm.project_phase_id = pp.id
+        where pp.project_id = #{projectId}::INTEGER
+        and pp.phase_id = #{phaseId}::INTEGER
+    </select>
+
+    <select id="getProjectMembers" resultMap="projectPhaseMembers">
+        select distinct pm.member_id as member_id
+        from project_phase pp
+                 left join phase_member pm on pm.project_phase_id = pp.id
+        where
+            pp.project_id = #{projectId}::INTEGER ;
+    </select>
+
+
+</mapper>

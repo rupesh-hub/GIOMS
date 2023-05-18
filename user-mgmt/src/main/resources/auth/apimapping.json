@@ -1,0 +1,3230 @@
+[
+  {
+    "moduleKey": "DARTA",
+    "apis": [
+      {"name": "/received-letter/manual/save", "method": "POST","privilege": "CREATE"},
+      {"name": "/received-letter/manual/update", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/received-letter/paginated", "method": "POST","privilege": "READ"},
+      {"name": "/received-letter/manual/forward", "method": "POST","privilege": "CREATE"},
+      {"name": "/received-letter/forward/cc", "method": "POST","privilege": "CREATE"},
+      {"name": "/received-letter/darta-search-recommendation", "method": "GET","privilege": "READ"},
+
+      {"name": "/darta-kasamu", "method": "POST","privilege": "CREATE"},
+      {"name": "/darta-kasamu/search-recommendation", "method": "POST","privilege": "READ"},
+      {"name": "/dispatch-letter/internal-letter-search-recommendation", "method": "GET","privilege": "READ"},
+      {"name": "/dispatch-letter/external-list", "method": "GET","privilege": "READ"},
+      {"name": "/dashboard/sidebar-detail", "method": "GET","privilege": "READ"}
+    ]
+  },
+  {
+    "moduleKey": "RECEIVEDLETTERS",
+    "apis": [
+      {"name": "/received-letter/imp", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/received-letter/rec/in-progress", "method": "POST","privilege": "READ"},
+      {"name": "/received-letter/rec/finalized", "method": "POST","privilege": "READ"},
+      {"name": "/received-letter/paginated", "method": "POST","privilege": "READ"},
+      {"name": "/received-letter/page", "method": "POST","privilege": "READ"},
+      {"name": "/received-letter/manual/forward", "method": "POST","privilege": "UPDATE"},
+      {"name": "/received-letter/id", "method": "POST","privilege": "READ"},
+      {"name": "/received-letter/forwards", "method": "POST","privilege": "READ"},
+      {"name": "/received-letter/forward/cc", "method": "POST","privilege": "UPDATE"},
+
+      {"name": "/received-letter/revert", "method": "POST","privilege": "UPDATE"},
+      {"name": "/received-letter/comment", "method": "POST","privilege": "UPDATE"},
+
+      {"name": "/darta-kasamu/search-recommendation", "method": "POST","privilege": "READ"},
+      {"name": "/darta-kasamu/own/list", "method": "POST","privilege": "READ"},
+      {"name": "/darta-kasamu/inbox/search-recommendation", "method": "POST","privilege": "READ"},
+      {"name": "/darta-kasamu/inbox/list", "method": "POST","privilege": "READ"},
+      {"name": "/darta-kasamu/finalized/list", "method": "POST","privilege": "READ"},
+      {"name": "/darta-kasamu/created/list", "method": "POST","privilege": "CREATE"},
+      {"name": "/dispatch-letter/update-status", "method": "POST","privilege": "UPDATE"},
+      {"name": "/dispatch-letter/get-all-internal-letters", "method": "POST","privilege": "READ"},
+      {"name": "/dispatch-letter/forward-within-office", "method": "POST","privilege": "UPDATE"},
+      {"name": "/dispatch-letter/internal-letter-search-recommendation", "method": "GET","privilege": "READ"},
+      {"name": "/dispatch-letter/forwarded-detail", "method": "GET","privilege": "READ"},
+      {"name": "/dispatch-letter/external-list", "method": "GET","privilege": "READ"},
+      {"name": "/dashboard/sidebar-detail", "method": "GET","privilege": "READ"}
+
+    ]
+  },
+  {
+    "moduleKey": "REPORT",
+    "apis": [
+      {"name": "/report/darta/data", "method": "POST","privilege": "READ"},
+      {"name": "/report/chalani/data", "method": "POST","privilege": "READ"},
+      {"name": "/report/tippani/pdf", "method": "POST","privilege": "READ"},
+      {"name": "/report/kasamu/pdf", "method": "POST","privilege": "READ"},
+      {"name": "/report/chalani/pdf", "method": "POST","privilege": "READ"},
+      {"name": "/report/tippani/data", "method": "POST","privilege": "READ"},
+      {"name": "/report/kasamu/data", "method": "POST","privilege": "READ"},
+      {"name": "/dashboard/sidebar-detail", "method": "GET","privilege": "READ"}
+    ]
+  },
+  {
+    "moduleKey": "TIPPANI",
+    "apis": [
+      {"name": "/memo", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/memo", "method": "POST","privilege": "CREATE"},
+      {"name": "/memo/suggestion", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/memo/imp", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/memo/external/approval", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/memo/content", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/memo/content/doc", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/memo/approval", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/memo/approval", "method": "PUT","privilege": "APPROVE"},
+      {"name": "/memo/paginated", "method": "POST","privilege": "READ"},
+      {"name": "/memo/system/doc", "method": "GET","privilege": "UPDATE"},
+      {"name": "/memo/system/doc", "method": "GET","privilege": "CREATE"},
+      {"name": "/memo/tippani-search-recommendation", "method": "GET","privilege": "READ"},
+      {"name": "/reference", "method": "POST","privilege": "UPDATE"},
+      {"name": "/reference", "method": "POST","privilege": "CREATE"},
+      {"name": "/dispatch-letter/external-list", "method": "GET","privilege": "CREATE"},
+      {"name": "/dispatch-letter/external-list", "method": "GET","privilege": "UPDATE"},
+      {"name": "/dashboard/sidebar-detail", "method": "GET","privilege": "READ"}
+    ]
+  },
+  {
+    "moduleKey": "TIPPANIREVIEW",
+    "apis": [
+      {"name": "/memo/suggestion", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/memo/imp", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/memo/content", "method": "POST","privilege": "READ"},
+      {"name": "/memo/reference", "method": "POST","privilege": "READ"},
+      {"name": "/memo/paginated", "method": "POST","privilege": "READ"},
+      {"name": "/memo/system/doc", "method": "GET","privilege": "READ"},
+      {"name": "/memo/tippani-search-recommendation", "method": "GET","privilege": "READ"},
+      {"name": "/reference", "method": "POST","privilege": "READ"},
+      {"name": "/dispatch-letter/external-list", "method": "GET","privilege": "READ"}
+    ]
+  },
+  {
+    "moduleKey": "FINALTIPPANI",
+    "apis": [
+      {"name": "/memo/imp", "method": "PUT","privilege": "UPDATE"}
+    ]
+  },
+  {
+    "moduleKey": "CHALANI",
+    "apis": [
+      {"name": "/memo/system/doc", "method": "GET","privilege": "UPDATE"},
+      {"name": "/memo/system/doc", "method": "GET","privilege": "CREATE"},
+      {"name": "/dispatch-letter", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/dispatch-letter", "method": "POST","privilege": "CREATE"},
+      {"name": "/dispatch-letter/imp", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/dispatch-letter/send-for-review", "method": "POST","privilege": "UPDATE"},
+      {"name": "/dispatch-letter/send-for-review", "method": "POST","privilege": "CREATE"},
+      {"name": "/dispatch-letter/paginated", "method": "POST","privilege": "READ"},
+      {"name": "/reference", "method": "POST","privilege": "CREATE"},
+      {"name": "/reference", "method": "POST","privilege": "UPDATE"},
+      {"name": "/dispatch-letter/external-list", "method": "GET","privilege": "UPDATE"},
+      {"name": "/dispatch-letter/external-list", "method": "GET","privilege": "CREATE"},
+      {"name": "/dashboard/sidebar-detail", "method": "GET","privilege": "READ"}
+    ]
+  },
+  {
+    "moduleKey": "FINALTIPPANI",
+    "apis": [
+      {"name": "/memo/tippani-search-recommendation", "method": "GET","privilege": "READ"}
+
+    ]
+  },
+  {
+    "moduleKey": "CHALANIAPPROVAL",
+    "apis": [
+      {"name": "/dispatch-letter/imp", "method": "PUT","privilege": "UPDATE"},
+      {"name": "/dispatch-letter/send-for-review", "method": "POST","privilege": "READ"},
+      {"name": "/dispatch-letter/back-for-review", "method": "POST","privilege": "APPROVE"},
+      {"name": "/dispatch-letter/approve", "method": "POST","privilege": "APPROVE"},
+      {"name": "/dispatch-letter/update-review", "method": "POST","privilege": "UPDATE"},
+      {"name": "/dispatch-letter/external-list", "method": "GET","privilege": "READ"}
+    ]
+  },
+  {
+    "moduleKey": "DARTACHALANICONFIGURATION",
+    "apis": [
+      {"name": "/initial", "method": "POST","privilege": "READ"},
+      {"name": "/initial", "method": "GET","privilege": "READ"},
+      {"name": "/dashboard/sidebar-detail", "method": "GET","privilege": "READ"}
+
+    ]
+  },
+  {
+    "moduleKey": "ASSIGNATTENDEES",
+    "apis": [
+      {
+        "name": "/dispatch-letter/external-list",
+        "method": "GET",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "MASTERDASHBOARD",
+    "apis": [
+      {
+        "name": "/dashboard/bar-chart",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "OFFICEGROUPING",
+    "apis": [
+      {
+        "name": "/dashboard/sidebar-detail",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+
+
+
+
+
+
+  {
+    "moduleKey": "EATTENDANCEDASHBOARD",
+    "apis": [
+      {
+        "name": "/dashboard/get-approval-count",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/permission-managements/screen-group-wise/privilege-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/users/check-password",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/absence-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/irregular-attendance-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/irregular-attendance",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard/date-range",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard/present-employee-report",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard/get-employee-on-absent",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard/get-dashboard-data",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard/get-employee-leave",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard/get-employee-on-kaaj",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard/get-dashboard",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard/get-piscode-dailylog",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard/dashboard-count",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/absence-list",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "KAAJAPPROVAL",
+    "apis": [
+      {
+        "name": "/kaaj-request/approver/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/approval-activity-log/type/{type}/id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/kaaj-request/update-status",
+        "method": "PUT",
+        "privilege": "APPROVE"
+      },
+      {
+        "name": "/kaaj-request/update-status",
+        "method": "PUT",
+        "privilege": "REVERT"
+      },
+      {
+        "name": "/kaaj-request/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "LEAVEAPPROVAL",
+    "apis": [
+      {
+        "name": "/leave-request/approver/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-request/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/approval-employees-eattandance",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/approval-activity-log/type/{type}/id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-policy/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/remaining-leave/get-by-specific-piscode",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-request/update-status",
+        "method": "PUT",
+        "privilege": "APPROVE"
+      },
+      {
+        "name": "/leave-request/update-status",
+        "method": "PUT",
+        "privilege": "REVERT"
+      }
+    ]
+  },
+  {
+    "moduleKey": "DAILYLOGAPPROVAL",
+    "apis": [
+      {
+        "name": "/daily-log/approver/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/approval-activity-log/type/{type}/id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/daily-log/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/daily-log/update-status",
+        "method": "PUT",
+        "privilege": "APPROVE"
+      },
+      {
+        "name": "/daily-log/update-status",
+        "method": "PUT",
+        "privilege": "REVERT"
+      }
+    ]
+  },
+  {
+    "moduleKey": "MANUALATTENDANCEAPPROVAL",
+    "apis": [
+      {
+        "name": "/manual-attendance/approver/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/manual-attendance/get-by-id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/manual-attendance/update-status",
+        "method": "PUT",
+        "privilege": "APPROVE"
+      },
+      {
+        "name": "/manual-attendance/update-status",
+        "method": "PUT",
+        "privilege": "REVERT"
+      },
+      {
+        "name": "/approval-activity-log/type/{type}/id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "REMAININGLEAVE",
+    "apis": [
+      {
+        "name": "/remaining-leave/get-all-remainingleave/{pisCode}",
+        "method": "PUT",
+        "privilege": "REVERT"
+      }
+    ]
+  },
+  {
+    "moduleKey": "MYATTENDANCE",
+    "apis": [
+      {
+        "name": "/employee-attendance/filter/my-attendance",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/late-remarks",
+        "method": "PUT",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "MYLEAVE",
+    "apis": [
+      {
+        "name": "/leave-request/employee/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-request/update-status",
+        "method": "PUT",
+        "privilege": "APPROVE"
+      },
+      {
+        "name": "/leave-request/update-status",
+        "method": "PUT",
+        "privilege": "REVERT"
+      },
+      {
+        "name": "/approval-activity-log/type/{type}/id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/duration-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-policy/get-applicable/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/users/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/approval-employees-eattandance",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/periodic-holiday/count-holiday",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/year-start-end",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-request/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-joining-date/list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/remaining-leave/get-by-piscode/{leavePolicyId}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-policy/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-request",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/leave-request",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/approval-activity-log/type/{type}/id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "KAAJ",
+    "apis": [
+      {
+        "name": "/kaaj-request/employee/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/kaaj-request/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/approval-activity-log/type/{type}/id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/kaaj-request/update-status",
+        "method": "PUT",
+        "privilege": "APPROVE"
+      },
+      {
+        "name": "/kaaj-request/update-status",
+        "method": "PUT",
+        "privilege": "REVERT"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/approval-employees-eattandance",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/kaaj-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/country/all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/vehicle-category/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/approval-employees-eattandance",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/kaaj-request",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/kaaj-request",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/users/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "DAILYLOGBOOK",
+    "apis": [
+      {
+        "name": "/daily-log/employee/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/daily-log",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/daily-log",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/employee/employee-by-code",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/daily-log/update-status",
+        "method": "PUT",
+        "privilege": "APPROVE"
+      },
+      {
+        "name": "/daily-log/update-status",
+        "method": "PUT",
+        "privilege": "REVERT"
+      },
+      {
+        "name": "/approval-activity-log/type/{type}/id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "KAAJASSIGN",
+    "apis": [
+      {
+        "name": "/kaaj-request/employee/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/approval-activity-log/type/{type}/id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/kaaj-request/update-status",
+        "method": "PUT",
+        "privilege": "APPROVE"
+      },
+      {
+        "name": "/kaaj-request/update-status",
+        "method": "PUT",
+        "privilege": "REVERT"
+      },
+      {
+        "name": "/kaaj-request/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/approval-employees-eattandance",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/kaaj-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/country/all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/vehicle-category/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/periodic-holiday/count-holiday",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/kaaj-request",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/kaaj-request",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "MANUALATTENDANCE",
+    "apis": [
+      {
+        "name": "/manual-attendance/employee/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/approval-employees-eattandance",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employee-by-code",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/manual-attendance/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/manual-attendance/update-status",
+        "method": "PUT",
+        "privilege": "APPROVE"
+      },
+      {
+        "name": "/manual-attendance/update-status",
+        "method": "PUT",
+        "privilege": "REVERT"
+      },
+      {
+        "name": "/approval-activity-log/type/{type}/id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/manual-attendance/get-by-id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "DAILYINFORMATION",
+    "apis": [
+      {
+        "name": "/employee-attendance/get-daily-information",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/attendance-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/office-positions",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/print-daily-report",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "PRESENT",
+    "apis": [
+      {
+        "name": "/employee-attendance/get-present-employee",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/attendance-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/office-positions",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/print-present-report",
+        "method": "POST",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "ABSENT",
+    "apis": [
+      {
+        "name": "/employee-attendance/get-present-employee",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/attendance-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/office-positions",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/print-present-report",
+        "method": "POST",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "LATEREPORT",
+    "apis": [
+      {
+        "name": "/employee-attendance/get-present-employee",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/attendance-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/office-positions",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/print-present-report",
+        "method": "POST",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "MONTHLYATTENDNCEREPORT",
+    "apis": [
+      {
+        "name": "/employee-attendance/report-monthly/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-policy/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/report-monthly",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/attendance-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/office-positions",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "MONTHLYATTENDANCEDETAIL",
+    "apis": [
+      {
+        "name": "/employee-attendance/report-monthly-detail/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-policy/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/report-monthly-detail",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/attendance-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/office-positions",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "SUMMARYREPORT",
+    "apis": [
+      {
+        "name": "/attendance-report/monthly",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "YEARLYREPORT",
+    "apis": [
+      {
+        "name": "/employee-attendance/yearly-employee-attendance",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-higher-hierarchy-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/attendance-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/office-positions",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "YEARLYREPORTDETAILS",
+    "apis": [
+      {
+        "name": "/employee/section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-higher-hierarchy-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/attendance-report/annual",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "ATTENDANCEREPORT",
+    "apis": [
+      {
+        "name": "/employee/section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-higher-hierarchy-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/attendance-report/annual",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "LEAVEREPORT",
+    "apis": [
+      {
+        "name": "/leave-request/report/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-request/print-leave-report",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-higher-hierarchy-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/attendance-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/office-positions",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "KAAJREPORT",
+    "apis": [
+      {
+        "name": "/kaaj-request/report/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/kaaj-request/print-Kaaj-report",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-higher-hierarchy-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/attendance-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/office-positions",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "SUMMARYREPORT",
+    "apis": [
+      {
+        "name": "/employee-attendance/report-summary/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-higher-hierarchy-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/static/attendance-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/office-positions",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "LEAVESUMMARY",
+    "apis": [
+      {
+        "name": "/remaining-leave/employee/leaveTaken",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "KAAJREPORT",
+    "apis": [
+      {
+        "name": "/kaaj-request/kaaj-summary/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "REMAININGLEAVE",
+    "apis": [
+      {
+        "name": "/remaining-leave/get-by-office-code",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-higher-hierarchy-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/years/all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/remaining-leave/get-all-remainingleave/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-policy/get-applicable/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-policy/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/remaining-leave",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/remaining-leave",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/leave-policy/get-applicable/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/remaining-leave/{id}",
+        "method": "DELETE",
+        "privilege": "DELETE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "LEAVEPOLICY",
+    "apis": [
+      {
+        "name": "/leave-policy/get-applicable",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-setup",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-setup/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-policy",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/leave-policy/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-policy",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/leave-policy/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/leave-policy/get-applicable/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/remaining-leave/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "LEAVESETUP",
+    "apis": [
+      {
+        "name": "/leave-setup",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-policy",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-setup",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/leave-setup/toggle-status/{id}",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/leave-setup",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/remaining-leave",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/remaining-leave",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/leave-policy/get-applicable/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/remaining-leave/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "KAAJSETUP",
+    "apis": [
+      {
+        "name": "/kaaj-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/kaaj-type",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/kaaj-type",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "SHIFTSETUP",
+    "apis": [
+      {
+        "name": "/shift/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/shift-employee-group",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/fiscal-year",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/shift",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/shift/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/shift-mapping/get-mapped-group/shift-id/{shiftId}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/shift-mapping/get-mapped-group/shift-id/{shiftId}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/shift-mapping/get-mapped-group/shift-id/{shiftId}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/shift",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/shift/toggle/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "SHIFTEMPLOYEEGROUP",
+    "apis": [
+      {
+        "name": "/shift-employee-group",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/shift-employee-group/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-section-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/shift-employee-group",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/shift-employee-group",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/shift/{id}",
+        "method": "DELETE",
+        "privilege": "READ"
+      },
+      {
+        "name": "/shift-employee-group/used-pis-code-office",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/shift/toggle/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "SHIFTSETUP",
+    "apis": [
+      {
+        "name": "/office-time-config/get-by-officeCode/{officeCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-time-config",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/office-time-config",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "ATTENDANCEDEVICE",
+    "apis": [
+      {
+        "name": "/attendance-device/get-All",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/vendor/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/attendance-device/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/attendance-device/find-by-id/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/attendance-device/update",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/attendance-device/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "VENDORDEVICE",
+    "apis": [
+      {
+        "name": "/vehicle-category/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/vehicle-category",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/vehicle-category",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/vehicle-category/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "GAYALKATTI",
+    "apis": [
+      {
+        "name": "/gayal-katti/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/gayal-katti",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "VENDORDEVICE",
+    "apis": [
+      {
+        "name": "/gayal-katti/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/gayal-katti",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "PERIODICHOLIDAYSETUP",
+    "apis": [
+      {
+        "name": "/periodic-holiday/get-all-by-year",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/years/all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-attendance/year-start-end",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/periodic-holiday/inactive-holidays",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/periodic-holiday/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/periodic-holiday",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/periodic-holiday/toggle-specific/{holidayId}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/periodic-holiday/soft-delete/{holidayId}",
+        "method": "DELETE",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "PUBLICHOLIDAYSETUP",
+    "apis": [
+      {
+        "name": "/holiday-setup/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/holiday-setup",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/holiday-setup",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/holiday-setup/hard-delete/{holidayId}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/holiday-setup/{holidayId}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+
+
+
+  {
+    "moduleKey": "ROLEGROUP",
+    "apis": [
+      {
+        "name": "/role-groups",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/role-groups",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/role-groups",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/role-group-screen-mapping/get-screen-groups/role-group-id/{roleGroupId}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/role-group-screen-mapping/role-group/{roleGroupId}/screen-group-id/{screeGroupId}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/role-group-screen-mapping/unused-individual-screen/role-group/{roleGroupId}/screen-group-id/{screeGroupId}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/role-group-screen-mapping",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/role-group-screen-mapping/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/permission-managements/save/screen-wise-all-module",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/permission-managements/save/screen-wise-individual",
+        "method": "POST",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "ACKNOWLEDGE",
+    "apis":
+    [
+      {
+        "name": "/org-transfer-request/transfer-list",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/org-transfer-request/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/org-transfer-history/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/org-transfer-request/{id}",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "APPROVED",
+    "apis": [
+      {
+        "name": "/org-transfer-request/office-transfer-list",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/org-transfer-history/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/org-transfer-request/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/org-transfer-history/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "DELEGATION",
+    "apis":
+    [
+      {
+        "name": "/delegation",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/sectionListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/delegation",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/delegation",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/delegation/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "ADDITIONAL",
+    "apis": [
+      {
+        "name": "/delegation",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/sectionListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employee-by-section",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/delegation",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/delegation",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/delegation",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/delegation/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "PROMOTION",
+    "apis": [
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employee-detail",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/service-group/service-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-job-detail/list",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/service-group/sub-service/{serviceCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/get-all",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/promote-employee",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "REQUEST",
+    "apis": [
+      {
+        "name": "/employee/office-distinct-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/district/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/org-transfer-request/office-transfer-list",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "sermgmt/office/office-search",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/org-transfer-request",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/designation/get-all",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/promote-employee",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "OFFICELIST",
+    "apis": [
+      {
+        "name": "/office-type/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/district/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/all-office-paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/activate-office/{code}",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/office/update",
+        "method": "POST",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/office/detail",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/detail",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-search",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/office/detail",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/municipality-vdc/get-by-district",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-search",
+        "method": "POST",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "INDIVIDULSCREEN",
+    "apis": [
+      {
+        "name": "/screen-groups",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/screen-groups",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/screen-groups",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/individual-screens",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/individual-screens",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "MODULESETUP",
+    "apis": [
+      {
+        "name": "/modules",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/privileges",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/screen-groups",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/individual-screens/screen-group",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/individual-screens/screen-group/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/modules",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "PRIVILEGESETUP",
+    "apis": [
+      {
+        "name": "/privileges",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/privileges",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+
+  {
+    "moduleKey": "INTERNALUSER",
+    "apis": [
+      {
+        "name": "/section/section-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/district/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/users/filter-paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-remarks/get-by-pis-code",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/users/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/employee-remarks/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/users/get-device-id/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/users/save-device-id",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/employee/employee-detail",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/org-transfer-history/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/role-groups",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/users/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/users",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/users",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/users/change-password-by-admin",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/users/get-device-id/{pisCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-joining-date/list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-joining-date/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/employee-joining-date",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "PISUNASSIGNEDEMPLOYEE",
+    "apis": [
+      {
+        "name": "/service-group/service-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/sectionListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/get-all",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/all-employee/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/religion/with-inactive",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/employee/employee-detail",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/service-group/sub-service/{serviceCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-search",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/update",
+        "method": "POST",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/employee/activate-unassigned-employee",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/designation/get-all",
+        "method": "POST",
+        "privilege": "READ"
+      }
+    ]
+  },
+  {
+    "moduleKey": "CONTRACTEMPLOYEE",
+    "apis": [
+      {
+        "name": "/employee/all-employee/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employee-detail",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/edit/{code}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/religion/with-inactive",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/district/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/municipality-vdc/get-by-district",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/update",
+        "method": "POST",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/education-level/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/country/all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/faculty/faculty-by-education-level",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/update",
+        "method": "POST",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/service-group/service-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/sectionListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/service-group/services-hierarchy",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/get-all",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/service-group/sub-service/{serviceCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/update",
+        "method": "POST",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/religion/with-inactive",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+
+
+  {
+    "moduleKey": "CALENDAR",
+    "apis": [
+      {
+        "name": "/api/v1/calendar/{year}/{month}/",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/office-employee-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/api/v1/service/get_calendar_events",
+        "method": "POST",
+        "privilege": "READ"
+      }
+    ]
+  },
+
+
+
+  {
+    "moduleKey": "MASTERDASHBOARD",
+    "apis": [
+      {
+        "name": "/dashboard/get-top-officeDetail",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/dashboard/get-master-dashboard",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/child-offices",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+
+
+  {
+    "moduleKey": "ALLEMPLOYEES",
+    "apis": [
+      {
+        "name": "/employee/current-office-contact/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/district/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/favourite/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/employee/current-office-contact/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/update-employee",
+        "method": "POST",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "ALLOFFICEEMPLOYEES",
+    "apis": [
+      {
+        "name": "/employee/all-office-contact/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/district/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/update-employee",
+        "method": "POST",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/favourite/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/office/office-search",
+        "method": "POST",
+        "privilege": "READ"
+      }
+    ]
+  },
+
+
+  {
+    "moduleKey": "MYFAVOURITES",
+    "apis": [
+      {
+        "name": "/favourite/all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/office-designations",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/favourite/remove/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/employee/update-employee",
+        "method": "POST",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "CONTACTREPORT",
+    "apis": [
+      {
+        "name": "/employee/all-office-contact/paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/district/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-search",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/contact-report",
+        "method": "POST",
+        "privilege": "READ"
+      }
+    ]
+  },
+
+  {
+    "moduleKey": "MYOFFICE",
+    "apis": [
+      {
+        "name": "/office/detail",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/parentSectionOfOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/subsection",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/section/sectionDarbandiByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/subsectionDarbandiBySection",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section-designation/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section-designation/remove-employee/{id}",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/section/section-with-darbandi",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employee-search",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section-designation/assign-employee",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/section/subsectionDarbandiBySection",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/section/subsection",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/designation/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/service-group/service-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section-designation/{id}",
+        "method": "DELETE",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+
+
+  {
+    "moduleKey": "MYOFFICEEMPLOYEE",
+    "apis": [
+      {
+        "name": "/designation/get-all",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/service-group/service-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee-service-status/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/section/sectionListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/district/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/upload-excel",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/employee/upload-excel",
+        "method": "POST",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/users/filter-paginated",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employee-detail",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-search",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/service-group/sub-service/{serviceCode}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/update",
+        "method": "POST",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/employee/employeeAllDetailListByOffice",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/employee/employee-detail",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+
+
+  {
+    "moduleKey": "ORGANIZATIONPROFILE",
+    "apis": [
+      {
+        "name": "/office-type/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/district/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-level/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/child-offices",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/permission-managements/screen-group-wise/privilege-list",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/office-search",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office/child-offices",
+        "method": "GET",
+        "privilege": "READ"
+      }
+    ]
+  },
+
+  {
+    "moduleKey": "ORGANIZATIONTYPE",
+    "apis": [
+      {
+        "name": "/office-type/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-type/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/office-type/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-type/update",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "SERVICE",
+    "apis": [
+      {
+        "name": "/service-group/service-list-by-type",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/service-group/with-hierarchy/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/service-group/update",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "POSITION",
+    "apis": [
+      {
+        "name": "/position/get-all-filtered",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/position/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/position/update",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "DESIGNATION",
+    "apis": [
+      {
+        "name": "/office-type/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/paginated-list",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/update",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/designation/paginated-list",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "SPECIALDESIGNATION",
+    "apis": [
+      {
+        "name": "/office-type/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/paginated-list",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/designation/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/designation/update",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "ORGANIZATIONLEVEL",
+    "apis":[
+      {
+        "name": "/office-type/get-all",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-level/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-level",
+        "method": "POST",
+        "privilege": "CREATE"
+      },
+      {
+        "name": "/office-level",
+        "method": "PUT",
+        "privilege": "UPDATE"
+      }
+    ]
+  },
+  {
+    "moduleKey": "LETTERHEADER",
+    "apis":[
+      {
+        "name": "/office-template/get-by-office",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-template/default",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-template/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-template/activate-template",
+        "method": "POST",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-template/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+
+  },
+  {
+    "moduleKey": "LETTERFOOTER",
+    "apis":[
+      {
+        "name": "/office-template/get-by-office",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-template/default",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-template/{id}",
+        "method": "GET",
+        "privilege": "READ"
+      },
+      {
+        "name": "/office-template/activate-template",
+        "method": "POST",
+        "privilege": "UPDATE"
+      },
+      {
+        "name": "/office-template/save",
+        "method": "POST",
+        "privilege": "CREATE"
+      }
+    ]
+  }
+]

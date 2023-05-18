@@ -1,0 +1,110 @@
+@import url('./xinhuadev.css');
+
+:root {
+  --mdc-theme-primary: #3f51b5;
+}
+
+body {
+  margin: 0;
+}
+.login-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#kc-content-wrapper {
+  width: 400px;
+  padding: 30px;
+  margin-top: -45%;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
+}
+
+.login-card .login-headline {
+  text-align: center;
+}
+.login-card .login-action {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+}
+.login-card .login-action span {
+  order: 2;
+}
+.login-card .login-field {
+  margin: 15px 0;
+  width: 100%;
+}
+.login-card #toggle {
+  outline: 0;
+}
+
+#reload-captcha {
+  bottom: 3px;
+  right: 3px;
+}
+#reload-captcha img {
+  height: 50px;
+}
+
+/* keycloak headerId */
+#kc-header {
+  display: none;
+}
+
+#kc-form-options .checkbox {
+  display: flex;
+  align-items: center;
+}
+
+#kc-page-footer {
+  position: fixed;
+  bottom: 10px;
+  left: calc(50% - 56px);
+  text-align: center;
+  font-size: 14px;
+  font-weight: normal;
+  color: #666;
+}
+.alert {
+  display: none;
+}
+.alert-error {
+  color: #b71c1c;
+}
+.alert-success {
+  color: #388e3c;
+}
+
+#subline {
+  margin-top: -18px;
+  color: #666;
+}
+
+#guides-link {
+  text-decoration: none;
+  color: #3f51b5;
+  position: relative;
+}
+
+#guides-link::before {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #3f51b5;
+  transform-origin: bottom right;
+  transform: scaleX(0);
+  transition: transform 0.5s ease;
+}
+
+#guides-link:hover::before {
+  transform-origin: bottom left;
+  transform: scaleX(1);
+}

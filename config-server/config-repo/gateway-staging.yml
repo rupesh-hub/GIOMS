@@ -1,0 +1,122 @@
+#for actuator endpoint exposer purpose development
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+      health:
+        show-details: always
+server:
+  port: ${GATEWAY_PORT:8070}
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: attendance
+          uri: lb://attendance
+          predicates:
+            - Path=/attendance/**
+          filters:
+            - RewritePath=/attendance/(?<path>.*), /$\{path}
+        - id: usermgmt
+          uri: lb://usermgmt
+          predicates:
+            - Path=/usermgmt/**
+          filters:
+            - RewritePath=/usermgmt/(?<path>.*), /$\{path}
+        - id: usermgmt2
+          uri: lb://usermgmt2
+          predicates:
+            - Path=/usermgmt2/**
+          filters:
+            - RewritePath=/usermgmt2/(?<path>.*), /$\{path}
+        - id: kasamu
+          uri: lb://kasamu
+          predicates:
+            - Path=/kasamu/**
+          filters:
+            - RewritePath=/kasamu/(?<path>.*), /$\{path}
+        - id: ops
+          uri: lb://ops
+          predicates:
+            - Path=/ops/**
+          filters:
+            - RewritePath=/ops/(?<path>.*), /$\{path}
+        - id: sbm
+          uri: lb://sbm
+          predicates:
+            - Path=/sbm/**
+          filters:
+            - RewritePath=/sbm/(?<path>.*), /$\{path}
+        - id: openapi
+          uri: http://localhost:${server.port}
+          predicates:
+            - Path=/v3/api-docs/**
+          filters:
+            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+        - id: darta-chalani
+          uri: lb://darta-chalani
+          predicates:
+            - Path=/darta-chalani/**
+          filters:
+            - RewritePath=/darta-chalani/(?<path>.*), /$\{path}
+        - id: dms
+          uri: lb://DMSMGMT
+          predicates:
+            - Path=/dms/**
+          filters:
+            - RewritePath=/dms/(?<path>.*), /api/$\{path}
+        - id: committeemgmt
+          uri: lb://COMMITTEEMGMT
+          predicates:
+            - Path=/committee-mgmt/**
+          filters:
+            - RewritePath=/committee-mgmt/(?<path>.*), /$\{path}
+        - id: giomscalendar
+          uri: lb://GIOMSCALENDAR
+          predicates:
+            - Path=/calendar/**
+          filters:
+            - RewritePath=/calendar/(?<path>.*), /$\{path}
+        - id: tms
+          uri: lb://tms
+          predicates:
+            - Path=/tms/**
+          filters:
+            - RewritePath=/tms/(?<path>.*), /$\{path}
+        - id: messaging-service
+          uri: lb://messaging-service
+          predicates:
+            - Path=/socket/**
+          filters:
+            - RewritePath=/socket/(?<segment>.*), /$\{segment}
+        - id: templating-service
+          uri: lb://templating-service
+          predicates:
+            - Path=/template/**
+          filters:
+            - RewritePath=/template/(?<path>.*), /$\{path}
+  application:
+    gateway:
+      discovery:
+        locator:
+          lowerCaseServiceId: true
+          enabled: true
+hystrix.command.attendance.execution.isolation.thread.timeoutInMilliseconds: 60000
+hystrix.command.usermgmt.execution.isolation.thread.timeoutInMilliseconds: 60000
+#hystrix.command.employee-service.execution.isolation.thread.timeoutInMilliseconds: 60000
+# discovery server
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${ADDRESS_DISCOVERY_SERVER:http://localhost:8761/eureka}
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+default-filters:
+  - DedupeResponseHeader=Access-Control-Allow-Credentials, RETAIN_UNIQUE
+allowed-origins: ${ALLOWED_ORIGIN}

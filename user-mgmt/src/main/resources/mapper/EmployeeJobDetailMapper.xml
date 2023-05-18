@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.EmployeeJobDetailMapper">
+
+    <resultMap id="jobDetailResponse" type="com.gerp.usermgmt.pojo.organization.employee.EmployeeJobLogResponsePojo">
+        <id property="id" column="id"/>
+        <result column="pis_code" property="pisCode"/>
+        <result column="e_name_en" property="employeeNameEn"/>
+        <result column="e_name_np" property="employeeNameNp"/>
+        <result column="start_date" property="startDate"/>
+        <result column="start_date_np" property="startDateNp"/>
+        <result column="end_date" property="endDate"/>
+        <result column="end_date_np" property="endDateNp"/>
+        <result column="is_active" property="isActive"/>
+        <result column="is_period_over" property="isPeriodOver"/>
+        <result column="is_promotion" property="isPromotion"/>
+        <association property="createdBy" resultMap="createdBy"/>
+        <association property="oldFunctionalDesignation" resultMap="oldFunctionalDesignation"/>
+        <association property="newFunctionalDesignation" resultMap="newFunctionalDesignation"/>
+    </resultMap>
+    <resultMap id="createdBy" type="com.gerp.shared.pojo.IdNamePojo">
+        <result column="created_by_code" property="code"/>
+        <result column="created_by_name_en" property="name"/>
+        <result column="created_by_name_np" property="nameN"/>
+    </resultMap>
+
+    <resultMap id="oldFunctionalDesignation" type="com.gerp.usermgmt.pojo.organization.employee.FunctionalDesignationPojo">
+        <result column="old_functional_designation_code" property="code"/>
+        <result column="old_functional_designation_name_en" property="nameEn"/>
+        <result column="old_functional_designation_name_np" property="nameNp"/>
+    </resultMap>
+    <resultMap id="newFunctionalDesignation" type="com.gerp.usermgmt.pojo.organization.employee.FunctionalDesignationPojo">
+        <result column="new_functional_designation_code" property="code"/>
+        <result column="new_functional_designation_name_en" property="nameEn"/>
+        <result column="new_functional_designation_name_np" property="nameNp"/>
+    </resultMap>
+
+    <select id="searchCurrentPromotionLog"
+            resultMap="jobDetailResponse">
+        select ejl.id,
+               e.pis_code                                                  as pis_code,
+               ejl.is_promotion                                            as is_promotion,
+               case
+                   when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end   as e_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end   as e_name_np,
+               cb.pis_code                                                 as created_by_code,
+               case
+                   when cb.middle_name_en IS NOT NULL then concat(cb.first_name_en, ' ', cb.middle_name_en, ' ',
+                                                                  cb.last_name_en)
+                   else concat(cb.first_name_en, ' ', cb.last_name_en) end as created_by_name_en,
+               case
+                   when cb.middle_name_np IS NOT NULL then concat(cb.first_name_np, ' ', cb.middle_name_np, ' ',
+                                                                  cb.last_name_np)
+                   else concat(cb.first_name_np, ' ', cb.last_name_np) end as created_by_name_np,
+               oldFd.name_en                                               as old_functional_designation_name_en,
+               oldFd.name_np                                               as old_functional_designation_name_np,
+               newFd.name_en                                               as new_functional_designation_name_en,
+               newFd.name_np                                               as new_functional_designation_name_np,
+               ejl.start_date                                              as start_date,
+               ejl.start_date_np                                           as start_date_np,
+               ejl.end_date                                                as end_date,
+               ejl.end_date_np                                             as end_date_np,
+               ejl.is_active                                               as is_active,
+               ejl.is_period_over                                          as is_period_over
+        from employee_job_detail_log ejl
+                 left join functional_designation newFd on ejl.new_designation_code = newFd.code
+                 left join functional_designation oldFd  on ejl.old_designation_code = oldFd.code
+                 left join employee e on ejl.pis_code = e.pis_code
+                 left join users u on u.id = ejl.created_by
+                 left join employee cb on cb.pis_code = u.pis_employee_code
+        where ejl.id in
+              (select id from employee_job_detail_log ejl where ejl.promoted_office_code = #{officeCode} and ejl.is_promotion = true group by id)
+    </select>
+
+    <resultMap id="designationHistory" type="com.gerp.usermgmt.pojo.organization.jobdetail.DesignationDetailPojo">
+
+        <result property="organizationName" column="organization_name" />
+        <result property="officeCode" column="promoted_office_code" />
+        <result property="organizationNameNp" column="organization_name_np" />
+        <result property="newPosition" column="new_position_name" />
+        <result property="newPositionNp" column="new_position_name_np" />
+        <result property="jobStatus" column="employee_service_status" />
+        <result property="jobStatusNp" column="employee_service_status_np" />
+        <result property="newDesignation" column="new_designation"/>
+        <result property="newDesignationNp" column="new_designation_np"/>
+
+        <collection property="newService"
+                    ofType="com.gerp.usermgmt.pojo.organization.office.ServicePojo">
+            <result column="new_service_code" property="code"/>
+            <result column="new_service_name_en" property="nameEn"/>
+            <result column="new_service_name_np" property="nameNp"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="findAllOfficeHistory" resultMap="designationHistory">
+        select  distinct
+            ejdl.promoted_office_code as promoted_office_code,
+            o.name_en as organization_name,
+            o.name_np as  organization_name_np
+        from employee_job_detail_log
+        ejdl left join office o on o.code = ejdl.promoted_office_code  where ejdl.pis_code = #{pisCode};
+
+    </select>
+    <select id="getStartDate" resultType="java.time.LocalDate">
+        select ejdl.start_date from employee_job_detail_log ejdl where  ejdl.promoted_office_code = #{officeCoe} and ejdl.pis_code = #{pisCode}  order by ejdl.start_date asc limit 1;
+    </select>
+    <select id="getEndDate" resultType="java.time.LocalDate">
+        select ejdl.end_date from employee_job_detail_log ejdl where  ejdl.promoted_office_code = #{officeCoe} and ejdl.pis_code= #{pisCode} order by ejdl.created_date desc limit 1;
+    </select>
+    <select id="getServiceDetails"
+            resultMap="designationHistory">
+        select ejdl.new_service_code,
+               e.app_service_status_code as service_status,
+               p.name_en as new_position_name,
+               p.name_np as new_position_name_np,
+               s.code as new_service_code,
+               ess.name_en as employee_service_status,
+               ess.name_np as employee_service_status_np,
+               fd.name_np as new_designation,
+               fd.name_en as new_designation_np
+        from employee_job_detail_log ejdl
+                 left join employee e on e.pis_code = ejdl.pis_code
+                 left join employee_service_status ess  on ess.code = e.employee_service_status_code
+                 left join service s on s.code =ejdl.new_service_code
+                 left join position p on ejdl.new_position_code = p.code
+                 left join functional_designation fd on ejdl.new_designation_code = fd.code
+        where  ejdl.promoted_office_code = #{officeCode}  and ejdl.pis_code= #{pisCode} order by ejdl.created_date desc limit 1;
+    </select>
+
+
+</mapper>

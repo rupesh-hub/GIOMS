@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+    body {
+      /* margin: 2rem; */
+      font-family: Kalimati;
+      /* width: 100%; */
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+    }
+    body::before {
+        content: <span th:text="${entity.mobileNumber}"> </span>;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: -1;
+        color: #5c5f5e;
+        font-size: 10vw;
+        font-weight: 500px;
+        display: grid;
+        justify-content: center;
+        align-content: center;
+        opacity: 0.2;
+        transform: rotate(-30deg);
+
+    }
+
+    img {
+      height: 90px;
+    }
+
+    .header-text-block {
+      margin: 0 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: Kalimati;
+    }
+
+    .header-text {
+      font-weight: bold;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .header-heading {
+      font-size: 1.5048rem;
+    }
+
+    .document-content-container {
+      display: flex;
+      margin-bottom: 1rem;
+    }
+
+    .document-content {
+      text-align: justify;
+      line-height: 1.875rem;
+      font-size: 1.0032rem;
+      display: block;
+    }
+
+    .sign-container {
+      text-align: right;
+      margin-top: 5px;
+    }
+
+    @media only screen and (max-width: 500px) {
+      .header-text {
+        font-weight: bold;
+        text-align: center;
+        font-size: 0.6rem;
+      }
+
+      .header-heading {
+        font-size: 1rem;
+      }
+
+      img {
+        height: 50px;
+      }
+
+      .document-content {
+        display: block;
+        font-size: small;
+      }
+
+      .document-content {
+        text-align: justify;
+        line-height: 1.5rem;
+        font-size: 1rem;
+        display: block;
+      }
+    }
+
+    @media only screen and (max-width: 350px) {
+      .header-text {
+        font-weight: bold;
+        text-align: center;
+        font-size: 0.4rem;
+      }
+
+      .header-heading {
+        font-size: 0.8rem;
+      }
+
+      img {
+        height: 50px;
+      }
+
+      .document-content {
+        display: block;
+        font-size: smaller;
+      }
+
+      .document-content {
+        text-align: justify;
+        line-height: 1.3rem;
+        font-size: 0.8rem;
+        display: block;
+      }
+        .header span {
+
+            font-size: 75%;
+
+        }
+    }
+  </style>
+</head>
+
+<body>
+header_from_programmer
+
+<table style="width: 100%;">
+  <thead>
+  <tr>
+    <td>
+      <div class="head-space">&nbsp;</div>
+    </td>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td colspan="3" class="document-content">
+      <div style="display: flex; justify-content: space-between; color: red; font-weight: bold;">
+        <div> Ref No. :- <span style="color: black; font-weight: normal" th:text="${entity.chali_no}" > </span></span> </div>
+        <div> Date :- <span style="color: black; font-weight: normal" th:text="${entity.letter_date}" ></span> </div>
+      </div>
+
+      <!-- <div style="display: flex; justify-content: center; margin-bottom: 2rem">
+          <div style="text-decoration: underline"> विषय: <span>test rev</span> </div>
+      </div> -->
+      subject_to_replace
+
+      <div class="document-content-container"> <span style="display: block" th:utext="${entity.body_message}" > </span> </div>
+h
+
+      <div
+              style="display: block; justify-content: flex-end; text-align: right; margin-top: 5px"
+      >
+        signature_here
+        <div style="text-align: right">
+          ......................................... <br/>
+
+          <span style="display: block;" th:text="'('+${entity.requester_name}+')'"></span>
+
+          <span style="display: block;" th:text="${entity.requester_position}"></span>
+
+          <span style="display: block;" th:if="${entity.sectionLetter != null}" th:text="${entity.sectionLetter}"></span>
+        </div>
+      </div>
+      <div
+              class="print-format"
+              style="display: flex; justify-content: flex-start"
+      >
+        <div colspan="3">
+          <ul style="list-style: none;margin: 0; padding: 0;" th:if="${saadar_awagataartha!=''}">
+            <span style="text-decoration: underline" th:text="${saadar_awagataartha}"></span> <br/>
+            <span th:each="data: ${entity.saadar_awagataartha}">
+                                <li th:text="${data.office}"></li>
+                                <li th:if="${data.section != ''}" th:text="${data.section}"></li>
+                                <li th:if="${data.address != ''}" th:text="${data.address}"></li>
+                                <li th:if="${data.remarks != null}" th:text="'('+ ${data.remarks}+')'"></li>
+                             </span>
+          </ul>
+          <ul style="list-style: none;margin: 0; padding: 0;" th:if="${bodartha_option!=''}">
+            <span style="text-decoration: underline" th:text="${bodartha_option}"></span> <br/>
+            <span th:each="data: ${entity.bodartha}">
+                                <li th:text="${data.office}"></li>
+                                <li th:if="${data.section != ''}" th:text="${data.section}"></li>
+                                <li th:if="${data.address != ''}" th:text="${data.address}"></li>
+                                    <li th:if="${data.remarks !=null}" th:text="'('+${data.remarks}+')'"></li>
+                             </span>
+          </ul>
+          <ul style="list-style: none;margin: 0; padding: 0;" th:if="${bodartha_karyartha!=''}">
+            <span style="text-decoration: underline" th:text="${bodartha_karyartha}"></span> <br/>
+            <span th:each="data: ${entity.bodartha_karyartha}">
+                                <li th:text="${data.office}"></li>
+                                <li th:if="${data.section != ''}" th:text="${data.section}"></li>
+                                <li th:if="${data.address != ''}" th:text="${data.address}"></li>
+                                    <li th:if="${data.remarks !=null}" th:text="'('+ ${data.remarks} +')'"></li>
+                             </span>
+          </ul>
+
+        </div>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+  <tfoot>
+  <tr>
+    <td>
+      <div class="foot-space">&nbsp;</div>
+    </td>
+  </tr>
+  </tfoot>
+</table>
+<div
+        style="
+				flex: 1;
+				text-align: center;
+				border-top: 3px solid red;
+				color: red;
+				font-size: x-small;
+			"
+        class="footer"
+>
+  <span th:utext="${entity.footer}"></span>
+</div>
+</body>
+
+</html>

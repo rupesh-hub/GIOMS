@@ -1,0 +1,28 @@
+package com.gerp.shared.enums;
+
+/**
+ * @author Sanjeena Basukala
+ * @version 1.0.0
+ * @since 1.0.0
+ */
+public enum Gender {
+
+    Male("Male", "M"),
+    Female("Female", "F");
+
+    private String key;
+    private String value;
+
+    Gender(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public static String getKey(Gender gender) {
+        return gender.key;
+    }
+
+    public String getValue(Gender gender) {
+        return gender.value;
+    }
+}

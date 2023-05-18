@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.transfer.TransferMapper">
+
+    <resultMap id="transferRequest" type="com.gerp.usermgmt.pojo.transfer.TransferSubmissionResponsePojo">
+        <id column="id" property="id"/>
+        <result column="expected_departure_date_np" property="expectedDepartureDateNp"/>
+        <result column="approved" property="status"/>
+        <result column="created_date" property="requestedOn"/>
+        <result column="expected_departure_date_en" property="expectedDepartureDateEn"/>
+        <result column="transfer_type" property="transferType"/>
+
+        <association property="employeeToBeTransfer" resultMap="employee"/>
+
+        <association property="toPosition" resultMap="newPosition"/>
+        <association property="toDesignation" resultMap="newDesignation"/>
+        <association property="toService" resultMap="newService"/>
+        <association resultMap="officePojo" property="toOffice"/>
+
+        <association property="fromPosition" resultMap="oldPositionCode"/>
+        <association property="fromDesignation" resultMap="oldDesignation"/>
+        <association property="fromService" resultMap="oldService"/>
+        <association resultMap="oldOffice" property="fromOffice"/>
+        <association resultMap="toSection" property="toSection"/>
+        <association resultMap="fromSection" property="fromSection"/>
+
+        <collection resultMap="documentResponsePojo" property="documents"/>
+        <collection resultMap="remarksResponse" property="remarks"/>
+        <collection resultMap="sendTOOffice" property="sendToOffices"/>
+    </resultMap>
+    <resultMap id="employee" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="e_code" property="code"/>
+        <result column="e_name_en" property="nameEn"/>
+        <result column="e_name_np" property="nameNp"/>
+    </resultMap>
+    <resultMap id="newPosition" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="np_code" property="code"/>
+        <result column="np_name_en" property="nameEn"/>
+        <result column="np_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="officePojo" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="no_code" property="code"/>
+        <result column="no_name_en" property="nameEn"/>
+        <result column="no_name_np" property="nameNp"/>
+        <association property="district" resultMap="officeDistrict"/>
+    </resultMap>
+
+<!--    <resultMap id="sendTOOffice" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">-->
+<!--        <id column="seo_code" property="code"/>-->
+<!--        <result column="seo_name_en" property="nameEn"/>-->
+<!--        <result column="seo_name_np" property="nameNp"/>-->
+<!--    </resultMap>-->
+    <resultMap id="officeDistrict" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="do_code" property="code"/>
+        <result column="do_name_en" property="nameEn"/>
+        <result column="do_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="sendTOOffice" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="seo_code" property="code"/>
+        <result column="seo_name_en" property="nameEn"/>
+        <result column="seo_name_np" property="nameNp"/>
+    </resultMap>
+
+
+    <resultMap id="fromSection" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="fsc_code" property="code"/>
+        <result column="fsc_name_en" property="nameEn"/>
+        <result column="fsc_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="toSection" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="tsc_code" property="code"/>
+        <result column="tsc_name_en" property="nameEn"/>
+        <result column="tsc_name_np" property="nameNp"/>
+    </resultMap>
+    <resultMap id="newDesignation" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="nd_code" property="code"/>
+        <result column="nd_name_en" property="nameEn"/>
+        <result column="nd_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="newService" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="ns_code" property="code"/>
+        <result column="ns_name_en" property="nameEn"/>
+        <result column="ns_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="remarksResponse" type="com.gerp.usermgmt.pojo.transfer.TransferRemarksPojo">
+        <id column="pdd_id" property="id"/>
+        <result column="remarks" property="remarks"/>
+        <association property="remarksGivenByEmployee" resultMap="remarkGivenEmployee"/>
+    </resultMap>
+
+    <resultMap id="documentResponsePojo" type="com.gerp.usermgmt.pojo.transfer.document.DocumentResponsePojo">
+        <result property="id" column="pdd_id"/>
+        <result property="name" column="doument_name"/>
+    </resultMap>
+
+    <resultMap id="remarkGivenEmployee" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="re_code" property="code"/>
+        <result column="re_name_en" property="nameEn"/>
+        <result column="re_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="oldPositionCode" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="op_code" property="code"/>
+        <result column="op_name_en" property="nameEn"/>
+        <result column="op_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="oldOffice" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="oo_code" property="code"/>
+        <result column="oo_name_en" property="nameEn"/>
+        <result column="oo_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="oldDesignation" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="od_code" property="code"/>
+        <result column="od_name_en" property="nameEn"/>
+        <result column="od_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="oldService" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <id column="os_code" property="code"/>
+        <result column="os_name_en" property="nameEn"/>
+        <result column="os_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="rawanaDetail" type="com.gerp.usermgmt.pojo.transfer.RawanaDetailsResponsePojo">
+        <id column="rdd_id" property="id"/>
+        <result column="basic_salary" property="basicSalary"/>
+        <result column="cit" property="cit"/>
+        <result column="daily_expenses" property="dailyExpenses"/>
+        <result column="date_payment_receipt_en" property="datePaymentReceiptEn"/>
+        <result column="date_payment_receipt_np" property="datePaymentReceiptNp"/>
+        <result column="employee_provident_fund" property="employeeProvidentFund"/>
+        <result column="festival_date_en" property="festivalDateEn"/>
+        <result column="festival_date_np" property="festivalDateNp"/>
+        <result column="festival_expense" property="festivalExpense"/>
+        <result column="festival_name" property="festivalName"/>
+        <result column="handover" property="handover"/>
+        <result column="income_tax" property="incomeTax"/>
+        <result column="increased_salary" property="increasedSalary"/>
+        <result column="insurance_paid_en" property="insurancePaidEn"/>
+        <result column="insurance_paid_np" property="insurancePaidNp"/>
+        <result column="insurance_registered_en" property="insuranceRegisteredEn"/>
+        <result column="insurance_registered_np" property="insuranceRegisteredNp"/>
+        <result column="last_salary_received_np" property="lastReceivedDateNp"/>
+        <result column="last_salary_received_en" property="lastSalaryReceivedDateEn"/>
+        <result column="new_pension_en" property="newPensionEn"/>
+        <result column="new_pension_np" property="newPensionNp"/>
+        <result column="old_pension" property="oldPension"/>
+        <result column="paternity_care" property="paternityCare"/>
+        <result column="payment_medical" property="paymentMedical"/>
+        <result column="provident_fund" property="providentFund"/>
+        <result column="salary_increment_date_en" property="salaryIncrementDateEn"/>
+        <result column="salary_increment_date_np" property="salaryIncrementDateNp"/>
+        <result column="total_attendance" property="totalAttendance"/>
+        <result column="tranfer_date_en" property="tranferDateEn"/>
+        <result column="tranfer_date_np" property="tranferDateNp"/>
+        <association property="transferDetails" resultMap="transferRequest" />
+    </resultMap>
+
+    <select id="getTransferToBeDecided" resultMap="transferRequest">
+        select
+               th.id ,
+               th.approved ,
+               th.created_date,
+--                th.expected_departure_date_en ,
+--                th.transfer_type,
+
+
+               e.pis_code as e_code,
+               e.first_name_np as e_name_np,
+               e.first_name_en as e_name_en,
+
+--                 sn.code as ns_code,
+--                 sn.name_np as ns_name_np,
+--                 sn.name_en as ns_name_en,
+--
+--                pn.code as np_code,
+--                pn.name_np as np_name_np,
+--                pn.name_en as np_name_en,
+--
+--                fdn.code as nd_code,
+--                fdn.name_np as nd_name_np,
+--                fdn.name_en as nd_name_en,
+
+               oNew.code as no_code,
+               oNew.name_np as no_name_np,
+               oNew.name_en as no_name_en,
+
+               oOld.code as oo_code,
+               oOld.name_np as oo_name_np,
+               oOld.name_en as oo_name_en ,
+
+               so.code as os_code,
+               so.name_np as os_name_np,
+               so.name_en as os_name_en ,
+
+               po.code as op_code,
+               po.name_np as op_name_np,
+               po.name_en as op_name_en ,
+
+               fdo.code as od_code,
+               fdo.name_np as od_name_np,
+               fdo.name_en as od_name_en
+
+--                 rd.id as pdd_id,
+--                 rd.name as doument_name,
+--                 tr.remark as remarks,
+
+--                 seo.id as seo_code,
+--                 seo.name_np as seo_name_np,
+--                 seo.name_en as seo_name_en,
+
+--                 eRem.pis_code as re_code,
+--                 eRem.first_name_np as re_name_np,
+--                eRem.first_name_en as re_name_en
+        from transfer_history th
+--                  left join service sn on sn.code = th.to_service_code
+--                  left join position pn on pn.code = th.to_position_code
+--                  left join functional_designation fdn on fdn.code = th.to_designation_code
+                 left join functional_designation fdo on fdo.code = th.from_designation_code
+                 left join service so on so.code = th.from_service_code
+                 left join position po on po.code = th.from_position_code
+                 left join office oNew on oNew.code = th.to_office_code
+                left join office  oOld on oOld.code = th.from_office_code
+                left join employee e on e.pis_code = th.pis_code
+--                 left join transfer_documents rd on rd.transfer_history_id = th.id
+--                 left join transfer_remarks tr on tr.transfer_history_id = th.id
+--                 left join employee eRem on eRem.pis_code = tr.pis_code
+--                 left join trasnfer_to_be_viewed tv on tv.transfer_history_id = th.id
+--                 left join office seo on seo.code = tv.office_code
+        where
+        <if test="pisCode != null">
+            th.approver_code = #{pisCode}
+           ;
+        </if>
+        <if test="code != null">
+            th.created_by = #{code}::INTEGER
+           ;
+        </if>
+
+
+    </select>
+
+    <select id="getTransferListForTippadi" resultMap="transferRequest">
+        select
+        th.id ,
+        th.approved ,
+        th.created_date,
+        e.pis_code as e_code,
+       concat_ws(' ',e.first_name_np,e.middle_name_np,e.last_name_np) as e_name_np,
+       concat_ws(' ',e.first_name_en,e.middle_name_en,e.last_name_en) as e_name_en,
+
+        oNew.code as no_code,
+        oNew.name_np as no_name_np,
+        oNew.name_en as no_name_en,
+
+        oOld.code as oo_code,
+        oOld.name_np as oo_name_np,
+        oOld.name_en as oo_name_en ,
+
+        so.code as os_code,
+        so.name_np as os_name_np,
+        so.name_en as os_name_en ,
+
+        fsc.id as fsc_code,
+        fsc.name_en as fsc_name_en,
+        fsc.name_np as fsc_name_np,
+
+        tsc.id as tsc_code,
+        tsc.name_en as tsc_name_en,
+        tsc.name_np as tsc_name_np,
+
+        od.code as do_code,
+        od.name_np as do_name_np,
+        od.name_en as do_name_en ,
+
+        fdn.code as nd_code,
+        fdn.name_np as nd_name_np,
+        fdn.name_en as nd_name_en,
+
+        po.code as op_code,
+        po.name_np as op_name_np,
+        po.name_en as op_name_en ,
+
+        fdo.code as od_code,
+        fdo.name_np as od_name_np,
+        fdo.name_en as od_name_en
+
+        from transfer_history th
+        left join functional_designation fdo on fdo.code = th.from_designation_code
+        left join functional_designation fdn on fdn.code = th.to_designation_code
+        left join service so on so.code = th.from_service_code
+        left join section_subsection fsc on fsc.id = th.from_section_code
+        left join section_subsection tsc on tsc.id = th.to_section_code
+        left join position po on po.code = th.from_position_code
+        left join office oNew on oNew.code = th.to_office_code
+        left join office  oOld on oOld.code = th.from_office_code
+        left join district od on od.code = oOld.district_code
+        left join employee e on e.pis_code = th.pis_code
+        where
+        th.created_by = #{code}::INTEGER and
+        th.approved = #{status} and
+        th.is_active = true
+        <if test="withIn != null">
+           and th.transfer_type = #{withIn}
+        </if>
+
+
+
+    </select>
+
+    <select id="getRawanaList" resultMap="transferRequest">
+        select
+        th.id ,
+        th.approved ,
+        th.created_date,
+
+        e.pis_code as e_code,
+        e.first_name_np as e_name_np,
+        e.first_name_en as e_name_en,
+
+        oNew.code as no_code,
+        oNew.name_np as no_name_np,
+        oNew.name_en as no_name_en,
+
+        oOld.code as oo_code,
+        oOld.name_np as oo_name_np,
+        oOld.name_en as oo_name_en ,
+
+        so.code as os_code,
+        so.name_np as os_name_np,
+        so.name_en as os_name_en ,
+
+        po.code as op_code,
+        po.name_np as op_name_np,
+        po.name_en as op_name_en ,
+
+
+        fdo.code as od_code,
+        fdo.name_np as od_name_np,
+        fdo.name_en as od_name_en
+        from transfer_history th
+        left join rawana_details rd on rd.transfer_history_id = th.id
+        left join functional_designation fdo on fdo.code = th.from_designation_code
+        left join service so on so.code = th.from_service_code
+        left join position po on po.code = th.from_position_code
+        left join office oNew on oNew.code = th.to_office_code
+        left join office  oOld on oOld.code = th.from_office_code
+        left join employee e on e.pis_code = th.pis_code
+        where
+            th.from_office_code = #{officeCode} and
+            <if test="status != null">
+                rd.approval_status = #{status}
+            </if>
+            th.approved = 'Approved';
+
+    </select>
+
+    <select id="getTransferById" resultMap="transferRequest">
+        select
+            th.id ,
+            th.expected_departure_date_np ,
+            th.expected_departure_date_en ,
+            th.transfer_type,
+
+
+            e.pis_code as e_code,
+            e.first_name_np as e_name_np,
+            e.first_name_en as e_name_en,
+
+            sn.code as ns_code,
+            sn.name_np as ns_name_np,
+            sn.name_en as ns_name_en,
+
+            pn.code as np_code,
+            pn.name_np as np_name_np,
+            pn.name_en as np_name_en,
+
+            fdn.code as nd_code,
+            fdn.name_np as nd_name_np,
+            fdn.name_en as nd_name_en,
+
+            oNew.code as no_code,
+            oNew.name_np as no_name_np,
+            oNew.name_en as no_name_en,
+
+            oOld.code as oo_code,
+            oOld.name_np as oo_name_np,
+            oOld.name_en as oo_name_en ,
+
+            so.code as os_code,
+            so.name_np as os_name_np,
+            so.name_en as os_name_en ,
+
+            po.code as op_code,
+            po.name_np as op_name_np,
+            po.name_en as op_name_en ,
+
+            fdo.code as od_code,
+            fdo.name_np as od_name_np,
+            fdo.name_en as od_name_en,
+
+
+        od.code as do_code,
+        od.name_np as do_name_np,
+        od.name_en as do_name_en ,
+
+            rd.id as pdd_id,
+            rd.name as doument_name,
+            tr.remark as remarks,
+
+               seo.code as seo_code,
+                seo.name_np as seo_name_np,
+                seo.name_en as seo_name_en,
+
+            eRem.pis_code as re_code,
+            eRem.first_name_np as re_name_np,
+            eRem.first_name_en as re_name_en
+        from transfer_history th
+                 left join service sn on sn.code = th.to_service_code
+                 left join position pn on pn.code = th.to_position_code
+                 left join functional_designation fdn on fdn.code = th.to_designation_code
+                 left join functional_designation fdo on fdo.code = th.from_designation_code
+                 left join service so on so.code = th.from_service_code
+                 left join position po on po.code = th.from_position_code
+                 left join office oNew on oNew.code = th.to_office_code
+                 left join district od on od.code = oNew.district_code
+                 left join office  oOld on oOld.code = th.from_office_code
+                 left join employee e on e.pis_code = th.pis_code
+                 left join transfer_documents rd on rd.transfer_history_id = th.id
+                 left join transfer_remarks tr on tr.transfer_history_id = th.id
+                 left join employee eRem on eRem.pis_code = tr.pis_code
+                  left join trasnfer_to_be_viewed tv on tv.transfer_history_id = th.id
+                inner join office seo on seo.code = tv.office_code
+        where th.id = #{id}
+         <if test="type !=null">
+             and (tv.type = #{type} or tv.type = 'BOTH')
+         </if>
+         ;
+
+    </select>
+
+
+    <select id="getToBeApprovalRawana" resultMap="rawanaDetail">
+        select
+    th.id ,
+    th.expected_departure_date_np ,
+    th.expected_departure_date_en ,
+    th.transfer_type,
+
+
+    e.pis_code as e_code,
+    e.first_name_np as e_name_np,
+    e.first_name_en as e_name_en,
+
+    sn.code as ns_code,
+    sn.name_np as ns_name_np,
+    sn.name_en as ns_name_en,
+
+    pn.code as np_code,
+    pn.name_np as np_name_np,
+    pn.name_en as np_name_en,
+
+    fdn.code as nd_code,
+    fdn.name_np as nd_name_np,
+    fdn.name_en as nd_name_en,
+
+    oNew.code as no_code,
+    oNew.name_np as no_name_np,
+    oNew.name_en as no_name_en,
+
+    oOld.code as oo_code,
+    oOld.name_np as oo_name_np,
+    oOld.name_en as oo_name_en ,
+
+    so.code as os_code,
+    so.name_np as os_name_np,
+    so.name_en as os_name_en ,
+
+    po.code as op_code,
+    po.name_np as op_name_np,
+    po.name_en as op_name_en ,
+
+    fdo.code as od_code,
+    fdo.name_np as od_name_np,
+    fdo.name_en as od_name_en,
+
+    od.code as do_code,
+    od.name_np as do_name_np,
+    od.name_en as do_name_en ,
+
+    rd.id as pdd_id,
+    rd.name as doument_name,
+    tr.remark as remarks,
+
+    seo.code as seo_code,
+    seo.name_np as seo_name_np,
+    seo.name_en as seo_name_en,
+
+    eRem.pis_code as re_code,
+    eRem.first_name_np as re_name_np,
+    eRem.first_name_en as re_name_en,
+
+       rdd.id as rdd_id,
+       rdd.basic_salary,
+       rdd.cit ,
+       rdd.daily_expenses,
+       rdd.date_payment_receipt_en,
+        rdd.date_payment_receipt_np,
+       rdd.employee_provident_fund,
+       rdd.festival_date_en,
+       rdd.festival_date_np,
+       rdd.festival_expense,
+       rdd.festival_name,
+       rdd.handover,
+       rdd.income_tax,
+       rdd.increased_salary,
+       rdd.insurance_paid_en,
+       rdd.insurance_paid_np,
+       rdd.insurance_registered_en,
+       rdd.insurance_registered_np,
+       rdd.last_salary_received_np,
+       rdd.last_salary_received_en,
+       rdd.new_pension_en,
+       rdd.new_pension_np,
+       rdd.old_pension,
+       rdd.paternity_care,
+       rdd.payment_medical,
+       rdd.provident_fund,
+       rdd.salary_increment_date_en,
+       rdd.salary_increment_date_np,
+       rdd.total_attendance,
+       rdd.tranfer_date_en,
+       rdd.tranfer_date_np
+from rawana_details rdd
+        inner join transfer_history th on th.id = rdd.transfer_history_id
+         left join service sn on sn.code = th.to_service_code
+         left join position pn on pn.code = th.to_position_code
+         left join functional_designation fdn on fdn.code = th.to_designation_code
+         left join functional_designation fdo on fdo.code = th.from_designation_code
+         left join service so on so.code = th.from_service_code
+         left join position po on po.code = th.from_position_code
+         left join office oNew on oNew.code = th.to_office_code
+         left join district od on od.code = oNew.district_code
+         left join office  oOld on oOld.code = th.from_office_code
+         left join employee e on e.pis_code = th.pis_code
+         left join transfer_documents rd on rd.transfer_history_id = th.id
+         left join transfer_remarks tr on tr.transfer_history_id = th.id
+         left join employee eRem on eRem.pis_code = tr.pis_code
+         left join trasnfer_to_be_viewed tv on tv.transfer_history_id = th.id
+         inner join office seo on seo.code = tv.office_code
+where rdd.id =#{id};
+    </select>
+    <select id="getDateRange" resultType="com.gerp.shared.pojo.DateListPojo">
+        select  min(eng_date) as minDate, max(eng_date) as maxDate
+            from date_list
+            where
+            <if test="year != null">
+                nepali_year=#{year}::INTEGER
+            </if>
+            <if test="month != null">
+               and  nepali_month = (select dll.nepali_month from date_list dll where dll.eng_date = #{month})
+            </if>
+    </select>
+
+    <select id="getYearDateRange" resultType="com.gerp.shared.pojo.DateListPojo">
+        select min(eng_date) as minDate, max(eng_date) as maxDate,nepali_month as months from date_list  where nepali_year=#{year}
+        group by nepali_month
+    </select>
+</mapper>

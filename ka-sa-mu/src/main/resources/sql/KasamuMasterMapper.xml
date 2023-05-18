@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.kasamu.mapper.KasamuMasterMapper">
+
+    <resultMap id="draftResult" type="com.gerp.kasamu.pojo.response.KasamuMasterResponsePojo">
+        <id property="id" column="id"/>
+       <result property="valuationPeriod" column="valuation_period"/>
+       <result property="regdNum" column="regd_num"/>
+       <result property="createdDate" column="created_date"/>
+    </resultMap>
+
+    <resultMap id="kasamuMasterDetails" type="com.gerp.kasamu.pojo.response.KasamuMasterResponsePojo">
+        <id property="id" column="m_id"/>
+        <result property="valuationPeriod" column="valuation_period"/>
+<!--        <result property="regdNum" column="regd_num"/>-->
+<!--        <result property="createdDate" column="created_date"/>-->
+<!--        <result property="officeCode" column="office_code"/>-->
+        <result property="employeePisCode" column="employee_pis_code"/>
+        <result property="supervisorPisCode" column="supervisor_pis_code"/>
+        <result property="evaluatorPisCode" column="evaluator_pis_code"/>
+        <result property="subDate" column="sub_date"/>
+<!--        <result property="currentOfficeCode" column="current_office_code"/>-->
+<!--        <result property="superSubDate" column="super_sub_date"/>-->
+<!--        <result property="reviewerSubDate" column="reviewer_sub_date"/>-->
+<!--        <result property="valRemarksBySupervisor" column="val_remarks_by_supervisor" />-->
+<!--        <result property="valRemarksByEvaluator" column="val_remarks_by_evaluator" />-->
+<!--        <result property="evalSubDate" column="eval_sub_date"/>-->
+<!--        <result property="evalCommitteeSubDate" column="eval_committee_sub_date"/>-->
+<!--        <result property="empShreni" column="emp_shreni" />-->
+        <result property="status" column="status" />
+        <result property="justificationOfReason" column="justification_of_reason" />
+        <result property="resolveCause" column="resolve_cause" />
+        <result property="kasamuMasterEn" column="kasamu_en_details" typeHandler="com.gerp.kasamu.converter.AESTypeHandler"/>
+<!--        <result property="progressAchievedResult" column="progress_achieved_result" />-->
+<!--        <result property="deadlineAchievedResult" column="deadline_achieved_result" />-->
+<!--        <result property="submittedStatus" column="submitted_status"/>-->
+
+        <collection property="kasamuDetailList" resultMap="kasamuDetails"/>
+        <collection property="kasamuForNonGazettedList" resultMap="kasamuNonGaztted"/>
+        <collection property="committeeIndicatorList" resultMap="committeeIndicator"/>
+        <collection property="committeeResponseList" resultMap="committee"/>
+        <collection property="kasamuEvaluatorList" resultMap="kasamuEvaluator"/>
+        <collection property="offices" resultMap="office"/>
+    </resultMap>
+
+    <resultMap id="kasamuNonGaztted" type="com.gerp.kasamu.pojo.request.KasamuForNoGazettedPojo">
+        <id property="id" column="n_id"/>
+        <result property="kasamuNonGazettedEn" column="kasamu_non_gazetted_en" typeHandler="com.gerp.kasamu.converter.AESTypeHandler"/>
+<!--        <result property="taskType" column="n_task_type"  />-->
+<!--        <result property="description" column="description" />-->
+<!--        <result property="cost" column="cost" />-->
+<!--        <result property="timeTaken" column="time_taken" />-->
+<!--        <result property="quality" column="quality" />-->
+<!--        <result property="quantity" column="quantity" />-->
+<!--        <result property="remarks" column="n_remarks" />-->
+    </resultMap>
+
+
+    <resultMap id="kasamuDetails" type="com.gerp.kasamu.pojo.response.KasamuDetailResponsePojo">
+        <id property="id" column="d_id"/>
+        <result property="kasamuDetailEn" column="kasamu_detail_en" typeHandler="com.gerp.kasamu.converter.AESTypeHandler"/>
+<!--        <result property="taskType" column="task_type" />-->
+<!--        <result property="task" column="task" />-->
+<!--        <result property="estimation" column="estimation" />-->
+<!--        <result property="semiannualTarget" column="semiannual_target" />-->
+<!--        <result property="annualTarget" column="annual_target" />-->
+<!--        <result property="achievement" column="achievement" />-->
+<!--        <result property="remarks" column="remarks" />-->
+    </resultMap>
+
+    <resultMap id="committeeIndicator" type="com.gerp.kasamu.pojo.response.CommitteeIndicatorResponsePojo">
+        <id property="id" column="ci_id"/>
+        <result property="committeeIndicatorEn" column="committee_indicator_en" typeHandler="com.gerp.kasamu.converter.AESTypeHandler"/>
+<!--        <result property="capacityType" column="capacity_type" />-->
+<!--        <result property="scoredMarks" column="ci_second_marks" />-->
+<!--        <result property="scoredLevel" column="ci_scored_level" />-->
+    </resultMap>
+
+    <resultMap id="committee" type="com.gerp.kasamu.pojo.response.CommitteeResponsePojo">
+        <id property="id" column="c_id"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="officeCode" column="c_office_code"/>
+        <result property="status" column="decision" />
+    </resultMap>
+
+    <resultMap id="office" type="com.gerp.kasamu.pojo.response.CommitteeResponsePojo">
+        <id property="id" column="to_id"/>
+        <result property="officeCode" column="to_office_code"/>
+    </resultMap>
+
+    <resultMap id="kasamuEvaluator" type="com.gerp.kasamu.pojo.response.KasamuEvaluatorResponsePojo">
+        <id property="id" column="ke_id"/>
+        <result property="kasamuEvaluatorEn" column="kasamu_evaluator_en" typeHandler="com.gerp.kasamu.converter.AESTypeHandler"/>
+<!--        <result property="valuatorType" column="valuator_type" />-->
+<!--        <result property="type" column="type" />-->
+<!--        <result property="fullMarks" column="full_marks" />-->
+<!--        <result property="scoredMarks" column="scored_marks" />-->
+<!--        <result property="scoredLevel" column="scored_level" />-->
+    </resultMap>
+
+    <select id="getDraft" resultMap="draftResult">
+        select id, valuation_period, regd_num, created_date
+        from kasamu_master
+        where employee_pis_code = #{employee_code}::VARCHAR and submitted_status = false
+    </select>
+
+    <select id="getKasamuMasterById" resultMap="kasamuMasterDetails">
+        select *, km.id as m_id , kd.id as d_id, ci.id as ci_id , c.id as c_id,
+       c.office_code as c_office_id,ke.id as ke_id,kfng.id as n_id, too.id as to_id, too.office_code as to_office_code
+        from kasamu_master km
+                 left join kasamu_detail kd on kd.kasamu_master_id = km.id
+                 left join committee_indicator ci on ci.kasamu_master_id =km.id
+                 left join committee c on c.kasamu_master_id = km.id
+                 left join kasamu_evaluator ke on ke.kasamu_master_id = km.id
+                 left join transfer_office too on too.kasamu_master_id = km.id
+                left join kasamu_for_non_gazetted kfng on kfng.kasamu_master_id = km.id
+        where km.id = #{id}::INTEGER
+    </select>
+
+    <select id="getKasamuMasterByEmployeePisCodeANdFiscalYear" resultMap="kasamuMasterDetails">
+        select *, km.id as m_id , kd.id as d_id, ci.id as ci_id , c.id as c_id,
+       c.office_code as c_office_id,ke.id as ke_id,kfng.id as n_id
+        from kasamu_master km
+        left join kasamu_detail kd on kd.kasamu_master_id = km.id
+        left join committee_indicator ci on ci.kasamu_master_id =km.id
+        left join committee c on c.kasamu_master_id = km.id
+        left join kasamu_evaluator ke on ke.kasamu_master_id = km.id
+        left join kasamu_for_non_gazetted kfng on kfng.kasamu_master_id = km.id
+        where
+            km.fiscal_year = #{fiscalYear} and
+            km.employee_pis_code = #{pisCode};
+    </select>
+
+    <select id="getAllKasamu" resultMap="kasamuMasterDetails">
+        select *, km.id as m_id , kd.id as d_id, ci.id as ci_id , c.id as c_id, c.office_code as c_office_id,ke.id as ke_id, ci.second_marks as ci_second_marks,ci.scored_level as ci_scored_level
+        from kasamu_master km
+        left join kasamu_detail kd on kd.kasamu_master_id = km.id
+        left join committee_indicator ci on ci.kasamu_master_id =km.id
+        left join committee c on c.kasamu_master_id = km.id
+        left join kasamu_evaluator ke on ke.kasamu_master_id = km.id
+        where
+         <if test="#{employeeCode} != null">
+             km.employee_pis_code = #{employeeCode}::VARCHAR
+         </if>
+        <if test="#{employeeCode} == null">
+            km.created_by= #{pisCode}::INTEGER
+        </if>
+    </select>
+
+    <select id="getKasamuToBeReviewedBySupervisor" resultMap="kasamuMasterDetails">
+        select  km.id as m_id,km.employee_pis_code,km.supervisor_pis_code,km.evaluator_pis_code,km.fiscal_year,km.status,km.valuation_period,km.sub_date
+--         , kd.id as d_id,kfng.id as n_id
+        from kasamu_master km
+--         left join kasamu_detail kd on kd.kasamu_master_id = km.id
+--         left join kasamu_for_non_gazetted kfng on kfng.kasamu_master_id = km.id
+        where km.supervisor_pis_code = #{employeeCode}::VARCHAR and km.reviewed_by_super = false
+    </select>
+
+    <select id="getAllKasamuToBeReviewByPurnarawal" resultMap="kasamuMasterDetails">
+        select  km.id as m_id,km.employee_pis_code,km.evaluator_pis_code,km.fiscal_year,km.status,km.valuation_period,km.sub_date,km.supervisor_pis_code
+--         , kd.id as d_id,kfng.id as n_id
+        from kasamu_master km
+--                  left join kasamu_detail kd on kd.kasamu_master_id = km.id
+--                  left join kasamu_for_non_gazetted kfng on kfng.kasamu_master_id = km.id
+--                  left join non_gazetted_supervisor_tippadi gt on gt.kasamu_master_id = km.id
+        where km.evaluator_pis_code = #{employeeCode}::VARCHAR and km.reviewed_by_purnarawal = false
+    </select>
+
+    <select id="getAllKasamuToBeReviewByCommittee" resultMap="kasamuMasterDetails">
+        select  km.id as m_id ,c.id as c_id,km.employee_pis_code,km.evaluator_pis_code,km.fiscal_year,km.status,km.valuation_period,km.sub_date,c.pis_code,c.office_code,km.supervisor_pis_code
+--         , kd.id as d_id, ke.id as ke_id,kfng.id as n_id
+        from kasamu_master km
+--                  left join kasamu_detail kd on kd.kasamu_master_id = km.id
+--                  left join kasamu_evaluator ke on ke.kasamu_master_id = km.id
+--                  left join kasamu_for_non_gazetted kfng on kfng.kasamu_master_id = km.id
+                 left join committee c on c.kasamu_master_id = km.id
+--                   left join non_gazetted_supervisor_tippadi gt on gt.kasamu_master_id = km.id
+        where km.reviewed_by_super = true and
+        km.reviewed_by_purnarawal = true  and
+        c.pis_code = #{pisCode}
+
+    </select>
+</mapper>

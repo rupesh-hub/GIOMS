@@ -1,0 +1,14 @@
+<div style="display: flex; justify-content: center; margin-bottom: 2rem">
+    <div style="text-decoration: underline">
+        विषय: <span th:text="${entity.subject}"></span>
+    </div>
+</div>
+<div style="display: flex; margin-bottom: 1rem">
+    <div>
+                     <span th:each="data: ${entity.request_to_many}">
+                         <span style="display: block;" th:if="${data.isSectionName}" th:text="${data.sectionName}"/>
+                         <span style="display: block;" th:if="${data.isGroupName}" th:text="${data.office}"/>
+                         <span style="display: block;" th:unless="${data.isSectionName or data.isGroupName}" th:text="${data.office}+', '+${data.address}"/>
+                    </span>
+    </div>
+</div>

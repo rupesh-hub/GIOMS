@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gerp.attendance.mapper.OfficeTimeConfigurationMapper">
+
+    <select id="getOfficeTimeByCode" resultType="com.gerp.attendance.Pojo.shift.OfficeTimePojo">
+      WITH recursive q AS (select code, parent_code, 0 as level
+                     from office o
+                     where o.code = #{officeCode}
+                     UNION ALL
+                     select z.code, z.parent_code, q.level + 1
+                     from office z
+                         join q on z.code = q.parent_code
+       )
+       select otc.id,
+       otc.maximum_early_checkout,
+       otc.maximum_late_checkin,
+       otc.office_code,
+       otc.allowed_limit
+      from q
+      inner join office_time_config otc  on q.code = otc.office_code
+      where otc.is_active = true  order by level limit 1;
+    </select>
+
+    <select id="getAllOfficeTime" resultType="com.gerp.attendance.Pojo.shift.OfficeTimePojo">
+       select otc.id,
+       otc.maximum_early_checkout,
+       otc.maximum_late_checkin,
+       otc.allowed_limit,
+       otc.office_code
+      from office_time_config otc where otc.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>;
+    </select>
+
+
+
+
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.tms.mapper.TaskProgressStatusMapper">
+
+    <resultMap id="dynamicResultOutput" type="com.gerp.tms.model.task.DynamicProgressStatus">
+        <id property="id" column="id"/>
+        <result property="orderStatus" column="order_status"/>
+        <association property="taskProgressStatus" resultMap="taskProgressStatus"/>
+    </resultMap>
+
+
+    <resultMap id="taskProgressStatus" type="com.gerp.tms.model.task.TaskProgressStatus">
+        <id property="id" column="task_progress_status_id"/>
+        <result property="statusName" column="status_name"/>
+        <result property="statusNameNp" column="status_name_np"/>
+    </resultMap>
+    <resultMap id="baseResultMap" type="com.gerp.tms.pojo.TaskProgressStatusWithTaskDetailsResponsePojo">
+
+        <id property="id" column="id"/>
+        <result property="statusName" column="status_name"/>
+        <result property="statusNameNp" column="status_name_np"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="isDeletable" column="delete_status"/>
+
+        <collection property="taskList" resultMap="taskResponsePojo"/>
+    </resultMap>
+
+
+    <resultMap id="taskResponsePojo" type="com.gerp.tms.pojo.response.TaskResponsePojo">
+
+        <id property="id" column="task_id"/>
+        <result property="taskName" column="task_name"/>
+        <result property="code" column="code"/>
+        <result property="priority" column="priority"/>
+        <result property="taskDescription" column="task_description"/>
+        <result property="startDate" column="start_Date"/>
+        <result property="endDate" column="end_Date"/>
+        <result property="startDateNp" column="start_date_Np"/>
+        <result property="endDateNp" column="end_Date_Np"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="rating" column="rating"/>
+
+
+        <collection property="taskMembers" resultMap="taskMember"/>
+    </resultMap>
+
+    <resultMap id="taskMember" type="com.gerp.tms.pojo.TaskMembersPojo">
+        <result property="memberId" column="member_id"/>
+        <result property="isAdmin" column="is_member"/>
+    </resultMap>
+
+
+    <select id="getStatusWiseTask" resultMap="baseResultMap">
+        select *, t.id as task_id
+        from task_progress_status tps
+        inner join dynamic_progress_status dps on  dps.task_progress_status_id = tps.id
+        left join task t on t.progress_status_id = tps.id
+        inner join task_member tm on tm.task_id = t.id
+        left join task_rating tr on tr.task_id = t.id
+        where
+        t.is_active = true and
+        <if test="startDate != null and endDate != null" >
+            t.start_date >=#{startDate} and
+            t.end_date <![CDATA[<=]]> #{endDate} and
+        </if>
+
+        <if test="assigneeId != null">
+            tm.member_id = #{assigneeId} and
+        </if>
+        t.project_id = #{projectId}::INTEGER and
+        t.phase_id = #{phaseId}::INTEGER
+        <if test="status != null  ">
+            and tps.status_name = #{status}
+        </if>
+
+    </select>
+
+<select id="getDynamicTaskProgress" resultMap="dynamicResultOutput">
+    select * from dynamic_progress_status dps where dps.project_id = #{projectId}::INTEGER and dps.task_progress_status_id = #{taskProgressStatusId}::INTEGER
+</select>
+
+</mapper>

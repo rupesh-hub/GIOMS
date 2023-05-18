@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.dartachalani.mapper.DelegationMapper">
+
+  <select id="getStandardTemplate" resultType="com.gerp.dartachalani.dto.template.StandardTemplatePojo">
+      select id,template,template_name_en,template_name_np,created_by,created_date from standard_template where
+              created_by =#{pisCode}
+             <if test= "officeCode != null">
+                 or office_code =#{officeCode}
+             </if>
+           <if test="superAdmin != null">
+             or  role=#{superAdmin}
+           </if>
+  </select>
+</mapper>

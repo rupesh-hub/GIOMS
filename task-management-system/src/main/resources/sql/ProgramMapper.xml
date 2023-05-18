@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.tms.mapper.ProgramMapper">
+
+    <resultMap id="activityLevelPojo" type="com.gerp.tms.pojo.authorization.ActivityLevelPojo">
+        <id property="id" column="al_id"/>
+        <result property="activityLevelUcd" column="activity_level_ucd"/>
+        <result property="activityLevelNameE" column="activity_level_namee"/>
+        <result property="activityLevelNameN" column="activity_level_namen"/>
+        <result property="isProject" column="is_project"/>
+        <result property="projectId" column="p_id"/>
+        <collection property="authorizationActivity" resultMap="authorizationActivityPojo"/>
+    </resultMap>
+
+    <resultMap id="authorizationActivityPojo" type="com.gerp.tms.pojo.authorization.AuthorizationActivityPojo">
+        <id property="id" column="aa_id"/>
+        <result property="targetedOutcomes" column="targeted_outcomes"/>
+        <result property="fiscalYearId" column="fiscal_year_id"/>
+        <result property="amount" column="amount"/>
+
+        <association property="economicLevel" resultMap="economicLevelPojo"/>
+<!--        <association property="activityLevel" resultMap="activityLevelPojo"/>-->
+        <association property="payingOffice" resultMap="payingOfficePojo"/>
+        <association property="account" resultMap="accountPojo"/>
+        <association property="sourceType" resultMap="sourceTypePojo"/>
+        <association property="donor" resultMap="DonorPojo"/>
+        <collection property="supportOfficeList" resultMap="supportOffice"/>
+    </resultMap>
+
+    <resultMap id="supportOffice" type="com.gerp.tms.pojo.authorization.SupportOfficePojo">
+        <id property="id" column="so_id"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="supportingPisOfficeCode" column="supporting_pis_office_code"/>
+    </resultMap>
+
+
+
+    <resultMap id="economicLevelPojo" type="com.gerp.tms.pojo.authorization.EconomicLevelPojo">
+        <id property="id" column="el_id"/>
+        <result property="economicLevelUcd" column="economic_level_ucd"/>
+        <result property="economicLevelNameE" column="economic_level_namee"/>
+        <result property="economicLevelNameN" column="economic_level_namen"/>
+    </resultMap>
+
+
+    <resultMap id="payingOfficePojo" type="com.gerp.tms.pojo.authorization.PayingOfficePojo">
+        <id property="id" column="po_id"/>
+        <result property="poUcd" column="po_ucd"/>
+        <result property="poDescE" column="po_desce"/>
+        <result property="poDescN" column="po_descn"/>
+        <result property="poAddressE" column="po_addresse"/>
+        <result property="poAddressN" column="po_addressn"/>
+        <result property="ministryCd" column="ministry_cd"/>
+        <result property="pisMinistryCd" column="ministry_pis_code"/>
+        <result property="pisOfficeCode" column="pis_office_code"/>
+    </resultMap>
+
+
+    <resultMap id="accountPojo" type="com.gerp.tms.pojo.authorization.AccountPojo">
+        <id property="id" column="a_id"/>
+        <result property="accountUcd" column="account_ucd"/>
+    </resultMap>
+
+    <resultMap id="sourceTypePojo" type="com.gerp.tms.pojo.authorization.SourceTypePojo">
+        <id property="id" column="st_id"/>
+        <result property="sourceTypeUcd" column="source_type_ucd"/>
+        <result property="sourceTypeNameE" column="source_type_namee"/>
+        <result property="sourceTypeNameN" column="source_type_namen"/>
+        <association property="source" resultMap="sourcePojo"/>
+    </resultMap>
+
+    <resultMap id="sourcePojo" type="com.gerp.tms.pojo.authorization.SourcePojo">
+        <id property="id" column="s_id"/>
+        <result property="sourceUcd" column="source_ucd"/>
+        <result property="sourceNameE" column="source_namee"/>
+        <result property="sourceNameN" column="source_namen"/>
+    </resultMap>
+
+    <resultMap id="DonorPojo" type="com.gerp.tms.pojo.authorization.DonorPojo">
+        <id property="id" column="d_id"/>
+        <result property="donorCode" column="donor_code"/>
+        <result property="donorNameE" column="donor_namee"/>
+        <result property="donorNameN" column="donor_namen"/>
+        <result property="donorCode" column="donor_code"/>
+        <association property="donorAgent" resultMap="donorAgentPojo"/>
+    </resultMap>
+
+    <resultMap id="donorAgentPojo" type="com.gerp.tms.pojo.authorization.DonorAgentPojo">
+        <id property="id" column="da_id"/>
+        <result property="donorAgentUcd" column="donor_agent_ucd"/>
+        <result property="donorAgentNameE" column="donor_agent_namee"/>
+        <result property="donorAgentNameN" column="donor_agent_namen"/>
+        <association property="donorSubGroup" resultMap="donorSubGroupPojo"/>
+    </resultMap>
+
+    <resultMap id="donorSubGroupPojo" type="com.gerp.tms.pojo.authorization.DonorSubGroupPojo">
+        <id property="id" column="dsg_id"/>
+        <result property="donorSubGroupUcd" column="donor_sub_group_ucd"/>
+        <result property="donorSubGroupNameE" column="donor_sub_group_namee"/>
+        <result property="donorSubGroupNameN" column="donor_sub_group_namen"/>
+        <association property="donorGroup" resultMap="donorGroupPojo"/>
+    </resultMap>
+
+    <resultMap id="donorGroupPojo" type="com.gerp.tms.pojo.authorization.DonorGroupPojo">
+        <id property="id" column="dg_id"/>
+        <result property="donorGroupUcd" column="donor_group_ucd"/>
+        <result property="donorGroupNameE" column="donor_group_namee"/>
+        <result property="donorGroupNameN" column="donor_group_namen"/>
+    </resultMap>
+
+    <select id="getProgramList" resultMap="authorizationActivityPojo">
+        select *,
+               aa.id as aa_id,
+               a.id as a_id,
+               el.id as el_id,
+               d.id as d_id,
+               al.id as al_id,
+               da.id as da_id,
+               dsg.id as dsg_id,
+               dg.id as dg_id,
+               po.id as po_id,
+               st.id as st_id,
+               s.id as s_id,
+               so.id as so_id
+        from authorization_activity aa
+                 left join support_office so on so.authorization_activity_id = aa.id
+                 left join account a on a.id = aa.account_id
+                 left join economic_level el on el.id = aa.economic_level_id
+                 left join donor d on d.id = aa.donor_id
+                 left join activity_level al on al.id = aa.activity_level_id
+                 left join donor_agent da on da.id = d.donor_agent_id
+                 left join donor_sub_group dsg on dsg.id = da.donor_sub_group_id
+                 left join donor_group dg on dg.id = dsg.donor_group_id
+                 left join paying_office po on po.id = aa.paying_office_id
+                 left join source_type st on st.id = aa.source_type_id
+                 left join source s on s.id = st.source_id
+        where aa.fiscal_year_id =#{fiscalYearId} and al.activity_level_namee =#{activityName}
+    </select>
+
+    <select id="getActivites" resultMap="activityLevelPojo">
+        select *,
+               aa.id as aa_id,
+               el.id as el_id,
+               al.id as al_id,
+               a.id as a_id,
+               p.id as p_id
+        from activity_level al
+                 left join authorization_activity aa on  aa.activity_level_id =al.id
+                 left join account a on a.id = aa.account_id
+                    left join project p on p.activity_id = al.id
+                  left join paying_office po on po.id = aa.paying_office_id
+                 left join economic_level el on el.id = aa.economic_level_id
+        where
+        po.pis_office_code = #{officeCode}
+        <if test="fiscalYearId != null">
+            and aa.fiscal_year_id = #{fiscalYearId}
+        </if>
+        <if test="filter != null">
+            and al.activity_level_ucd = #{filter}
+        </if>
+        <if test="filterByHead != null">
+            and el.economic_level_namee LIKE #{filterByHead} or el.economic_level_namen LIKE #{filterByHead}
+        </if>
+        <if test="activityName != null">
+         and al.activity_level_namee LIKE #{activityName}
+        </if>
+          and a.account_ucd = #{accountCode}
+        order by #{sortBy} = #{sortByOrder}
+    </select>
+
+
+    <select id="getActivityById" resultMap="activityLevelPojo">
+        select *,
+               aa.id as aa_id,
+               a.id as a_id,
+               d.id as d_id,
+               al.id as al_id,
+               da.id as da_id,
+               dsg.id as dsg_id,
+               dg.id as dg_id,
+               po.id as po_id,
+               st.id as st_id,
+               s.id as s_id,
+               so.id as so_id
+        from activity_level al
+                 left join authorization_activity aa on  aa.activity_level_id =al.id
+                 left join support_office so on so.authorization_activity_id = aa.id
+                 left join account a on a.id = aa.account_id
+                 left join donor d on d.id = aa.donor_id
+                 left join donor_agent da on da.id = d.donor_agent_id
+                 left join donor_sub_group dsg on dsg.id = da.donor_sub_group_id
+                 left join donor_group dg on dg.id = dsg.donor_group_id
+                 left join paying_office po on po.id = aa.paying_office_id
+                 left join source_type st on st.id = aa.source_type_id
+                 left join source s on s.id = st.source_id
+        where al.id = #{id}
+    </select>
+
+    <select id="getHeadingDetails" resultMap="accountPojo">
+        select distinct
+        a.account_ucd as account_ucd,
+        a.id as a_id
+        from paying_office po
+                 left join authorization_activity aa on  aa.paying_office_id =po.id
+                 left join account a on a.id = aa.account_id
+                 where po.pis_office_code = #{officeCode}
+    </select>
+    <resultMap id="projectAndTaskProgressStatus" type="com.gerp.tms.pojo.response.ProjectAndTaskStatusPojo">
+        <id property="projectId" column="projectid"/>
+        <collection property="status" ofType="java.lang.String" javaType="list">
+            <result column="status" typeHandler="com.gerp.tms.converter.CharacterTypeHandler"/>
+        </collection>
+    </resultMap>
+    <select id="findProjectByFiscalYear" resultMap="projectAndTaskProgressStatus">
+        select p.id as projectId,tps.status_name as status from activity_level al
+        inner join authorization_activity aa on al.id = aa.activity_level_id
+        inner join project p on p.activity_id = al.id
+        left join task t on t.project_id = p.id
+        inner join task_progress_status tps on tps.id = t.progress_status_id
+        where al.is_project = true and aa.fiscal_year_id = #{fiscalYear}
+         <if test="responsibleUnit != null">
+             and aa.responsible_code = #{responsibleUnit}
+         </if>
+
+        <if test="startDate != null and endDate != null">
+           and p.created_date >=  #{startDate}::timestamp
+           and p.created_date <![CDATA[<=]]>   #{endDate}::timestamp
+        </if>
+    </select>
+
+    <resultMap id="projectResponse" type="com.gerp.tms.pojo.response.ProjectResponsePojo">
+        <id property="id" column="id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="endDate" column="end_Date"/>
+        <result property="endDateNp" column="end_Date_Np"/>
+        <result property="completedDate" column="completed_date"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="isCompleted" column="is_completed"/>
+        <collection property="taskStatus" ofType="java.lang.String" javaType="list" >
+            <result column="status"  typeHandler="com.gerp.tms.converter.CharacterTypeHandler"/>
+        </collection>
+        <collection property="tasks" resultMap="taskResponse"/>
+    </resultMap>
+    <resultMap id="taskResponse" type="com.gerp.tms.pojo.response.TaskResponsePojo">
+        <id property="id" column="t_id"/>
+        <result property="taskName" column="task_name"/>
+        <result property="endDate" column="t_end_Date"/>
+        <result property="endDateNp" column="t_end_Date_Np"/>
+        <result property="completedDate" column="t_completed_date"/>
+        <result property="taskStatus" column="status"/>
+    </resultMap>
+    <select id="getProjectList" resultMap="projectResponse">
+    select p.id, p.project_name,p.is_completed,p.end_date_np,p.end_date,p.completed_date,tps.status_name as status,
+    t.task_name,t.end_date as t_end_date,t.end_date_np as t_end_date_np,t.completed_date as t_completed_date,t.id as t_id
+    from  activity_level al
+    inner join authorization_activity aa on al.id = aa.activity_level_id
+    inner join project p on p.activity_id = al.id
+    left join task t on t.project_id = p.id
+    inner join task_progress_status tps on tps.id = t.progress_status_id
+     where al.is_project = true and aa.fiscal_year_id = #{fiscalYear}
+    </select>
+</mapper>

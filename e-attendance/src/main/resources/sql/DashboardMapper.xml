@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.DashboardMapper">
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.HolidayResponsePojo">
+        <id property="id" column="id"/>
+        <result property="holidayNameEn" column="name_en"/>
+        <result property="holidayNameNp" column="name_np"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+    </resultMap>
+
+    <resultMap id="baseLeaveResultMap" type="com.gerp.attendance.Pojo.AppliedLeavePojo">
+        <id property="id" column="id"/>
+        <result property="appliedDate" column="applied_date"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="status" column="status"/>
+        <result property="pisCode" column="pis_code"/>
+    </resultMap>
+
+    <resultMap id="resultMap" type="com.gerp.attendance.Pojo.DetailPojo">
+        <result property="totalAllowedDays" column="totalAllowedDays"/>
+        <result property="leaveTakenDays" column="leaveTaken"/>
+        <result property="remainingLeave" column="remaining_leave"/>
+        <result property="nameEn" column="name_en"/>
+        <result property="nameNp" column="name_np"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="leaveSetupId" column="leave_setup_id"/>
+        <result property="contractLeave" column="contract_leave"/>
+
+
+    </resultMap>
+
+
+    <select id="dashboardData" resultMap="baseLeaveResultMap">
+        select lrd.id           as id,
+               lr.emp_pis_code  as pis_code,
+               lrd.created_date as applied_date,
+               lrd.from_date_en,
+               lrd.to_date_en,
+               lrd.from_date_np,
+               lrd.to_date_np,
+               lrd.status
+        from leave_request lr
+                 left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        where lr.emp_pis_code = #{pisCode}
+          and lr.office_code = #{officeCode}
+          and lrd.status = 'P'
+          and lrd.is_active = true
+        order by applied_date desc limit 1;
+    </select>
+
+    <select id="getLeaveData" resultMap="baseLeaveResultMap">
+        select lrd.id           as id,
+               lr.emp_pis_code  as pis_code,
+               lrd.created_date as applied_date,
+               lrd.from_date_en,
+               lrd.to_date_en,
+               lrd.from_date_np,
+               lrd.to_date_np,
+               lrd.status
+        from leave_request lr
+                 left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        where lr.emp_pis_code = #{pisCode}
+          and lr.office_code = #{officeCode}
+          and lrd.status = 'P'
+          and lrd.is_active = true
+        order by applied_date;
+    </select>
+
+    <select id="getUpcomingHoliday" resultMap="baseResultMap">
+        SELECT ph.name_en,
+        peh.id as id,
+        ph.name_np,
+        peh.from_date_en,
+        peh.to_date_en,
+        peh.to_date_np,
+        peh.from_date_np
+        FROM periodic_holiday peh
+        left join public_holiday ph on peh.public_holiday_id = ph.id
+        WHERE peh.from_date_en >= #{date} and ph.office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and peh.fiscal_year_code= #{fiscalYear}
+        and ph.is_active=true and peh.is_active=true
+        ORDER BY peh.from_date_en
+        LIMIT 1;
+    </select>
+
+    <select id="getLeaveDateWise" resultMap="resultMap">
+        select l.totalAllowedDays,
+        case when(l.leaveTaken is null) then 0 else l.leaveTaken end,
+        case when(l.leaveTaken is null) then 0 else
+        COALESCE(SUM(l.totalAllowedDays),0) - COALESCE(SUM(l.leaveTaken),0) end as remaining_leave,
+        l.name_en,l.name_np,l.gender,l.order_value,l.office_code,l.contract_leave,
+        l.leave_setup_id
+        from
+        (select case when(lp.total_allowed_days_fy!=0)then lp.total_allowed_days_fy
+        when(lp.total_allowed_days !=0) then lp.total_allowed_days
+        when (lp.total_allowed_repetition!=0 and lp.total_allowed_repetition_fy!=0)then lp.total_allowed_repetition
+        when (lp.total_allowed_repetition!=0)then lp.total_allowed_repetition
+        when(lp.total_allowed_repetition_fy!=0)then lp.total_allowed_repetition_fy
+        end as totalAllowedDays,
+        case when(lp.total_allowed_days!=0 or lp.total_allowed_days_fy!=0) then lc.leaveTaken
+        when(lp.total_allowed_repetition!=0 or lp.total_allowed_repetition_fy!=0) then lc.repetition
+        end as leaveTaken,
+        ls.name_en,ls.name_np,lp.gender,ls.order_value,lp.contract_leave,
+        lp.office_code,
+        ls.id as leave_setup_id from leave_setup ls
+        inner join leave_policy lp on ls.id = lp.leave_setup_id
+        left join (
+        (select distinct COALESCE(SUM(DATE_PART('day', b.toDate::timestamp - b.fromDate::timestamp)+1),0) as
+        leaveTaken,count(b.name_en) as repetition,b.name_en as leaveNameEn,b.name_np as leaveNameNp from
+        (select case when (#{fromDate}>=rd.from_date_en) then #{fromDate} else rd.from_date_en end as fromDate,
+        case when(rd.to_date_en >= #{toDate}) then #{toDate} else rd.to_date_en end as toDate,
+        ls.name_en,ls.name_np
+        from leave_request_detail rd
+        left join leave_request lr on lr.id = rd.leave_request_id
+        left join decision_approval ra on rd.id = ra.leave_request_detail_id
+        left join leave_policy lp on rd.leave_policy_id = lp.id
+        left join leave_setup ls on ls.id = lp.leave_setup_id
+        left join remaining_leave rl on lp.id = rl.leave_policy_id
+        where rd.is_active = true
+        and ra.is_active = true
+        and rd.status='A'
+        and lr.office_code= #{officeCode}
+        and lr.year= #{year}
+        and (rd.from_date_en BETWEEN #{fromDate} AND #{toDate}
+        OR rd.to_date_en BETWEEN #{fromDate} AND #{toDate})
+        and lr.emp_pis_code = #{pisCode}
+        group by ls.name_np, ls.name_en,rd.from_date_en,rd.to_date_en)b
+        group by leaveNameEn,leaveNameNp))lc
+        on ls.name_en = lc.leaveNameEn where ls.is_active=true and lp.office_code in
+        <foreach item="item" index="index" collection="parentOfficeCodeWithSelf"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        )l
+        where l.gender in ((select e.gender from employee e where e.pis_code=#{pisCode}),'A')
+        and lower(l.name_en) in
+        ('casual leave','sick leave','festival leave','paternity leave','home leave','maternity leave','karaar leave')
+        group by l.totalAllowedDays, l.leaveTaken, l.name_en,
+        l.name_np,l.gender,l.contract_leave,l.order_value,office_code, leave_setup_id order by l.order_value,
+        office_code desc;
+    </select>
+
+    <select id="getLeavePolicy" resultType="java.lang.Long">
+        select lp.id from leave_policy lp
+        left join leave_setup ls on lp.leave_setup_id = ls.id
+        where lp.office_code in
+        <foreach item="item" index="index" collection="parentOfficeCodeWithSelf"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and ls.is_active=true and lp.is_active=true
+        and lp.gender in ((select e.gender from employee e where e.pis_code=#{pisCode}),'A')
+        and trim(lower(ls.name_en)) in
+        ('casual leave','sick leave','festival leave','paternity leave','home leave','maternity leave','karaar leave')
+    </select>
+
+    <select id="getCountKararEmployee" resultType="java.lang.Long">
+        select count(*)
+        from employee_joining_date ejd
+                 inner join employee e on e.pis_code = ejd.employee_pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+        where e.office_code = #{officeCode}
+          and e.pis_code like '%KR_%'
+          and ejd.is_active = true
+          and (((DATE_PART('day', ejd.end_date_en ::timestamp - now() ::timestamp)) <![CDATA[<=]]> #{days})
+            and ((DATE_PART('day', ejd.end_date_en ::timestamp - now() ::timestamp)) >= 0))
+    </select>
+
+    <select id="getTotalDays" resultType="java.lang.Double">
+        select case
+                   when (ls.maximum_allowed_accumulation and lower(ls.name_en) = 'home leave') then
+                           coalesce(rl.accumulated_leave, 0) + coalesce(rl.accumulated_leave_fy, 0)
+                   when (lp.total_allowed_days_fy!=0) then lp.total_allowed_days_fy
+                   when (lp.total_allowed_days !=0) then lp.total_allowed_days
+                   when (lp.total_allowed_repetition!=0 and lp.total_allowed_repetition_fy!=0)
+                       then lp.total_allowed_repetition
+                   when (lp.total_allowed_repetition!=0) then lp.total_allowed_repetition
+                   when (lp.total_allowed_repetition_fy!=0) then lp.total_allowed_repetition_fy
+                   end as totalAllowedDays
+        from leave_policy lp
+                 left join leave_setup ls on lp.leave_setup_id = ls.id
+                 left join remaining_leave rl on rl.leave_policy_id = lp.id
+        where lp.id = #{leavePolicyId}
+          and ls.is_active = true
+          and rl.pis_code = #{pisCode}
+          and rl.is_active = true
+          and rl.year = #{year} limit 1;
+    </select>
+
+
+    <select id="getLeaveAllowedDays" resultType="java.lang.Double">
+        select case
+                   when (ls.maximum_allowed_accumulation and lower(ls.name_en) = 'home leave') then 0
+                   when (lp.total_allowed_days_fy!=0) then lp.total_allowed_days_fy
+                   when (lp.total_allowed_days !=0) then lp.total_allowed_days
+                   when (lp.total_allowed_repetition!=0 and lp.total_allowed_repetition_fy!=0)
+                       then lp.total_allowed_repetition
+                   when (lp.total_allowed_repetition!=0) then lp.total_allowed_repetition
+                   when (lp.total_allowed_repetition_fy!=0) then lp.total_allowed_repetition_fy
+                   end as totalAllowedDays
+        from leave_policy lp
+                 left join leave_setup ls on lp.leave_setup_id = ls.id
+        where lp.id = #{leavePolicyId}
+          and ls.is_active = true;
+    </select>
+
+    <select id="getLeaveDuration" resultType="com.gerp.attendance.Pojo.DatesPojo">
+        select distinct b.toDate::timestamp as toDate, b.fromDate::timestamp as fromDate, b.leavePolicyId as id
+        from (select case when (#{fromDate} >= rd.from_date_en) then #{fromDate} else rd.from_date_en end as fromDate,
+                     case when (rd.to_date_en >= #{toDate}) then #{toDate} else rd.to_date_en end         as toDate,
+                     ls.name_en,
+                     ls.name_np,
+                     lp.id                                                                                as leavePolicyId
+              from leave_request_detail rd
+                       left join leave_request lr on lr.id = rd.leave_request_id
+                       left join decision_approval ra on rd.id = ra.leave_request_detail_id
+                       left join leave_policy lp on rd.leave_policy_id = lp.id
+                       left join leave_setup ls on ls.id = lp.leave_setup_id
+                       left join remaining_leave rl on lp.id = rl.leave_policy_id
+              where rd.is_active = true
+                and ra.is_active = true
+                and rd.status = 'A'
+                and lr.office_code = #{officeCode}
+                and (rd.from_date_en BETWEEN #{fromDate} AND #{toDate}
+                  OR rd.to_date_en BETWEEN #{fromDate} AND #{toDate})
+                and lr.emp_pis_code = #{pisCode}
+                and lr.year = #{year}
+              group by ls.name_np, ls.name_en, rd.from_date_en, rd.to_date_en, lp.id) b
+    </select>
+
+
+    <!--    <select id="getByRemainingLeave" resultMap="resultMap">-->
+    <!--       select l.totalAllowedDays,-->
+    <!--       case when(l.leaveTaken is null) then 0 else l.leaveTaken end,-->
+    <!--       case when(l.leaveTaken is null) then 0 else-->
+    <!--       COALESCE(SUM(l.totalAllowedDays),0) - COALESCE(SUM(l.leaveTaken),0) end as remaining_leave,-->
+    <!--       l.name_en,l.name_np,l.gender,l.order_value,l.office_code,l.contract_leave,-->
+    <!--       l.leave_setup_id from-->
+    <!--    (select case  when(lp.total_allowed_days_fy!=0)then lp.total_allowed_days_fy-->
+    <!--                  when(lp.total_allowed_days !=0) then lp.total_allowed_days-->
+    <!--                  when (lp.total_allowed_repetition!=0 and lp.total_allowed_repetition_fy!=0)then lp.total_allowed_repetition-->
+    <!--                  when (lp.total_allowed_repetition!=0)then lp.total_allowed_repetition-->
+    <!--                  when(lp.total_allowed_repetition_fy!=0)then lp.total_allowed_repetition_fy-->
+    <!--                end as totalAllowedDays,-->
+    <!--            case when(lp.total_allowed_days!=0 or lp.total_allowed_days_fy!=0) then lc.leaveTaken-->
+    <!--                 when(lp.total_allowed_repetition!=0 or lp.total_allowed_repetition_fy!=0) then lc.repetition-->
+    <!--                end as leaveTaken,-->
+    <!--            ls.name_en,ls.name_np,lp.gender,ls.order_value,lp.contract_leave,-->
+    <!--            lp.office_code,-->
+    <!--            ls.id as leave_setup_id from leave_setup ls-->
+    <!--                                             inner join leave_policy lp on ls.id = lp.leave_setup_id-->
+    <!--                                             left join (-->
+    <!--        (select distinct b.leaveTaken as-->
+    <!--                             leaveTaken,count(b.name_en) as repetition,b.name_en as leaveNameEn,b.name_np as leaveNameNp from-->
+    <!--             (select coalesce(rl.remaining_leave,0) as leaveTaken,-->
+    <!--                      ls.name_en,ls.name_np-->
+    <!--              from remaining_leave rl-->
+    <!--                       left join leave_policy lp on rl.leave_policy_id = lp.id-->
+    <!--                       left join leave_setup ls on ls.id = lp.leave_setup_id-->
+    <!--              where lp.is_active = true-->
+    <!--                and rl.is_active = true-->
+    <!--                and rl.office_code= #{officeCode}-->
+    <!--                and rl.pis_code = #{pisCode}-->
+    <!--              group by ls.name_np, ls.name_en,rl.remaining_leave)b-->
+    <!--         group by leaveNameEn,leaveNameNp,b.leaveTaken))lc-->
+    <!--         on ls.name_en = lc.leaveNameEn where ls.is_active=true and lp.office_code in-->
+    <!--        <foreach item="item" index="index" collection="parentOfficeCodeWithSelf"-->
+    <!--                 open="(" separator="," close=")">-->
+    <!--            #{item}-->
+    <!--        </foreach>-->
+    <!--    )l-->
+    <!--where l.gender in ((select e.gender from employee e where e.pis_code=#{pisCode}),'A')-->
+    <!--group by l.totalAllowedDays, l.leaveTaken, l.name_en, l.name_np,l.gender,l.contract_leave,l.order_value,office_code, leave_setup_id order by l.order_value, office_code desc;-->
+    <!--    </select>-->
+    <select id="getByRemainingLeave" resultMap="resultMap">
+        select l.totalAllowedDays,
+        case when(l.leaveTaken is null) then 0 else l.leaveTaken end,
+        case when(l.leaveTaken is null) then 0 else
+        COALESCE(SUM(l.totalAllowedDays),0) - COALESCE(SUM(l.leaveTaken),0)
+        end as remaining_leave,
+        l.name_en,l.name_np,l.gender,l.order_value,l.office_code,l.contract_leave,
+        l.leave_setup_id from
+        (select case when (ls.unlimited_allowed_accumulation and lp.total_allowed_days_fy!=0) then
+        coalesce(rl.accumulated_leave_fy,0)+coalesce(lp.total_allowed_days_fy)
+        when (ls.maximum_allowed_accumulation and lower(ls.name_en)='home leave') then
+        coalesce(rl.accumulated_leave,0)+coalesce(rl.accumulated_leave_fy,0)
+        when(lp.total_allowed_days_fy!=0)then lp.total_allowed_days_fy
+        when(lp.total_allowed_days !=0) then lp.total_allowed_days
+        when (lp.total_allowed_repetition!=0 and lp.total_allowed_repetition_fy!=0)then lp.total_allowed_repetition
+        when (lp.total_allowed_repetition!=0)then lp.total_allowed_repetition
+        when(lp.total_allowed_repetition_fy!=0)then lp.total_allowed_repetition_fy
+        end as totalAllowedDays,
+        case when(lp.total_allowed_days!=0 or lp.total_allowed_days_fy!=0) then rl.remaining_leave
+        when (ls.maximum_allowed_accumulation and lower(ls.name_en)='home leave') then 0
+        when(lp.total_allowed_repetition!=0 or lp.total_allowed_repetition_fy!=0) then rl.repetition
+        end as leaveTaken,
+        ls.name_en,ls.name_np,lp.gender,ls.order_value,lp.contract_leave,
+        lp.office_code,
+        ls.id as leave_setup_id from leave_setup ls
+        inner join leave_policy lp on ls.id = lp.leave_setup_id
+        left join remaining_leave rl on lp.id = rl.leave_policy_id
+        where ls.is_active=true
+        and rl.is_active=true
+        and rl.pis_code=#{pisCode}
+        and rl.office_code= #{officeCode}
+        and lp.office_code in
+        <foreach item="item" index="index" collection="parentOfficeCodeWithSelf"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        )l
+        where l.gender in ((select e.gender from employee e where e.pis_code=#{pisCode}),'A')
+        group by l.totalAllowedDays, l.leaveTaken, l.name_en,
+        l.name_np,l.gender,l.contract_leave,l.order_value,office_code, leave_setup_id order by l.order_value,
+        office_code desc;
+    </select>
+
+
+    <select id="getPresentEmployee" resultType="Long">
+        select count(distinct e.pis_code) from
+        employee_attendance ea
+        left join users u on u.pis_employee_code = ea.pis_code
+        left join employee e on e.pis_code=ea.pis_code
+        left join functional_designation fd on e.designation_code = fd.code
+        where ea.date_en= #{date}
+        and ea.office_code= #{officeCode}
+        and u.is_active=true and fd.designation_type='NORMAL_DESIGNATION'
+        and (ea.is_device =true
+        or ea.attendance_status in
+        <foreach item='item' index='index' collection='attendanceStatus' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        )
+        and ea.is_active=true;
+    </select>
+
+    <select id="getAbsentEmployee" resultType="Long">
+        select count(distinct e.pis_code) from
+        employee_attendance ea
+        left join users u on u.pis_employee_code = ea.pis_code
+        left join employee e on e.pis_code=ea.pis_code
+        left join functional_designation fd on e.designation_code = fd.code
+        where ea.date_en= #{date}
+        and ea.office_code= #{officeCode}
+        and u.is_active=true and u.is_active=true and fd.designation_type='NORMAL_DESIGNATION'
+        and ea.attendance_status in
+        <foreach item='item' index='index' collection='attendanceStatus' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and ea.is_active=true;
+    </select>
+
+
+    <select id="getEmployeeOnLeave" resultType="Long">
+        select count(distinct e.pis_code) from
+        employee_attendance ea
+        left join users u on u.pis_employee_code = ea.pis_code
+        left join employee e on e.pis_code=ea.pis_code
+        left join functional_designation fd on e.designation_code = fd.code
+        where ea.date_en= #{date}
+        and ea.office_code= #{officeCode}
+        and u.is_active=true
+        and ea.is_device =false and fd.designation_type='NORMAL_DESIGNATION'
+        and ea.attendance_status in
+        <foreach item='item' index='index' collection='attendanceStatus' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and ea.is_active=true;
+    </select>
+
+    <select id="getNotActiveEmployee" resultType="Long">
+        select count(*)
+        from (select e.pis_code
+              from employee e
+                       left join users u on u.pis_employee_code = e.pis_code
+              where e.office_code = #{officeCode}
+                and u.is_active = true
+              except
+              select distinct pis_code
+              from employee_attendance ea
+                       left join users u on u.pis_employee_code = ea.pis_code
+              where ea.date_en = #{date}
+                and ea.office_code = #{officeCode}
+                and u.is_active = true
+                and ea.is_active = true) as b
+    </select>
+
+</mapper>

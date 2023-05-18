@@ -1,0 +1,246 @@
+version: '3.3'
+networks:
+  mynetwork:
+    external:
+      name: mynetwork
+services:
+  config-server:
+    build: ./config-server
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: config-server
+    container_name: config-server
+    ports:
+      - ${CONFIG_PORT}:${CONFIG_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+  discovery-server:
+    build: ./discovery-server
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: discovery-server
+    container_name: discovery-server
+    ports:
+      - ${DISCOVERY_PORT}:${DISCOVERY_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+  oauth-server:
+    build: ./auth-server
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: oauth-server
+    container_name: oauth-server
+    ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/oauth.env
+  gateway-route:
+    build: ./gateway-route
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: gateway-route
+    container_name: gateway-route
+    ports:
+      - ${GATEWAY_PORT}:${GATEWAY_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/gateway.env     
+    volumes:
+      #      - "/home/user/backups/gateway-route/logs:/logs"
+      - "/home/user/backups/gateway-route/upload:/upload"
+  usermgmt-service:
+    build: ./user-mgmt
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: usermgmt-service
+    container_name: usermgmt-service
+    ports:
+      - ${USERMGMT_PORT}:${USERMGMT_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/usermgmt.env
+  usermgmt-service2:
+    build: ./user-mgmt
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: usermgmt-service2
+    container_name: usermgmt-service2
+    ports:
+      - ${USERMGMT_PORT2}:${USERMGMT_PORT2}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/usermgmt2.env
+  kasamu-service:
+    build: ./ka-sa-mu
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: kasamu-service
+    container_name: kasamu-service
+    ports:
+      - ${KASAMU_PORT}:${KASAMU_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/kasamudb.env
+  darta-chalani-service:
+    build: ./darta-chalani
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: darta-chalani
+    container_name: darta-chalani
+    ports:
+      - ${DARTACHALANI_PORT}:${DARTACHALANI_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/dartachalanidb.env
+  sbm-service:
+    build: ./sampati-bibaran-management
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: sbm-service
+    container_name: sbm-service
+    ports:
+      - ${SBM_PORT}:${SBM_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/sbmdb.env
+  eattendance-service:
+    build: ./e-attendance
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: eattendance-service
+    container_name: eattendance-service
+    ports:
+      - ${ATT_PORT}:${ATT_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/attendancedb.env
+  tms-service:
+    build: ./task-management-system
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: tms-service
+    container_name: tms-service
+    ports:
+      - ${TMS_PORT}:${TMS_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/tmsdb.env
+  templating-service:
+    build: ./templating-service
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: templating-service
+    container_name: templating-service
+    ports:
+      - ${TEMPLATING_PORT}:${TEMPLATING_PORT}
+    restart: always
+    network_mode: mynetwork
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/tmsdb.env
+      - /var/lib/jenkins/env_files/gerp_backend/templating.env
+  #redis-server:
+    #image: redis
+   # container_name: redis-server
+    #command: ["redis-server", "--protected-mode", "no", "--appendonly", "yes"]
+    #restart: always
+    #network_mode: mynetwork
+    #    ports:
+    #      - "6375:6379"
+    #expose:
+     # - "6379"
+    #volumes:
+     # - "~/redis-data:/data"
+  messaging-service:
+    build: ./messaging-service
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "1000m" 
+    image: messaging-service
+    container_name: messaging-service
+    network_mode: mynetwork
+    ports:
+      - ${MESSAGING_PORT}:${MESSAGING_PORT}
+    restart:
+      always
+    env_file:
+      - /var/lib/jenkins/env_files/gerp_backend/.env
+      - /var/lib/jenkins/env_files/gerp_backend/app.env
+      - /var/lib/jenkins/env_files/gerp_backend/messaging.env
+    volumes:
+      - /home/doitadmin/logs/messaging-service:/app/src/logs
+    environment:
+      - PORT=${MESSAGING_PORT}

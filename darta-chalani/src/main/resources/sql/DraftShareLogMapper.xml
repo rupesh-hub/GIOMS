@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.dartachalani.mapper.DraftShareLogMapper">
+
+    <select id="getDraftShareLog" resultType="com.gerp.dartachalani.dto.DraftSharePojo">
+        select * from (select
+        ds.status,
+        ds.receiver_pis_code,
+        ds.last_modified_date,
+        ds.sender_pis_code,
+        false as is_modified,
+        ds.created_date
+        from draft_share ds
+        where
+        <if test="dispatchId != null">
+             ds.dispatch_id = #{dispatchId}
+        </if>
+        <if test="memoId != null">
+             ds.memo_id = #{memoId}
+        </if>
+        union all
+        select
+        dsl.to_status,
+        dsl.pis_code as receiver_pis_code,
+        dsl.created_date as last_modified_date,
+        null as sender_pis_code,
+        true as is_modified,
+        dsl.created_date
+        from draft_share_log dsl
+        left join draft_share ds on ds.id = dsl.draft_share_id
+        where
+        <if test="dispatchId != null">
+             ds.dispatch_id = #{dispatchId}
+        </if>
+        <if test="memoId != null">
+             ds.memo_id = #{memoId}
+        </if>
+        ) t order by t.created_date desc
+    </select>
+
+</mapper>

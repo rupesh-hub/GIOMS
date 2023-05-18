@@ -1,0 +1,36 @@
+.section_two{
+	margin-top: 29px;
+}
+.header{
+	color: red;
+}
+
+.body_content{
+	margin-left: 37px;	
+}
+
+
+.approved_by{
+	border-top: 2px dotted  black;
+}
+
+.container{
+	height:3508px
+}
+footer{
+	border-top: 2px solid  red;
+	margin-top: 15%;
+	color:red;
+}
+
+.message{
+	text-align: justify;
+}
+img{
+	vertical-align: middle;
+    border-style: none;
+	width: 118px;
+}
+/*.main-logo{
+	    position: absolute;
+}*/

@@ -1,0 +1,836 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.RemainingLeaveMapper">
+
+    <resultMap id="remainingLeaveBaseResultMap" type="com.gerp.attendance.Pojo.RemainingLeaveRequestPojo">
+        <result property="leaveTaken" column="leave_taken"/>
+        <result property="leaveTakenFy" column="leave_taken_fy"/>
+        <result property="accumulatedLeaveFy" column="accumulated_leave_fy"/>
+        <result property="accumulatedLeave" column="accumulated_leave"/>
+        <result property="leaveNameEn" column="leaveNameEn"/>
+        <result property="leaveNameNp" column="leaveNameNp"/>
+        <result property="leaveSetupId" column="leaveSetupId"/>
+        <result property="leavePolicyId" column="leavePolicyId"/>
+        <result property="monthlyLeaveTaken" column="monthly_leave_taken"/>
+        <result property="leaveTakenMonth" column="monthly_leave_taken"/>
+        <result property="year" column="year"/>
+    </resultMap>
+
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.RemainingLeaveMinimalPojo">
+        <result property="pisCode" column="pis_code"/>
+
+        <collection property="remainingLeave" ofType="com.gerp.attendance.Pojo.RemainingLeaveRequestPojo">
+            <id property="id" column="id"/>
+            <result property="leaveTaken" column="leave_taken"/>
+            <result property="leaveTakenFy" column="leave_taken_fy"/>
+            <result property="lastModifiedDate" column="last_modified_date"/>
+            <result property="repetition" column="repetition"/>
+            <result property="accumulatedLeaveFy" column="accumulated_leave_fy"/>
+            <result property="accumulatedLeave" column="accumulated_leave"/>
+            <result property="leaveNameEn" column="leaveNameEn"/>
+            <result property="leaveNameNp" column="leaveNameNp"/>
+            <result property="leaveSetupId" column="leaveSetupId"/>
+            <result property="leavePolicyId" column="leavePolicyId"/>
+            <result property="leaveTakenForObsequies" column="leaveTakenForObsequies"/>
+            <result property="lastModifiedDate" column="last_modified_date"/>
+            <result property="createdDate" column="created_date"/>
+            <result property="monthlyLeaveTaken" column="monthly_leave_taken"/>
+            <result property="leaveTakenMonth" column="monthly_leave_taken"/>
+
+            <result property="uptoDate" column="uptoDate"/>
+            <result property="year" column="year"/>
+
+
+        </collection>
+
+
+    </resultMap>
+
+    <select id="getAllRemainingLeave" resultMap="baseResultMap">
+        select case
+        when(lp.total_allowed_repetition!=0 or lp.total_allowed_repetition_fy!=0)then
+        rl.repetition
+        else 0 end as repetition,
+
+        case when((lp.total_allowed_repetition=0 and lp.total_allowed_repetition_fy =0 and lp.total_allowed_days_fy=0
+        and lp.total_allowed_days=0) and lp.maximum_leave_limit_at_once>0)
+        then rl.remaining_leave
+        else 0
+        end as leaveTakenForObsequies,
+        rl.id,
+        rl.pis_code,
+        rl.leave_taken,
+        rl.year,
+        rl.leave_taken_fy,
+        rl.accumulated_leave_fy,
+        rl.accumulated_leave,
+        rl.remaining_leave,
+        ls.name_en as leaveNameEn,
+        ls.id as leaveSetupId,
+        ls.name_np as leaveNameNp
+        from remaining_leave rl
+        left join leave_policy lp on lp.id=rl.leave_policy_id
+        left join leave_setup ls on ls.id=lp.leave_setup_id
+        where rl.is_active=true
+        <if test="year !=null and year!='' ">
+            rl.year=#{year}
+        </if>
+        order by rl.created_date;
+    </select>
+
+    <select id="getRemainingLeaveById" resultType="com.gerp.attendance.Pojo.RemainingLeaveResponsePoio">
+        select
+        case
+        when(lp.total_allowed_repetition!=0 or lp.total_allowed_repetition_fy!=0)then
+        rl.repetition
+        else 0 end as repetition,
+        case when((lp.total_allowed_repetition=0 and lp.total_allowed_repetition_fy =0 and lp.total_allowed_days_fy=0
+        and lp.total_allowed_days=0) and lp.maximum_leave_limit_at_once>0)
+        then rl.remaining_leave
+        else 0
+        end as leaveTakenForObsequies,
+        rl.id,
+        rl.pis_code,
+        rl.leave_taken,
+        rl.leave_taken_fy,
+        rl.travel_days,
+        rl.accumulated_leave_fy,
+        rl.accumulated_leave,
+        rl.remaining_leave,
+        rl.leave_policy_id,
+        ls.id as leaveSetupId,
+        rl.monthly_leave_taken as leaveTakenMonth,
+        ls.name_en as leaveNameEn,
+        ls.name_np as leaveNameNp
+        from remaining_leave rl
+        left join leave_policy lp on lp.id=rl.leave_policy_id
+        left join leave_setup ls on ls.id=lp.leave_setup_id
+        where rl.is_active=true and rl.id= #{id}
+        <if test="year!=null">
+            and rl.year=#{year}
+        </if>
+
+    </select>
+
+
+    <select id="getRemainingLeaveByOfficeCode" resultMap="baseResultMap">
+        select case
+        when(lp.total_allowed_repetition!=0 or lp.total_allowed_repetition_fy!=0)then
+        rl.repetition
+        else 0 end as repetition,
+        case when((lp.total_allowed_repetition=0 and lp.total_allowed_repetition_fy =0 and lp.total_allowed_days_fy=0
+        and lp.total_allowed_days=0) and lp.maximum_leave_limit_at_once>0)
+        then rl.remaining_leave
+        else 0
+        end as leaveTakenForObsequies,
+        rl.id,
+        rl.pis_code,
+        rl.leave_taken,
+        rl.leave_taken_fy,
+        rl.year,
+        rl.monthly_leave_taken,
+        rl.upto_date as uptoDate,
+        rl.accumulated_leave_fy,
+        rl.accumulated_leave,
+        rl.last_modified_date,
+        rl.created_date,
+        ls.name_en as leaveNameEn,
+        ls.id as leaveSetupId,
+        lp.id as leavePolicyId,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        ls.name_np as leaveNameNp
+        from remaining_leave rl
+        left join leave_policy lp on lp.id=rl.leave_policy_id
+        left join leave_setup ls on ls.id=lp.leave_setup_id
+        left join employee e on (e.pis_code= rl.pis_code or e.employee_code=rl.pis_code)
+        left join position po on e.position_code = po.code
+        where rl.office_code= #{officeCode}
+        and e.office_code=#{officeCode}
+        <if test="name != null">
+            <bind name="name_en" value="name + '%'"/>
+            and(
+            case
+            WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+            e.last_name_en))
+            else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{name_en})
+            OR
+            case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+            e.last_name_np)
+            else concat(e.first_name_np, ' ', e.last_name_np) end like #{name_en})
+        </if>
+
+        <if test="year!=null">
+            and rl.year=#{year}
+        </if>
+        order by e_order,po.order_no,e.current_position_app_date_bs, e.first_name_en;
+    </select>
+
+    <select id="getAllRemainingLeaveByPisCode" resultMap="baseResultMap">
+        select case
+        when(lp.total_allowed_repetition!=0 or lp.total_allowed_repetition_fy!=0)then
+        rl.repetition
+        else 0 end as repetition,
+        case when((lp.total_allowed_repetition=0 and lp.total_allowed_repetition_fy =0 and lp.total_allowed_days_fy=0
+        and lp.total_allowed_days=0) and lp.maximum_leave_limit_at_once>0)
+        then rl.remaining_leave
+        else 0
+        end as leaveTakenForObsequies,
+        rl.id,
+        rl.pis_code,
+        rl.year,
+        rl.leave_taken,
+        rl.leave_taken_fy,
+        rl.accumulated_leave_fy,
+        rl.accumulated_leave,
+        rl.last_modified_date,
+        rl.monthly_leave_taken,
+        rl.created_date,
+        rl.upto_date as uptoDate,
+        ls.name_en as leaveNameEn,
+        ls.id as leaveSetupId,
+        lp.id as leavePolicyId,
+        ls.name_np as leaveNameNp
+        from remaining_leave rl
+        left join leave_policy lp on lp.id=rl.leave_policy_id
+        left join leave_setup ls on ls.id=lp.leave_setup_id
+        where rl.pis_code= #{pisCode}
+        <if test="year!=null">
+            and rl.year=#{year}
+        </if>
+        order by ls.order_value asc;
+    </select>
+
+    <select id="allRemainingLeave" resultMap="remainingLeaveBaseResultMap">
+        select
+        rl.year,
+        rl.leave_taken,
+        rl.leave_taken_fy,
+        rl.accumulated_leave_fy,
+        rl.accumulated_leave,
+        rl.monthly_leave_taken,
+        case when((lp.total_allowed_repetition=0 and lp.total_allowed_repetition_fy =0 and lp.total_allowed_days_fy=0
+        and lp.total_allowed_days=0) and lp.maximum_leave_limit_at_once>0)
+        then rl.remaining_leave
+        else 0
+        end as leaveTakenForObsequies,
+        ls.name_en as leaveNameEn,
+        ls.id as leaveSetupId,
+        lp.id as leavePolicyId,
+        ls.name_np as leaveNameNp
+        from remaining_leave rl
+        left join leave_policy lp on lp.id=rl.leave_policy_id
+        left join leave_setup ls on ls.id=lp.leave_setup_id
+        where rl.pis_code= #{pisCode}
+        <if test="year!=null">
+            and rl.year=#{year}
+        </if>
+        order by ls.order_value asc;
+    </select>
+
+    <!--    <select id="getRemainingLeave" resultType="Integer" >-->
+    <!--select-->
+    <!--    case-->
+    <!--        when(lp.total_allowed_days_fy!=0)then-->
+    <!--            case when (lp.carry_forward) then-->
+    <!--                         coalesce(sum(lp.total_allowed_days_fy),0)+coalesce(sum(lp.max_allowed_accumulation),0) - #{leaveTakenFy} else-->
+    <!--                         coalesce(sum(lp.total_allowed_days_fy),0) - #{leaveTakenFy} end-->
+
+    <!--        when(lp.total_allowed_days !=0) then-->
+    <!--             coalesce(sum(lp.total_allowed_days),0) - #{leaveTaken}-->
+
+    <!--        when(lp.total_allowed_repetition!=0) then-->
+    <!--                coalesce(sum(lp.total_allowed_repetition),0) - #{repetition}-->
+
+    <!--      end as remainingLeave-->
+    <!--from leave_policy lp-->
+    <!--where lp.id= #{leavePolicyId} group by lp.total_allowed_days_fy,lp.total_allowed_days,lp.total_allowed_repetition,lp.carry_forward;-->
+    <!--    </select>-->
+
+    <select id="getRemainingLeave" resultType="java.lang.Double">
+        select case
+                   when (lp.total_allowed_days_fy!=0) then
+                       #{leaveTakenFy}
+
+                   when (lp.total_allowed_days !=0) then
+                       #{leaveTaken}
+
+                   when (lp.total_allowed_repetition!=0 or lp.total_allowed_repetition_fy!=0) then
+                       #{repetition}
+
+                   when (lp.allowed_leave_monthly !=0) then
+                       #{leaveTakenMonthly}
+
+                   when (lp.max_allowed_accumulation !=0) then
+                       #{leaveTaken}
+
+                   when (lp.maximum_leave_limit_at_once !=0) then
+                       #{leaveTakenForObsequies}
+                   end as remainingLeave
+        from leave_policy lp
+        where lp.id = #{leavePolicyId};
+    </select>
+
+    <!--    <select id="getRemainingLeaveByPisCode" resultType="com.gerp.attendance.Pojo.RemainingLeaveForLeaveRequestPojo">-->
+    <!--    select-->
+    <!--    ls.name_en as leaveNameEn,-->
+    <!--    ls.name_np as leaveNameNp,-->
+    <!--    case when(lp.total_allowed_repetition!=0) then coalesce(sum(lp.maximum_leave_limit_at_once),0) end as maximumLimit,-->
+    <!--    case when exists (select * from remaining_leave where pis_code=#{pisCode} and leave_policy_id=#{policyId} and fiscal_year=#{fiscalYear})-->
+    <!--    then-->
+    <!--    (select case-->
+    <!--    when(lp.total_allowed_days_fy !=0)then-->
+    <!--    rl.leave_taken_fy-->
+    <!--    when(lp.total_allowed_days !=0)then-->
+    <!--    rl.leave_taken-->
+    <!--    when(lp.total_allowed_repetition_fy !=0 or lp.total_allowed_repetition!=0)then-->
+    <!--    rl.repetition-->
+    <!--    end-->
+    <!--    from remaining_leave rl where pis_code=#{pisCode} and leave_policy_id=#{policyId} and fiscal_year=#{fiscalYear})-->
+
+    <!--    else 0-->
+    <!--    end as leaveTaken,-->
+    <!--    case when exists (select * from remaining_leave where pis_code=#{pisCode} and leave_policy_id=#{policyId})-->
+    <!--    then (select rl.remaining_leave from remaining_leave rl where pis_code=#{pisCode} and leave_policy_id=#{policyId} and fiscal_year=#{fiscalYear})-->
+    <!--    else (-->
+    <!--    case-->
+    <!--    when(lp.total_allowed_days_fy!=0)then-->
+    <!--    case when (lp.carry_forward) then-->
+    <!--    coalesce(sum(lp.total_allowed_days_fy),0)+coalesce(sum(lp.max_allowed_accumulation),0) else-->
+    <!--    coalesce(sum(lp.total_allowed_days_fy),0)  end-->
+
+    <!--   when(lp.total_allowed_days !=0 and lp.total_allowed_repetition!=0) then-->
+    <!--    coalesce(sum(lp.total_allowed_days),0)-->
+
+    <!--    when(lp.total_allowed_days !=0) then-->
+    <!--    coalesce(sum(lp.total_allowed_days),0)-->
+
+    <!--    when(lp.total_allowed_repetition!=0) then-->
+    <!--    coalesce(sum(lp.total_allowed_repetition),0)-->
+    <!--    end-->
+    <!--    )-->
+    <!--    end as remainingLeave-->
+    <!--    from leave_policy lp-->
+    <!--    left join leave_setup ls on ls.id = lp.leave_setup_id-->
+    <!--    where lp.is_active=true-->
+    <!--    and lp.id =#{policyId}-->
+    <!--    group by lp.total_allowed_days_fy,lp.total_allowed_days,lp.total_allowed_repetition,lp.total_allowed_repetition_fy,lp.carry_forward,ls.name_en, ls.name_np;-->
+    <!--    </select>-->
+
+    <select id="getRemainingLeaveByPisCode" resultType="com.gerp.attendance.Pojo.RemainingLeaveForLeaveRequestPojo">
+        select ls.name_en as leaveNameEn,
+               ls.name_np as leaveNameNp,
+               case
+                   when ((lp.total_allowed_repetition!=0 or lp.total_allowed_repetition_fy !=0) and lp.maximum_leave_limit_at_once > 0)
+                       then coalesce(sum(lp.maximum_leave_limit_at_once), 0)
+                   when ((lp.total_allowed_repetition = 0 and lp.total_allowed_repetition_fy = 0 and
+                          lp.total_allowed_days_fy = 0 and lp.total_allowed_days = 0) and
+                         lp.maximum_leave_limit_at_once > 0)
+                       then coalesce(sum(lp.maximum_leave_limit_at_once), 0)
+                   end    as maximumLimit,
+
+               case
+                   when exists(select *
+                               from remaining_leave
+                               where pis_code = #{pisCode} and leave_policy_id = #{policyId} and year = #{year} limit 1)
+                       then
+                       (select accumulated_leave_fy
+                        from remaining_leave
+                        where pis_code = #{pisCode} and leave_policy_id = #{policyId} and year = #{year} limit 1)
+         else 0
+        end
+        as accumulatedLeaveFy,
+     case when exists (select * from remaining_leave where pis_code= #{pisCode}  and  leave_policy_id =#{policyId} and year=#{year}   limit  1 )
+        then
+        (select home_leave_additional from remaining_leave where pis_code= #{pisCode} and leave_policy_id = #{policyId} and year= #{year} limit 1)
+        else 0 end as homeLeaveAdditional,
+     case when exists (select * from remaining_leave where pis_code= #{pisCode} and leave_policy_id = #{policyId} and year =#{year} limit 1)
+        then (select upto_date from remaining_leave  where  pis_code = #{pisCode} and leave_policy_id = #{policyId} and year = #{year} limit 1)
+        end   as uptoDate,
+      case when exists (select * from remaining_leave where pis_code= #{pisCode} and leave_policy_id = #{policyId} and year = #{year} and  accumulated_leave
+        is not null  limit 1 )
+        then
+        (select accumulated_leave from remaining_leave  where  pis_code = #{pisCode} and leave_policy_id = #{policyId}  and year = #{year} limit 1 )
+        else  0
+        end as accumulatedLeave,
+    case when exists (select * from remaining_leave where pis_code=  #{pisCode} and leave_policy_id = #{policyId} and year = #{year} limit 1 )
+        then   (select
+        case
+        when remaining_leave >0 then remaining_leave
+        when leave_taken_fy > 0 then leave_taken_fy
+        when leave_taken > 0 then leave_taken
+        else 0
+        end
+         from remaining_leave  where pis_code= #{pisCode} and leave_policy_id = #{policyId} and year=#{year} limit 1)
+        else  0
+        end as leaveTaken,
+     case when exists (select * from remaining_leave where pis_code=#{pisCode} and leave_policy_id=#{policyId}  and  year= #{year} limit 1 )
+        then
+        (select monthly_leave_taken from remaining_leave  where pis_code = #{pisCode} and leave_policy_id =#{policyId} and year=#{year} limit 1)
+        else 0 end
+        as monthlyLeaveTaken,
+     case when exists (select * from remaining_leave where pis_code=#{pisCode} and leave_policy_id =#{policyId} and year= #{year} limit 1)
+        then (select  travel_days from remaining_leave where pis_code = #{pisCode} and leave_policy_id = #{policyId} and year =#{year}  limit 1 )
+        else 0   end
+        as travelDays,
+    case
+     when(lp.total_allowed_days_fy!=0)then
+            coalesce(sum(lp.total_allowed_days_fy),0)
+
+    when(lower(ls.name_en) like 'home leave') then
+     coalesce(sum(lp.max_allowed_accumulation),0)
+
+   when(lp.total_allowed_repetition_fy !=0 and lp.total_allowed_repetition!=0)then
+      coalesce(sum(lp.total_allowed_repetition),0)
+
+   when(lp.total_allowed_repetition_fy !=0)then
+       coalesce(sum(lp.total_allowed_repetition_fy),0)
+
+    when(lp.total_allowed_days !=0) then
+    coalesce(sum(lp.total_allowed_days),0)
+
+    when(lp.allowed_leave_monthly !=0) then  #{monthlyLeave}
+        when(lp.total_allowed_repetition != 0)
+        then  coalesce(sum(lp.total_allowed_repetition),0)
+        when(lp.max_allowed_accumulation !=0) then
+        coalesce(sum(lp.max_allowed_accumulation),0)
+        when(lp.maximum_leave_limit_at_once != 0) then
+        coalesce(sum(lp.maximum_leave_limit_at_once),0) else
+        0 end  as totalLeave
+            from leave_policy lp left join leave_setup ls on ls.id = lp.leave_setup_id
+            where lp.is_active=true  and lp.id =  #{policyId} group by lp.total_allowed_days_fy,lp.total_allowed_days,
+        lp.total_allowed_repetition,lp.total_allowed_repetition_fy,lp.carry_forward,ls.name_en,ls.name_np,lp.maximum_leave_limit_at_once,
+        lp.allowed_leave_monthly,lp.max_allowed_accumulation;
+    </select>
+
+
+    <!--    <select id="getRemainingLeaveByPisCode" resultType="com.gerp.attendance.Pojo.RemainingLeaveForLeaveRequestPojo">-->
+    <!--    select-->
+    <!--    ls.name_en as leaveNameEn,-->
+    <!--    ls.name_np as leaveNameNp,-->
+    <!--    case-->
+    <!--    when((lp.total_allowed_repetition!=0 or lp.total_allowed_repetition_fy !=0) and lp.maximum_leave_limit_at_once>0)-->
+    <!--       then coalesce(sum(lp.maximum_leave_limit_at_once),0)-->
+    <!--    when((lp.total_allowed_repetition=0 and lp.total_allowed_repetition_fy =0 and lp.total_allowed_days_fy=0 and lp.total_allowed_days=0) and lp.maximum_leave_limit_at_once>0)-->
+    <!--       then coalesce(sum(lp.maximum_leave_limit_at_once),0)-->
+    <!--      end as maximumLimit,-->
+    <!--        <choose>-->
+    <!--        <when test="#{remainingLeave}!=null">-->
+    <!--            select accumulated_leave_fy as accumulatedLeave,remaining_leave as leaveTaken,travel_days as travelDays from remaining_leave where pis_code=#{pisCode} and leave_policy_id=#{policyId} and fiscal_year=#{fiscalYear} and is_active=true,-->
+    <!--        </when>-->
+    <!--        <otherwise>-->
+    <!--            0 as accumulatedLeave,-->
+    <!--            0 as leaveTaken,-->
+    <!--            0 as travelDays,-->
+    <!--        </otherwise>-->
+    <!--        </choose>-->
+
+    <!--    case-->
+    <!--     when(lp.total_allowed_days_fy!=0)then-->
+    <!--            coalesce(sum(lp.total_allowed_days_fy),0)-->
+
+    <!--    when(lower(ls.name_en) like 'home leave') then-->
+    <!--    #{homeAllowedLeave}-->
+
+    <!--   when(lp.total_allowed_repetition_fy !=0 and lp.total_allowed_repetition!=0)then-->
+    <!--      coalesce(sum(lp.total_allowed_repetition),0)-->
+
+    <!--   when(lp.total_allowed_repetition_fy !=0)then-->
+    <!--       coalesce(sum(lp.total_allowed_repetition_fy),0)-->
+
+    <!--    when(lp.total_allowed_days !=0) then-->
+    <!--    coalesce(sum(lp.total_allowed_days),0)-->
+
+    <!--    when(lp.allowed_leave_monthly !=0) then-->
+    <!--    (extract(month from age(current_date,#{empJoinDate}))*coalesce(sum(lp.allowed_leave_monthly),0))-->
+
+    <!--    when(lp.total_allowed_repetition!=0) then-->
+    <!--    coalesce(sum(lp.total_allowed_repetition),0)-->
+    <!--    else 0-->
+    <!--    end as totalLeave-->
+    <!--            from leave_policy lp-->
+    <!--            left join leave_setup ls on ls.id = lp.leave_setup_id-->
+    <!--            where lp.is_active=true-->
+    <!--            and lp.id =#{policyId}-->
+    <!--            group by lp.total_allowed_days_fy,lp.total_allowed_days,lp.total_allowed_repetition,lp.total_allowed_repetition_fy,lp.carry_forward,ls.name_en, ls.name_np,lp.maximum_leave_limit_at_once,lp.allowed_leave_monthly;-->
+    <!--    </select>-->
+    <select id="getMonthlyLeaveData" resultType="com.gerp.attendance.Pojo.RemainingMonthlyLeavePojo">
+        select rl.created_date,
+        rl.leave_policy_id,
+        rl.accumulated_leave_fy,
+        rl.remaining_leave as leaveTaken,
+        rl.monthly_leave_taken,
+        rl.repetition
+        from remaining_leave rl
+        left join leave_policy lp on rl.leave_policy_id = lp.id
+        left join leave_setup ls on lp.leave_setup_id = ls.id
+        where ls.allowed_monthly=true and rl.pis_code=#{pisCode} and rl.is_active=true and lp.office_code in
+        <foreach item="item" index="index" collection="officeCode" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getLatestLeaveDate" resultType="java.util.Date">
+        select max(lrd.to_date_en)
+        from leave_request lr
+                 left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                 left join leave_policy lp on lrd.leave_policy_id = lp.id
+        where lr.emp_pis_code = #{pisCode}
+          and lp.id = #{leavePolicyId}
+          and lr.year = #{year}
+          and lr.is_active = true
+          and lrd.is_active = true
+          and lrd.status = 'A';
+    </select>
+
+    <select id="MonthlyLeaveCheck" resultType="com.gerp.attendance.Pojo.KararMonthPojo">
+        select count(distinct dl.nepali_month) as totalMonth,
+               max(dl.nepali_month)            as latestMonth,
+               dl.nepali_year                  as currentYear
+        from date_list dl
+        where dl.eng_date
+                  between #{fromDate} and #{toDate}
+        group by dl.nepali_year;
+    </select>
+
+    <select id="maxEngDate" resultType="java.util.Date">
+        select dl2.eng_date
+        from date_list dl2
+        where dl2.nep_date in (select max(dl.nep_date)
+                               from date_list dl
+                               where nepali_month = #{nepaliMonth}
+                                 and dl.nepali_year = #{nepaliYear});
+    </select>
+
+    <select id="getRepetition" resultType="java.lang.Integer">
+        select rl.created_date,
+        rl.leave_policy_id,
+        rl.accumulated_leave_fy,
+        rl.remaining_leave as leaveTaken,
+        rl.monthly_leave_taken,
+        rl.repetition
+        from remaining_leave rl
+        left join leave_policy lp on rl.leave_policy_id = lp.id
+        left join leave_setup ls on lp.leave_setup_id = ls.id
+        where ls.allowed_monthly=true and rl.is_active=true and lp.office_code in
+        <foreach item="item" index="index" collection="officeCode" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getLatestDate" resultType="java.lang.String">
+        select max(nep_date)
+        from date_list dll
+        where dll.nepali_month in (select (dl.nepali_month - 1)
+                                   from date_list dl
+                                   where dl.eng_date = #{fromDate})
+          and dll.nepali_year = #{year};
+    </select>
+
+    <update id="updateKararLeave">
+        update remaining_leave
+        set repetition=#{repetition},
+            created_date=#{latestDate},
+            last_modified_date=#{latestDate},
+            upto_date=#{latestDate},
+            remaining_leave=#{leaveTaken},
+            monthly_leave_taken=#{leaveTaken},
+            accumulated_leave_fy=#{accumulatedLeaveFy} from remaining_leave rl
+        where rl.leave_policy_id=#{policyId}
+          and rl.pis_code=#{pisCode}
+          and rl.is_active= true
+    </update>
+    <update id="updateRemainingLeave">
+        update remaining_leave
+        set repetition=repetition + 1,
+            created_date=case
+                             when (b.totalAllowedLeaveMonthly !=0) then
+                                 #{createdDate}
+                             else created_date end,
+            last_modified_date=case
+                                   when (b.totalAllowedLeaveMonthly !=0) then
+                                       #{createdDate}
+                                   when (b.maxAllowedAccumulation != 0) then
+                                       current_timestamp
+                                   else last_modified_date end,
+            travel_days= case
+                             when (#{travelDays} > 0) then
+                                 #{travelDays}
+                             else 0 end,
+            leave_taken=#{leaveTaken},
+            accumulated_leave=#{accumulatedLeave},
+            leave_taken_fy=#{leaveTakenFy},
+            accumulated_leave_fy=case
+                                     when (b.maxAllowedAccumulation != 0 and #{accumulatedLeaveFy}>=31) then
+                                         31
+                                     when (b.allowedMaximumAccumulation is false and
+                                           b.allowedUnlimitedAccumulation is false) then
+                                         0
+                                     when (b.totalAllowedDaysFy !=0 and b.allowedUnlimitedAccumulation and #{accumulatedLeaveFy} >600)
+                                         then
+                                         600
+                                     else
+                                         #{accumulatedLeaveFy} end,
+            home_leave_additional=case
+                                      when (#{additionalHomeLeave} is not null) then
+                                          #{additionalHomeLeave}
+                end,
+            monthly_leave_taken=#{leaveMonthly},
+            upto_date=#{updateDate},
+            remaining_leave= case
+                                 when (b.totalAllowedDays != 0) then
+                                     #{leaveTaken}
+
+                                 when (b.totalAllowedDaysFy != 0) then
+                                     #{leaveTakenFy}
+
+                                 when (b.totalAllowedLeaveMonthly != 0) then
+                                     #{leaveMonthly}
+
+                                 when (b.totalAllowedRepetition != 0 or b.totalAllowedRepetitionFy!=0) then
+                                     repetition + 1
+
+                                 when (b.maxAllowedAccumulation != 0) then
+                                     #{homeLeave}
+
+                                 when (b.maximumLeaveLimitAtOnce != 0) then
+                                     #{obsequiesLeave}
+
+
+                                 else accumulated_leave end from (select
+    lp.total_allowed_days_fy as totalAllowedDaysFy,
+    lp.total_allowed_repetition as totalAllowedRepetition,
+    lp.total_allowed_repetition_fy as totalAllowedRepetitionFy,
+    lp.max_allowed_accumulation as maxAllowedAccumulation,
+    lp.maximum_leave_limit_at_once as maximumLeaveLimitAtOnce,
+    lp.allowed_leave_monthly as totalAllowedLeaveMonthly,
+    ls.maximum_allowed_accumulation as allowedMaximumAccumulation,
+    ls.unlimited_allowed_accumulation as allowedUnlimitedAccumulation,
+    lp.total_allowed_days    as totalAllowedDays
+    from leave_policy lp
+    left join leave_setup ls on lp.leave_setup_id=ls.id
+    where
+    lp.id = #{policyId}) as b
+        where remaining_leave.pis_code=#{pisCode}
+          and remaining_leave.leave_policy_id=#{policyId}
+          and remaining_leave.is_active= true;
+    </update>
+
+    <update id="updateRemainingLeaveRevert">
+        update remaining_leave
+        set repetition= case
+                            when (repetition > 0) then
+                                repetition - 1
+                            else 0 end,
+            travel_days= case
+                             when (#{travelDays} > 0) then
+                                 0
+                             else travel_days end,
+            upto_date= #{updateDate},
+            leave_taken=#{leaveTaken},
+            home_leave_additional=#{additionalHomeLeaved},
+            leave_taken_fy=#{leaveTakenFy},
+            accumulated_leave_fy=case
+                                     when (b.allowedLeaveMonthly != 0) then
+                                         (monthly_leave_taken - #{leaveTakenMonthly}) + #{accumulatedLeaveFy}
+                                     when (b.maxAllowedAccumulation != 0 and #{accumulatedLeaveFy}>=31) then
+                                         31
+                                     when (b.allowedMaximumAccumulation is false and
+                                           b.allowedUnlimitedAccumulation is false) then
+                                         0
+                                     else
+                                         #{accumulatedLeaveFy} end,
+            accumulated_leave=case
+                                  when (#{accumulatedLeave} >= 180) then
+                                      180
+                                  else
+                                      #{accumulatedLeave} end,
+            monthly_leave_taken=#{leaveTakenMonthly},
+            remaining_leave= case
+                                 when (b.totalAllowedDays != 0) then
+                                     #{leaveTaken}
+
+
+                                 when (b.totalAllowedDaysFy != 0) then
+                                     #{leaveTakenFy}
+
+                                 when (b.allowedLeaveMonthly != 0) then
+                                     #{leaveTakenMonthly}
+
+                                 when (b.totalAllowedRepetition != 0 or b.totalAllowedRepetitionFy!=0) then
+                                     repetition - 1
+
+                                 when (b.maxAllowedAccumulation != 0) then
+                                     #{homeLeave}
+
+                                 when (b.maximumLeaveLimitAtOnce != 0) then
+                                     #{obsequiesLeave}
+
+                                 else accumulated_leave end from (select
+    lp.total_allowed_days_fy as totalAllowedDaysFy,
+    lp.total_allowed_repetition as totalAllowedRepetition,
+    lp.total_allowed_repetition_fy as totalAllowedRepetitionFy,
+    lp.max_allowed_accumulation as maxAllowedAccumulation,
+    lp.maximum_leave_limit_at_once as maximumLeaveLimitAtOnce,
+    lp.allowed_leave_monthly as allowedLeaveMonthly,
+    ls.maximum_allowed_accumulation as allowedMaximumAccumulation,
+    ls.unlimited_allowed_accumulation as allowedUnlimitedAccumulation,
+    lp.total_allowed_days    as totalAllowedDays
+    from leave_policy lp
+    left join leave_setup ls on lp.leave_setup_id=ls.id
+    where
+    lp.id = #{policyId}) as b
+        where remaining_leave.pis_code=#{pisCode}
+          and remaining_leave.leave_policy_id=#{policyId}
+          and remaining_leave.year=#{year};
+    </update>
+
+    <select id="getYealyRemainingLeave" resultType="com.gerp.attendance.Pojo.RemainingReportPojo">
+        select b.currentAccumulated,
+               c.previousAccumulated,
+               b.name_en,
+               b.name_np,
+               case
+                   when (b.maximumAccumulated and b.allowedMaximum!=0) then
+                       (case
+                            when (coalesce(sum(b.currentAccumulated), 0) + coalesce(sum(c.previousAccumulated), 0)) >
+                                 b.allowedMaximum then
+                                b.allowedMaximum
+                            else coalesce(sum(b.currentAccumulated), 0) + coalesce(sum(c.previousAccumulated), 0) end)
+
+                   when (b.unAccumulated and b.allowedMaximum = 0) then
+                       (coalesce(sum(b.currentAccumulated), 0) + coalesce(sum(c.previousAccumulated), 0))
+                   end
+                   as totalLeave
+        from (select accumulated_leave_fy             as currentAccumulated,
+                     l.name_en,
+                     l.name_np,
+                     rl.leave_policy_id               as policyId,
+                     l.maximum_allowed_accumulation   as maximumAccumulated,
+                     l.unlimited_allowed_accumulation as unAccumulated,
+                     lp.max_allowed_accumulation      as allowedMaximum
+
+              from remaining_leave rl
+                       left join
+                   leave_policy lp on rl.leave_policy_id = lp.id
+                       left join leave_setup l on lp.leave_setup_id = l.id
+              where (l.maximum_allowed_accumulation = true or l.unlimited_allowed_accumulation = true)
+                and rl.pis_code = #{pisCode}
+                and rl.year = #{year}
+                and rl.office_code = #{officeCode}) b
+                 left outer join
+             (select accumulated_leave_fy             as previousAccumulated,
+                     l.name_en,
+                     l.name_np,
+                     rl.leave_policy_id               as policyId,
+                     l.maximum_allowed_accumulation   as maximumAccumulated,
+                     l.unlimited_allowed_accumulation as unAccumulated,
+                     lp.max_allowed_accumulation      as allowedMaximum
+
+              from remaining_leave rl
+                       left join
+                   leave_policy lp on rl.leave_policy_id = lp.id
+                       left join leave_setup l on lp.leave_setup_id = l.id
+              where (l.maximum_allowed_accumulation = true or l.unlimited_allowed_accumulation = true)
+                and rl.pis_code = #{pisCode}
+                and rl.year = #{previousYear}
+                and rl.office_code = #{officeCode}) c on b.policyId = c.policyId
+        group by b.name_en, b.currentAccumulated, c.previousAccumulated, b.name_np, b.maximumAccumulated,
+                 b.unAccumulated, b.allowedMaximum;
+    </select>
+
+
+    <select id="getAllLeaveTaken" resultType="com.gerp.attendance.Pojo.EmployeeLeaveTakenPojo">
+        select * from
+        (select distinct e.pis_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        fd.name_en as fd_name_en,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        e.gender,
+        p.order_no,
+        e.current_position_app_date_bs,
+        fd.name_np as fd_name_np
+        from employee e
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        left join users_roles ur on u.id = ur.user_id
+        left join role_group rg on ur.role_id = rg.id
+        where e.office_code = #{officeCode} and e.is_active = true
+        and  fd.designation_type='NORMAL_DESIGNATION'
+        and ((ss.is_active=true and sd.is_active=true) or sd.id is null)
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        )b
+        where 1=1
+        <if test="name!=null">
+            and lower(b.emp_name_en) like concat(#{name},'%')
+        </if>
+        order by b.e_order,b.order_no,b.current_position_app_date_bs,b.emp_name_en
+    </select>
+
+
+    <select id="remainingLeaveByOfficeCode" resultType="com.gerp.attendance.Pojo.RemainingLeaveByOfficeCodePojo">
+        select distinct rl.pis_code as pisCode,
+                        po.order_no,
+                        e.current_position_app_date_bs,
+                        e.first_name_en,
+                        CONCAT(e.first_name_en, ' ', COALESCE(e.middle_name_en, ''), ' ', e.last_name_en) as nameEn,
+                        CONCAT(e.first_name_np, ' ', COALESCE(e.middle_name_np, ''), ' ', e.last_name_np) as nameNp,
+                        fd.name_en                                                as designationEn,
+                        fd.name_np                                                as designationNp,
+                        case
+                            when e.employee_service_status_code = '01' then 0
+                            when (e.employee_service_status_code = '04') then 2
+                            when (e.employee_service_status_code = '08') then 3
+                            when (e.employee_service_status_code = '09') then 4 else 0
+                            end as e_order
+        from remaining_leave rl
+                 left join employee e on (e.pis_code= rl.pis_code or e.employee_code=rl.pis_code)
+                 left join position po on e.position_code = po.code
+                 left join functional_designation fd on e.designation_code = fd.code
+        where rl.office_code = #{officeCode}
+          and e.office_code = #{officeCode}
+        <if test="name != null">
+            <bind name="name_en" value="name + '%'"/>
+            and(
+            case
+            WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+            e.last_name_en))
+            else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{name_en})
+            OR
+            case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+            e.last_name_np)
+            else concat(e.first_name_np, ' ', e.last_name_np) end like #{name_en})
+        </if>
+        <if test="year!=null">
+            and rl.year=#{year}
+        </if>
+        order by e_order,po.order_no,e.current_position_app_date_bs, e.first_name_en;
+    </select>
+
+</mapper>

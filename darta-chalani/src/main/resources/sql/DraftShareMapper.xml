@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.dartachalani.mapper.DraftShareMapper">
+
+    <select id="getDraftShareList" resultType="com.gerp.dartachalani.dto.DraftSharePojo">
+        select
+        ds.id,
+        ds.status,
+        ds.receiver_pis_code,
+        ds.receiver_section_code,
+        ds.last_modified_date,
+        ds.sender_pis_code
+        from draft_share ds
+        where ds.is_active = true
+        <if test="dispatchId != null">
+            and ds.dispatch_id = #{dispatchId}
+        </if>
+        <if test="memoId != null">
+            and ds.memo_id = #{memoId}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.OfficeMapper">
+    <resultMap id="officePojo"
+               type="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        <result column="code" property="code"/>
+        <result column="defined_code" property="definedCode"/>
+        <result column="is_active" property="isActive"/>
+        <result column="is_gioms_active" property="isGiomsActive"/>
+        <result column="email" property="email"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="url" property="url"/>
+        <result column="parent_code" property="parentCode"/>
+        <result column="name_en" property="nameEn"/>
+        <result column="name_np" property="nameNp"/>
+        <result column="address_en" property="addressEn"/>
+        <result column="address_np" property="addressNp"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="office_prefix_en" property="officePrefixEn"/>
+        <result column="office_prefix_np" property="officePrefixNp"/>
+        <result column="office_suffix_en" property="officeSuffixEn"/>
+        <result column="office_suffix_np" property="officeSuffixNp"/>
+        <result column="remarks_en" property="remarksEn"/>
+        <result column="remarks_np" property="remarksNp"/>
+        <result column="parent_code" property="parentCode"/>
+        <collection property="parentOffice"
+                    ofType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+            <id property="code" column="parent_office_code"/>
+            <result column="parent_office_name_en" property="nameEn"/>
+            <result column="parent_office_name_np" property="nameNp"/>
+        </collection>
+        <collection property="district"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="district_code"/>
+            <result column="district_name_en" property="name"/>
+            <result column="district_name_np" property="nameN"/>
+        </collection>
+        <collection property="officeType"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="id" column="office_type_id"/>
+            <result column="office_type_name_en" property="name"/>
+            <result column="office_type_name_np" property="nameN"/>
+        </collection>
+        <collection property="municipalityVdc"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="municipality_code"/>
+            <result column="municipality_name_en" property="name"/>
+            <result column="municipality_name_np" property="nameN"/>
+        </collection>
+        <collection property="organizationLevel"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="organization_level_code"/>
+            <result column="organization_level_name_en" property="name"/>
+            <result column="organization_level_name_np" property="nameN"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="officeSectionPojo"
+               type="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        <result column="office_code" property="code"/>
+        <result column="name_en" property="nameEn"/>
+        <result column="name_np" property="nameNp"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="parent_code" property="parentCode"/>
+        <collection property="childOffice"
+                    ofType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+            <result column="code" property="code"/>
+            <result column="name_en" property="nameEn"/>
+            <result column="name_np" property="nameNp"/>
+            <result column="phone_number" property="phoneNumber"/>
+            <result column="parent_code" property="parentCode"/>
+        </collection>
+        <collection property="section"
+                    ofType="com.gerp.usermgmt.pojo.organization.office.SectionPojo">
+            <id column="section_code" property="code"/>
+            <result column="section_name_np" property="nameNp"/>
+            <result column="section_name_en" property="nameEn"/>
+            <result column="section_version" property="version"/>
+        </collection>
+    </resultMap>
+
+    <select id="getAllParentOffice"
+            resultMap="officePojo">
+        select o.code         ,
+               o.name_en      as name_en,
+               o.name_np      as name_np,
+               o.email      ,
+               o.address_en,
+               o.address_np,
+               o.phone_number,
+               o.parent_code  as parent_code,
+
+               d.code as district_code,
+               d.name_en as district_name_en,
+               d.name_np as district_name_np
+        from office o
+                 left join district d on o.district_code = d.code
+                 left join country c on o.country_code = c.code
+                 left join municipality_vdc mv on o.municipality_vdc_code = mv.code
+
+        where parent_code = '00' and o.disabled is false
+        <if test="orgTypeId != null">
+            and o.organisation_type_id = #{orgTypeId}
+        </if>
+    </select>
+    <select id="getOfficeSectionByParent" resultMap="officeSectionPojo">
+        select o.code          as office_code,
+               o.name_en       as name_en,
+               o.name_np       as name_np,
+               o.phone_number  as phone_number,
+               o.parent_code   as parent_code,
+
+               co.code         as child_office_code,
+               co.name_en      as child_office_name_en,
+               co.name_np      as child_office_name_np,
+               co.phone_number as child_office_phone_number,
+               co.parent_code  as child_office_parent_code,
+
+               ss.code         as section_code,
+               ss.name_np      as section_name_np,
+               ss.name_en      as section_name_en,
+               ss.version      as section_version
+        from office o
+                 inner join office co on o.code = co.parent_code
+                 left join section_subsection ss on o.code = ss.office_code
+        where o.code = #{officeCode}
+          and ss.parent_code is null and o.is_active is true
+
+    </select>
+    <select id="getOfficeByCode" resultMap="officePojo">
+        select o.code         ,
+               o.email,
+               o.url,
+               o.parent_code,
+               o.defined_code,
+               o.is_active,
+               o.is_gioms_active,
+               o.name_en      as name_en,
+               o.name_np      as name_np,
+
+               po.code      as parent_office_code,
+               po.name_en      as parent_office_name_en,
+               po.name_np      as parent_office_name_np,
+
+
+               o.email      ,
+               o.address_en,
+               o.address_np,
+               o.phone_number,
+               o.parent_code  as parent_code,
+               o.office_prefix_en,
+               o.office_prefix_np,
+               o.office_suffix_en,
+               o.office_suffix_np,
+
+               o.remarks_en,
+               o.remarks_np,
+
+               d.code as district_code,
+               d.name_en as district_name_en,
+               d.name_np as district_name_np,
+
+               mv.code as municipality_code,
+               mv.name_en as municipality_name_en,
+               mv.name_np as municipality_name_np,
+
+               ol.code as organization_level_code,
+               ol.name_np as organization_level_name_np,
+               ol.name_en as organization_level_name_en,
+
+               ot.id as office_type_id,
+               ot.name_np as office_type_name_np,
+               ot.name_en as office_type_name_en
+
+
+
+        from office o
+                 left join district d on o.district_code = d.code
+                 left join country c on o.country_code = c.code
+                 left join municipality_vdc mv on o.municipality_vdc_code = mv.code
+                 left join organization_level ol on o.organization_level_code = ol.code
+            left join organisation_type ot on ot.id = o.organisation_type_id
+        left join office po on o.parent_code = po.code
+
+        where o.code = #{officeCode}
+    </select>
+    <select id="getChildOffices" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        select o.code         ,
+               o.name_en      as name_en,
+               o.name_np      as name_np,
+               o.parent_code  as parent_code
+        from office o
+        where o.parent_code = #{officeCode} and o.is_active is true
+    </select>
+
+    <select id="getEmployeeList" resultType="java.lang.String">
+    select b.pis_code
+    from
+    (select distinct e.pis_code,
+    case
+    when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+    else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+    case
+    when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+    else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+    fd.name_en as fd_name_en,
+    case
+    when e.employee_service_status_code = '01' then 0
+    when (e.employee_service_status_code = '04') then 2
+    when (e.employee_service_status_code = '08') then 3
+    when (e.employee_service_status_code = '09') then 4 else 0
+    end as e_order,
+    p.order_no,
+    e.current_position_app_date_bs,
+    fd.name_np as fd_name_np
+    from employee e
+    left join employee_service_status es on es.code=e.employee_service_status_code
+    left join position p on e.position_code = p.code
+    left join functional_designation fd on e.designation_code = fd.code
+    left join section_designation sd on sd.employee_pis_code=e.pis_code
+    left join section_subsection ss on sd.section_subsection_id = ss.id
+    left join users u on e.pis_code = u.pis_employee_code
+    left join users_roles ur on u.id = ur.user_id
+    left join role_group rg on ur.role_id = rg.id
+    where e.office_code  in
+    <foreach item='item' index='index' collection='offices' open='(' separator=',' close=')'>
+        #{item}
+    </foreach>
+    and e.is_active = true
+    and ((ss.is_active=true and sd.is_active=true) or sd.id is null)
+    )b
+    order by b.e_order,b.order_no,b.current_position_app_date_bs,b.emp_name_en
+    </select>
+    <select id="getAllChildOfficeCode" resultType="java.lang.String">
+    WITH recursive q AS (select o.parent_code, o.code
+    from office o
+    where o.code = #{officeCode}
+    and o.is_active=true
+    UNION distinct
+    select p.code,p.parent_code
+    from office p where
+    p.parent_code=#{officeCode}
+    and p.is_active=true
+    UNION distinct
+    select z.parent_code, z.code
+    from office z
+    join q on z.code = q.parent_code
+    )
+    SELECT distinct q.code from q;
+    </select>
+    <select id="getOfficeLowerHierarchy" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+
+    </select>
+    <select id="getALlOffices" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        select o.code         ,
+               o.is_gioms_active,
+               o.is_active,
+               o.name_en      as name_en,
+               o.name_np      as name_np,
+               o.email      ,
+               o.address_en,
+               o.address_np,
+               o.phone_number,
+               o.parent_code  as parent_code,
+
+               d.code as district_code,
+               d.name_en as district_name_en,
+               d.name_np as district_name_np
+        from office o
+                 left join district d on o.district_code = d.code
+                 left join country c on o.country_code = c.code
+                 left join municipality_vdc mv on o.municipality_vdc_code = mv.code
+                 <if test="searchKey != null">
+                     where
+                     <bind name="pattern_en" value="searchKey  + '%'" />
+                     upper(o.name_en) like upper(#{pattern_en}) or o.name_np like #{pattern_en}
+                 </if>
+                 <if test="district !=null">
+                     <choose>
+                     <when test="searchKey == null">
+                        where
+                     </when>
+                     <otherwise>
+                         AND
+                     </otherwise>
+                 </choose>
+                     o.district_code = #{district}
+
+                 </if>
+    </select>
+    <select id="getAllOfficeListByParam" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo"></select>
+    <select id="getOfficeByFilter" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        select o.name_en, o.name_np, o.code,  o.parent_code from office o where o.is_active is true
+        <if test="map!=null">
+                <if test="map.organizationLevelCode!=null and map.organizationLevelCode!=''">
+                    and o.organization_level_id = #{map.organizationLevelCode}
+                </if>
+                <if test="map.districtCode!=null and map.districtCode!=''">
+                   and o.district_code = #{map.districtCode}
+                </if>
+        <if test="map.giomsActive !=null and map.giomsActive != ''">
+            and o.is_gioms_active = #{map.giomsActive}
+        </if>
+        <if test="map.name !=null and map.name !=''">
+            <bind name="pattern_en" value="map.name + '%'"/>
+            and upper(o.name_en) like upper(#{pattern_en})
+        </if>
+        </if>
+    </select>
+    <select id="getChildOffice" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        select o.code         ,
+               o.name_en      as name_en,
+               o.name_np      as name_np from office o where o.is_active is true and  o.parent_code = #{officeCode}
+    </select>
+    <select id="getParentOffice" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        select  s.code         ,
+                s.name_en      as name_en,
+                s.name_np      as name_np from office s left join office o on o.parent_code = s.code where o.code = #{officeCode}
+    </select>
+    <select id="getMinistryOffices" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+
+        select o.code         ,
+               o.name_en      as name_en,
+               o.name_np      as name_np from office o where o.parent_code = '8886' and o.is_active is true
+    </select>
+    <select id="getALlOfficesByIds" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        select o.code         ,
+        o.name_en      as name_en,
+        o.is_gioms_active as is_gioms_active,
+        o.address_en,
+        o.address_np,
+        o.name_np      as name_np from office o where o.code
+        in
+        <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+    </select>
+    <resultMap id="officeGroup" type="com.gerp.usermgmt.pojo.organization.office.OfficeGroupPojo">
+        <id column="id" property="id"/>
+        <result column="name_en" property="nameEn"/>
+        <result column="saved_by_admin" property="savedByAdmin"/>
+        <result column="name_np" property="nameNp"/>
+        <collection property="officePojos" resultMap="officeDetails"/>
+    </resultMap>
+    <resultMap id="officeDetails" type="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        <result column="code" property="code"/>
+        <result column="o_name_en" property="nameEn"/>
+        <result column="o_name_np" property="nameNp"/>
+        <result column="address" property="addressEn"/>
+        <result column="s_type" property="type"/>
+        <result column="s_order" property="order"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="email" property="email"/>
+        <collection property="section" resultMap="SectionSubSection"/>
+    </resultMap>
+    <resultMap id="SectionSubSection" type="com.gerp.usermgmt.pojo.organization.office.SectionPojo">
+        <result column="ss_id" property="id"/>
+        <result column="s_name_en" property="nameEn"/>
+        <result column="s_name_np" property="nameNp"/>
+        <result column="section_name" property="definedCode"/>
+    </resultMap>
+    <select id="getOfficeGroup" resultMap="officeGroup">
+        select ogd.*,og.name_en as o_name_en,og.section_name,og.name_np as o_name_np,og.office_code as code, og.address, og.phone_number,og.email,
+               ss.id as ss_id, ss.name_en as s_name_en ,ogd.saved_by_admin, ss.name_np as s_name_np,og.type as s_type, og.ordering as s_order
+        from office_group_detail ogd
+        inner join office_group og on ogd.id = og.office_group_detail_id
+        left join section_subsection ss on ss.id = og.section_sub_section_id
+        where
+        ogd.office_code =#{ownOfficeCode} and
+        ogd.saved_by_admin = true
+        or ( ogd.created_by = #{pisCode}
+
+
+<!--        <if test="districtCode != null">-->
+<!--            and   o.district_code = #{districtCode}-->
+<!--        </if>-->
+<!--        <if test="officeLevelCode != null">-->
+
+<!--            and o.organization_level_code =#{officeLevelCode}-->
+<!--        </if>-->
+<!--        <if test="officeCode != null">-->
+<!--           and o.code = #{officeCode}-->
+<!--        </if>-->
+        )
+    </select>
+    <select id="searchOfficePaginated" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        select o.code         ,
+               o.name_en      as name_en,
+               o.name_np      as name_np,
+               o.email      ,
+               o.is_gioms_active,
+               o.is_active,
+               o.address_en,
+               o.address_np,
+               o.phone_number,
+               o.parent_code  as parent_code,
+
+               d.code as district_code,
+               d.name_en as district_name_en,
+               d.name_np as district_name_np
+        from office o
+                 left join district d on o.district_code = d.code
+                 left join country c on o.country_code = c.code
+                 left join organisation_type ot on o.organisation_type_id =  ot.id
+                 left join municipality_vdc mv on o.municipality_vdc_code = mv.code where o.is_active is true
+        <if test="orgTypeId != null">
+            and o.organisation_type_id = #{orgTypeId}
+        </if>
+       <if test="searchField != null">
+           <if test="searchField.officeCode!=null and searchField.officeCode!=''">
+               <bind name="pattern_en" value="'%' + searchField.officeCode + '%'"/>
+               <bind name="pattern_np" value="searchField.officeCode + '%'"/>
+               and o.code = #{searchField.officeCode}  or upper(o.name_en) like  upper(#{pattern_np})
+               or upper(o.name_np) like  upper(#{pattern_en})
+           </if>
+           <if test="searchField.officeTypeId !=null and searchField.officeTypeId !=''">
+               and o.office_type_id = #{searchField.officeTypeId}
+           </if>
+           <if test="searchField.organizationLevelCode!=null and searchField.organizationLevelCode!=''">
+               and o.organization_level_code = #{searchField.organizationLevelCode}
+           </if>
+           <if test="searchField.districtCode!=null and searchField.districtCode!=''">
+               and o.district_code = #{searchField.districtCode}
+           </if>
+           <if test="searchField.giomsActive !=null and searchField.giomsActive !=''">
+               and o.is_gioms_active = #{searchField.giomsActive}
+           </if>
+
+       </if>
+    </select>
+    <select id="getOfficeDetailMinimal" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        select o.code         ,
+               o.name_en      as name_en,
+               o.name_np      as name_np from office o where o.code = #{officeCode}
+    </select>
+    <select id="getTopLevelOffice" resultType="java.lang.String">
+        WITH recursive q AS (select o.parent_code, o.code
+                                                     from office o
+                                                    where o.code = #{code}
+                                                    UNION ALL
+                                                   select z.parent_code, z.code
+                                               from office z
+                                                              join q on z.code = q.parent_code
+                               )
+                              SELECT q.code from q where q.parent_code
+        in
+                                                       (select code from office where parent_code = '00')
+    </select>
+    <select id="getOfficeGroupById" resultType="com.gerp.usermgmt.pojo.OfficeGroupDto">
+
+        select ogd.id, ogd.name_en , ogd.name_np
+        from office_group_detail ogd where ogd.id = #{id}
+    </select>
+
+    <resultMap id="tmsOfficePojo" type="com.gerp.usermgmt.pojo.external.TMSOfficePojo">
+
+        <result property="clientCode" column="office_code"></result>
+        <result property="clientName" column="office_name_en"></result>
+        <result property="clientNameNp" column="office_name_np"></result>
+        <result property="countryName" column="country_name_en"></result>
+        <result property="countryNameNp" column="country_name_np"></result>
+        <result property="localBodyName" column="municipality_name_en"></result>
+        <result property="localBodyNameNp" column="municipality_name_np"></result>
+        <result property="id" column="office_code"></result>
+        <result property="districtId" column="district_code"></result>
+    </resultMap>
+    <select id="getAllOfficeByGIOMSStatus" resultMap="tmsOfficePojo">
+
+
+        select o.code as office_code,
+               o.name_np as office_name_np,
+               o.name_en as office_name_en,
+               o.district_code as district_code,
+
+               c.name_en as country_name_np,
+               c.name_np as country_name_en,
+
+               d.name_en as district_name_en,
+               d.name_np as district_name_np,
+
+               mv.name_np as municipality_name_np,
+               mv.name_en as municipality_name_en
+
+        from office o inner join country c on o.country_code = c.code
+                      inner join district d on o.district_code = d.code
+                      inner join municipality_vdc mv on o.municipality_vdc_code = mv.code
+        where o.is_gioms_active = #{isActive};
+
+    </select>
+    <select id="getAllOfficeByCodes" resultMap="tmsOfficePojo">
+        select o.code as office_code,
+               o.name_np as office_name_np,
+               o.name_en as office_name_en,
+               o.district_code as district_code,
+
+               c.name_en as country_name_np,
+               c.name_np as country_name_en,
+
+               d.name_en as district_name_en,
+               d.name_np as district_name_np,
+
+               mv.name_np as municipality_name_np,
+               mv.name_en as municipality_name_en,
+               o.municipality_vdc_code
+
+        from office o left join country c on o.country_code = c.code
+                      left join district d on o.district_code = d.code
+                      left join municipality_vdc mv on o.municipality_vdc_code = mv.code
+        where o.code in
+        <foreach collection="officeCodes" item="officeCode"  open=" (" separator= "," close=") ">
+            #{officeCode}
+        </foreach>
+    </select>
+    <select id="getGiomsActiveOffice" resultType="com.gerp.usermgmt.pojo.organization.office.OfficePojo">
+        select o.name_en, o.name_np, o.code,  o.parent_code from office o where o.is_gioms_active is true
+    </select>
+</mapper>
+

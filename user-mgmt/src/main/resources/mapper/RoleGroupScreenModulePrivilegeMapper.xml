@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gerp.usermgmt.mapper.RoleGroupScreenModulePrivilegeMapper">
+
+    <resultMap id="tmsScreenModulePojoResultMap" type="com.gerp.usermgmt.pojo.external.TMSScreenModelPojo">
+
+        <result property="id" column="id"></result>
+        <result property="name" column="module_name"></result>
+        <result property="code" column="module_key"></result>
+    </resultMap>
+
+    <select id="findAllTMSScreenPOjoByRoleId" resultMap="tmsScreenModulePojoResultMap">
+
+        select distinct rgsmp.module_id,
+                        m.module_name,
+                        m.module_key,
+                        m.id
+
+        from role_group_screen_module_privilege rgsmp
+        join  role_group rg on rg.id = rgsmp.role_group_id
+        join module m on rgsmp.module_id = m.id where rgsmp.role_group_id = #{roleId} order by rgsmp.module_id;
+    </select>
+
+</mapper>

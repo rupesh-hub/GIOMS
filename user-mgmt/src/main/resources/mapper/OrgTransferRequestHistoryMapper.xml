@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.orgtransfer.OrgTransferHistoryMapper">
+    <resultMap id="fromEmployee" type="com.gerp.shared.pojo.employee.EmployeeMinimalPojo">
+        <id property="pisCode" column="employee_pis_code"/>
+        <result property="employeeNameEn" column="employee_name_en"/>
+        <result property="email" column="employee_email"/>
+        <result property="employeeNameNp" column="employee_name_np"/>
+        <collection property="employeeOffice" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="employee_office_code"/>
+            <result property="name" column="employee_office_name_en"/>
+            <result property="nameN" column="employee_office_name_np"/>
+        </collection>
+        <collection property="section" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="employee_section_code"/>
+            <result property="name" column="employee_section_name_en"/>
+            <result property="nameN" column="employee_section_name_np"/>
+        </collection>
+        <collection property="functionalDesignation" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="employee_designation_code"/>
+            <result property="name" column="employee_designation_name_en"/>
+            <result property="nameN" column="employee_designation_name_np"/>
+        </collection>
+    </resultMap>
+    <resultMap id="approvalEmployee" type="com.gerp.shared.pojo.employee.EmployeeMinimalPojo">
+        <id property="pisCode" column="approval_employee_pis_code"/>
+        <result property="employeeNameEn" column="approval_employee_name_en"/>
+        <result property="email" column="approval_employee_email"/>
+        <result property="employeeNameNp" column="approval_employee_name_np"/>
+        <collection property="employeeOffice" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="approval_employee_office_code"/>
+            <result property="name" column="approval_employee_office_name_en"/>
+            <result property="nameN" column="approval_employee_office_name_np"/>
+        </collection>
+        <collection property="section" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="approval_employee_section_code"/>
+            <result property="name" column="approval_employee_section_name_en"/>
+            <result property="nameN" column="approval_employee_section_name_np"/>
+        </collection>
+        <collection property="functionalDesignation" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="approval_employee_designation_code"/>
+            <result property="name" column="approval_employee_designation_name_en"/>
+            <result property="nameN" column="approval_employee_designation_name_np"/>
+        </collection>
+    </resultMap>
+    <resultMap id="targetOffice" type="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="target_office_code"/>
+            <result property="name" column="target_office_name_en"/>
+            <result property="nameN" column="target_office_name_np"/>
+    </resultMap>
+    <resultMap id="fromOffice" type="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="from_office_code"/>
+            <result property="name" column="from_office_name_en"/>
+            <result property="nameN" column="from_office_name_np"/>
+    </resultMap>
+
+    <resultMap id="fromSection" type="com.gerp.shared.pojo.IdNamePojo">
+        <id property="id" column="from_section_id"/>
+        <result property="name" column="from_section_name_en"/>
+        <result property="nameN" column="from_section_name_np"/>
+    </resultMap>
+
+    <resultMap id="orgTransferRequestPojo"
+               type="com.gerp.usermgmt.pojo.organization.orgtransfer.OrgTransferHistoryPojo">
+        <id property="id" column="id"/>
+        <result property="transferStatus" column="transfer_status"/>
+        <result property="approvedDateEn" column="approved_date_en"/>
+        <result property="approvedDateNp" column="approved_date_np"/>
+        <result property="requestedDateEn" column="requested_date_en"/>
+        <result property="requestedDateNp" column="requested_date_np"/>
+        <result property="requestedDateNp" column="requested_date_np"/>
+
+        <result property="expectedJoinDateEn" column="expected_join_date_en"/>
+        <result property="expectedJoinDateNp" column="expected_join_date_np"/>
+
+        <result property="transferType" column="transfer_type"/>
+        <result property="remark" column="remark"/>
+        <result property="acknowledged" column="acknowledged"/>
+        <association property="employee" resultMap="fromEmployee"/>
+       <association property="targetOffice" resultMap="targetOffice"/>
+       <association property="fromOffice" resultMap="fromOffice"/>
+       <association property="fromSection" resultMap="fromSection"/>
+       <association property="approvalEmployee" resultMap="approvalEmployee"/>
+
+    </resultMap>
+    <select id="transferHistoryByPisCode"
+            resultMap="orgTransferRequestPojo">
+        select
+            otr.id,otr.from_section_id,otr.acknowledged,
+            otr.transfer_status, otr.approved_date_en, otr.approved_date_np,
+            otr.requested_date_en, otr.requested_date_np,
+            otr.remark,otr.expected_join_date_en,otr.expected_join_date_np,otr.transfer_type,
+            case
+                when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+            case
+                when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+            e.pis_code as employee_pis_code,
+            e.email_address,
+            fd.code as employee_designation_code,
+            fd.name_en as employee_designation_name_en,
+            fd.name_np as employee_designation_name_np,
+
+            case
+                when ae.middle_name_en IS NOT NULL then concat(ae.first_name_en, ' ', ae.middle_name_en, ' ', ae.last_name_en)
+                else concat(ae.first_name_en, ' ', ae.last_name_en) end as approval_employee_name_en,
+            case
+                when ae.middle_name_np IS NOT NULL then concat(ae.first_name_np, ' ', ae.middle_name_np, ' ', ae.last_name_np)
+                else concat(ae.first_name_np, ' ', ae.last_name_np) end as approval_employee_name_np,
+            ae.pis_code as approval_employee_pis_code,
+            e.email_address,
+            ad.code as approval_employee_designation_code,
+            ad.name_en as approval_employee_designation_name_en,
+            ad.name_np as approval_employee_designation_name_np,
+
+
+            ss.id as from_section_id,
+            ss.name_en as from_section_name_en,
+            ss.name_np as from_section_name_np,
+
+
+
+            targetoffice.code as target_office_code,
+            targetoffice.name_en as target_office_name_en,
+            targetoffice.name_np as target_office_name_np,
+
+            fromoffice.code as from_office_code,
+            fromoffice.name_en as from_office_name_en,
+            fromoffice.name_np as from_office_name_np
+
+
+        from org_transfer_history otr
+                 inner join employee e on e.pis_code = otr.pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 inner join office targetoffice  on targetoffice.code = otr.target_office_code
+                 inner join office fromoffice on fromoffice.code = otr.from_office_code
+                 left join section_subsection ss on ss.id = otr.from_section_id
+                 left join employee ae on ae.pis_code = otr.approver_code
+                 left join functional_designation ad on ad.code = ae.designation_code
+        where otr.pis_code = #{pisCode} and otr.transfer_status = 'A'
+
+    </select>
+</mapper>

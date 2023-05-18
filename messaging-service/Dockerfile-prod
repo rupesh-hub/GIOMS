@@ -1,0 +1,18 @@
+# Common build stage
+#custom node image with libraries
+FROM  manjitmaharjan/custom-node-messaging
+#ENV http_proxy=http:...
+#ENV https_proxy=http:...
+COPY . ./app
+
+WORKDIR /app
+
+RUN npm install
+COPY ./kalimati-regular.otf /usr/share/fonts/
+RUN fc-cache -f -v
+
+EXPOSE 3000
+
+ENV NODE_ENV production
+
+CMD ["npm", "run", "start"]

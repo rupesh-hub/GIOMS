@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.DailyLogMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.DailyLogPojo">
+
+        <id property="id" column="id"/>
+        <result property="dateEn" column="date_en"/>
+        <result property="dateNp" column="date_np"/>
+        <result property="timeFrom" column="in_time"/>
+        <result property="timeTo" column="out_time"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="fiscalYearCode" column="fiscal_year_code"/>
+        <result property="remarks" column="remarks"/>
+        <result property="location" column="location"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="approverPisCode" column="ra_approver_pis_code"/>
+        <result property="delegatedApproverPisCode" column="delegated_approver_pis_code"/>
+        <result property="approvedDate" column="approvedDate"/>
+        <result property="status" column="ra_status"/>
+        <result property="isActive" column="is_active"/>
+        <result property="dailyLogRequesterHashContent" column="daily_log_requester_hash_content"/>
+        <result property="dailyLogContent" column="dailyLogContent"/>
+        <result property="dailyLogRequesterSignature" column="daily_log_requester_signature"/>
+        <result property="approvalHashContent" column="hash_content"/>
+        <result property="approvalContent" column="approvalContent"/>
+        <result property="approvalSignature" column="approvalSignature"/>
+
+        <result property="isApprover" column="is_approver"/>
+
+
+        <collection property="approvalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverPisCode" column="ra_approver_pis_code"/>
+            <result property="remarks" column="ra_remarks"/>
+            <result property="status" column="ra_status"/>
+            <result property="approvedDate" column="approvedDate"/>
+            <result property="isApprover" column="is_approver"/>
+            <result column="is_delegated" property="isDelegated"/>
+            <result property="isOfficeHead" column="is_approval_office_head_delegated"/>
+        </collection>
+        <collection property="delegatedApprovalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverPisCode" column="delegated_approver_pis_code"/>
+            <result property="approverNameEn" column="delegated_approver_name_en"/>
+            <result property="approverNameNp" column="delegated_approver_name_np"/>
+            <result property="isOfficeHead" column="is_office_head_delegated"/>
+        </collection>
+
+        <!--        <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo">-->
+        <!--            <result property="id" column="document_id" />-->
+        <!--            <result property="name" column="document_name" />-->
+        <!--        </collection>-->
+
+    </resultMap>
+
+    <select id="getDailyLogById" resultMap="baseResultMap">
+            select dl.id as id,
+            da.is_approver,
+            dl.date_en,
+            dl.date_np,
+            dl.in_time,
+            dl.out_time,
+            dl.pis_code,
+            dl.office_code,
+            dl.fiscal_year_code,
+            dl.remarks,
+            dl.location,
+            dl.created_date,
+            da.approver_pis_code as ra_approver_pis_code,
+            da.remarks as ra_remarks,
+            dl.daily_log_requester_hash_content,
+            dl.content as dailyLogContent,
+            dl.daily_log_requester_signature,
+            da.hash_content,
+            da.content as approvalContent,
+            da.signature as approvalSignature,
+             case when (da.status ='A')then
+            da.last_modified_date end as approvedDate,
+            da.status as ra_status,
+             de.pis_code as delegated_approver_pis_code,
+                   case
+                       when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ', de.last_name_en)
+                       else concat(de.first_name_en, ' ', de.last_name_en) end as delegated_approver_name_en,
+                   case
+                       when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ', de.last_name_np)
+                       else concat(de.first_name_np, ' ', de.last_name_np) end as delegated_approver_name_np,
+                   case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+
+            from daily_log dl inner join decision_approval da on dl.record_id = da.record_id
+                              left join delegation d on da.delegated_id = d.id
+            left join employee de on de.pis_code = d.to_piscode
+            where dl.is_active = true and dl.id = #{id} and da.is_active = true
+    </select>
+
+    <select id="getAllDailyLogs" resultMap="baseResultMap">
+            select dl.id as id,
+            dl.date_en,
+            dl.date_np,
+            dl.in_time,
+            dl.out_time,
+            dl.pis_code,
+            dl.office_code,
+            dl.fiscal_year_code,
+            dl.remarks,
+            dl.location,
+            dl.created_date,
+            d.to_piscode as delegated_approver_pis_code,
+            da.approver_pis_code as ra_approver_pis_code,
+            da.remarks as ra_remarks,
+            da.status as ra_status,
+            de.pis_code as delegated_approver_pis_code,
+                   case
+                       when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ', de.last_name_en)
+                       else concat(de.first_name_en, ' ', de.last_name_en) end as delegated_approver_name_en,
+                   case
+                       when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ', de.last_name_np)
+                       else concat(de.first_name_np, ' ', de.last_name_np) end as delegated_approver_name_np,
+                   case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+
+            from daily_log dl inner join decision_approval da on dl.record_id = da.record_id
+                              left join delegation d on da.delegated_id = d.id
+                              left join employee de on de.pis_code = d.to_piscode
+                left join employee de on de.pis_code = d.to_piscode
+            where dl.is_active = true and da.is_active = true
+    </select>
+
+    <select id="getDailyLogByPisCode" resultMap="baseResultMap">
+            select dl.id as id,
+            dl.date_en,
+            dl.date_np,
+            dl.in_time,
+            dl.out_time,
+            dl.pis_code,
+            dl.office_code,
+            dl.fiscal_year_code,
+            dl.remarks,
+            dl.location,
+            dl.created_date,
+            da.approver_pis_code as ra_approver_pis_code,
+                   d.to_piscode as delegated_approver_pis_code,
+                   da.remarks as ra_remarks,
+            da.status as ra_status,
+                   de.pis_code as delegated_approver_pis_code,
+                   case
+                       when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ', de.last_name_en)
+                       else concat(de.first_name_en, ' ', de.last_name_en) end as delegated_approver_name_en,
+                   case
+                       when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ', de.last_name_np)
+                       else concat(de.first_name_np, ' ', de.last_name_np) end as delegated_approver_name_np,
+                   case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+
+            from daily_log dl inner join decision_approval da on dl.record_id = da.record_id
+                              left join delegation d on da.delegated_id = d.id
+                              left join employee de on de.pis_code = d.to_piscode
+
+            where dl.is_active = true and da.is_active = true and dl.pis_code = #{pisCode}
+            order by dl.created_date desc
+    </select>
+
+    <select id="getDailyLogByApproverPisCode" resultMap="baseResultMap">
+            select dl.id as id,
+            dl.date_en,
+            dl.date_np,
+            dl.in_time,
+            dl.out_time,
+            dl.pis_code,
+            dl.office_code,
+            dl.fiscal_year_code,
+            dl.remarks,
+            dl.location,
+            dl.created_date,
+            da.approver_pis_code as ra_approver_pis_code,
+                   d.to_piscode as delegated_approver_pis_code,
+
+                   da.remarks as ra_remarks,
+            da.status as ra_status,
+                   de.pis_code as delegated_approver_pis_code,
+                   case
+                       when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ', de.last_name_en)
+                       else concat(de.first_name_en, ' ', de.last_name_en) end as delegated_approver_name_en,
+                   case
+                       when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ', de.last_name_np)
+                       else concat(de.first_name_np, ' ', de.last_name_np) end as delegated_approver_name_np,
+                   case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+
+            from daily_log dl inner join decision_approval da on dl.record_id = da.record_id
+                              left join delegation d on da.delegated_id = d.id
+                              left join employee de on de.pis_code = d.to_piscode
+
+            where dl.is_active = true and da.is_active = true and da.approver_pis_code = #{pisCode}
+            order by dl.created_date desc
+    </select>
+
+    <select id="getDailyLogByOfficeCode" resultMap="baseResultMap">
+            select dl.id as id,
+            dl.date_en,
+            dl.date_np,
+            dl.in_time,
+            dl.out_time,
+            dl.pis_code,
+            dl.office_code,
+            dl.fiscal_year_code,
+            dl.remarks,
+            dl.location,
+            dl.created_date,
+            da.approver_pis_code as ra_approver_pis_code,
+            d.to_piscode as delegated_approver_pis_code,
+            da.remarks as ra_remarks,
+            da.status as ra_status,
+                   de.pis_code as delegated_approver_pis_code,
+                   case
+                       when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ', de.last_name_en)
+                       else concat(de.first_name_en, ' ', de.last_name_en) end as delegated_approver_name_en,
+                   case
+                       when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ', de.last_name_np)
+                       else concat(de.first_name_np, ' ', de.last_name_np) end as delegated_approver_name_np,
+                   case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+
+            from daily_log dl inner join decision_approval da on dl.record_id = da.record_id
+                              left join delegation d on da.delegated_id = d.id
+                              left join employee de on de.pis_code = d.to_piscode
+
+            where dl.is_active = true and da.is_active = true and dl.office_code = #{officeCode}
+            order by dl.created_date desc
+    </select>
+
+    <select id="getDailyLogDetail" resultMap="baseResultMap">
+        select dl.id as id,
+        dl.date_en,
+        dl.date_np,
+        dl.in_time,
+        dl.out_time,
+        dl.pis_code,
+        dl.office_code,
+        dl.fiscal_year_code,
+        dl.remarks,
+        dl.location,
+        da.approver_pis_code as ra_approver_pis_code,
+        d.to_piscode as delegated_approver_pis_code,
+        da.remarks as ra_remarks,
+        da.status as ra_status,
+        dl.created_date,
+        de.pis_code as delegated_approver_pis_code,
+        case
+        when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ', de.last_name_en)
+        else concat(de.first_name_en, ' ', de.last_name_en) end as delegated_approver_name_en,
+        case
+        when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ', de.last_name_np)
+        else concat(de.first_name_np, ' ', de.last_name_np) end as delegated_approver_name_np,
+        case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+
+        from daily_log dl
+        left join decision_approval da on dl.id = da.daily_log_id
+        left join delegation d on da.delegated_id = d.id
+        left join employee de on de.pis_code = d.to_piscode
+        where dl.is_active=true and dl.fiscal_year_code= #{fiscalYear}
+        and dl.office_code=#{officeCode} and #{currentDate} = dl.date_en
+        and dl.status in
+        <foreach item='item' index='index' collection='status' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        <choose>
+            <when test="pisCodes != null and !pisCodes.isEmpty()">
+                and dl.pis_code in
+                <foreach item='item' index='index' collection='pisCodes' open='(' separator=',' close=')'>
+                    #{item}
+                </foreach>
+            </when>
+            <otherwise>
+                and 1=0
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="filterData" resultType="com.gerp.attendance.Pojo.DailyLogPojo">
+    SELECT *,
+        (SELECT case
+            WHEN e.middle_name_en IS NOT NULL
+            THEN concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+            ELSE concat(e.first_name_en, ' ', e.last_name_en) end FROM employee e
+            WHERE e.pis_code = b.approverPis)                     AS approverNameEn,
+        (SELECT case
+            WHEN e.middle_name_np IS NOT NULL
+            THEN concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+            ELSE concat(e.first_name_np, ' ', e.last_name_np) end
+            FROM employee e WHERE e.pis_code = b.approverPis)     AS approverNameNp
+        FROM (SELECT dl.id                                        AS id,
+        dl.in_time                                                AS timeFrom,
+        dl.out_time                                               AS timeTo,
+        dl.remarks                                                AS remarks,
+        dl.created_date                                           AS createdDate,
+        dl.last_modified_date                                     AS modifiedDate,
+        (SELECT CASE WHEN COUNT(*) > 0 THEN created_date ELSE NULL END
+            FROM decision_approval
+            WHERE daily_log_id = dl.id
+            AND status = 'A'
+            GROUP BY created_date ORDER BY created_date DESC limit 1)  AS approvedDate,
+        CASE WHEN e.middle_name_en IS NOT NULL
+            THEN concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+            ELSE concat(e.first_name_en, ' ', e.last_name_en) END      AS requesterNameEn,
+        CASE WHEN e.middle_name_np IS NOT NULL
+            THEN concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+            ELSE concat(e.first_name_np, ' ', e.last_name_np) END      AS requesterNameNp,
+        (SELECT CASE
+            WHEN (dl.status = 'P') AND da.approver_pis_code = COALESCE(#{approverPisCode}, #{pisCode})
+            THEN (SELECT da.status FROM decision_approval da WHERE da.approver_pis_code = COALESCE(#{approverPisCode}, #{pisCode})
+                  AND da.daily_log_id = dl.id ORDER BY created_date DESC limit 1)
+                  ELSE dl.status END)                                  AS status,
+        CASE WHEN (da.delegated_id IS NOT NULL) THEN (select to_piscode from delegation where id = da.delegated_id limit 1)
+            ELSE (SELECT approver_pis_code FROM decision_approval WHERE daily_log_id = dl.id ORDER BY created_date DESC limit 1)
+            END AS approverPis
+        FROM daily_log dl
+        LEFT JOIN decision_approval da ON dl.id = da.daily_log_id
+        LEFT JOIN delegation d ON da.delegated_id = d.id
+        LEFT JOIN employee e ON e.pis_code = dl.pis_code
+        LEFT JOIN employee app ON app.pis_code = da.approver_pis_code
+        WHERE dl.is_active = TRUE
+        <if test="fiscalYear != null">
+            AND dl.fiscal_year_code = #{fiscalYear}
+        </if>
+
+        <choose>
+            <when test="isApprover != null and isApprover == true">
+                AND da.approver_pis_code = #{approverPisCode}
+                AND dl.status != 'C'
+            </when>
+            <otherwise>
+                AND dl.pis_code = #{pisCode}
+                AND da.is_active = TRUE
+            </otherwise>
+        </choose>
+
+<!--        <if test="(currentDate != null and currentDate != '')">-->
+<!--            AND dl.date_en >= to_date(#{currentDate}, 'YYYY-MM-DD')-->
+<!--        </if>-->
+
+        <if test="searchField.name!=null and searchField.name!=''">
+            <bind name="pattern_en" value="searchField.name + '%'"/>
+            AND
+            (CASE WHEN COALESCE(e.middle_name_en, '') != '' THEN
+            UPPER(concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en))
+            ELSE UPPER(concat(e.first_name_en, ' ', e.last_name_en)) END LIKE UPPER(#{pattern_en})
+            OR
+            CASE WHEN COALESCE(e.middle_name_np, '') != '' THEN concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+            e.last_name_np)
+            ELSE concat(e.first_name_np, ' ', e.last_name_np) END LIKE #{pattern_en})
+        </if>
+
+        <if test="isApprover == false">
+            <if test="searchField.name!=null and searchField.name!=''">
+                <bind name="pattern_en" value="searchField.name + '%'"/>
+                AND
+                (CASE WHEN COALESCE(app.middle_name_en, '') != '' THEN
+                UPPER(concat(app.first_name_en, ' ', app.middle_name_en, ' ', app.last_name_en))
+                ELSE UPPER(concat(app.first_name_en, ' ', app.last_name_en)) END LIKE UPPER(#{pattern_en})
+                OR
+                CASE WHEN COALESCE(app.middle_name_np, '') != '' THEN concat(app.first_name_np, ' ', app.middle_name_np, ' ',
+                app.last_name_np)
+                ELSE concat(app.first_name_np, ' ', app.last_name_np) END LIKE #{pattern_en})
+            </if>
+        </if>
+
+        <if test="searchField != null">
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                AND dl.date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+            </if>
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                AND dl.status = #{searchField.approvalStatus}
+            </if>
+        </if>
+        )b ORDER BY b.modifiedDate DESC, b.approvedDate DESC
+    </select>
+
+    <select id="checkForPendingDailyLog" resultType="java.lang.Boolean">
+    select case when (count(*)>0 ) then true
+    else false end
+    from  daily_log dl
+    where dl.status='P' and dl.pis_code=#{pisCode}
+    and dl.is_active=true;
+    </select>
+
+    <select id="checkForApprovalDailyLog" resultType="java.lang.Boolean">
+    select case when (count(*)>0 ) then true
+    else false end
+    from daily_log dl
+    left join decision_approval da on dl.id = da.daily_log_id
+    where dl.status='P' and da.approver_pis_code=#{pisCode}
+    and dl.is_active=true
+    and da.is_active=true;
+    </select>
+    <select id="checkCurrentDateDailyLogExists" resultType="java.lang.Integer">
+        select count(*)
+        from daily_log dl where dl.pis_code = #{pisCode} and
+        dl.date_en = current_date and dl.out_time <![CDATA[>]]> #{inTime}
+        <if test="id != null and id != ''">
+            and dl.id = ${id}
+        </if>
+        and (dl.status = 'P' or dl.status = 'A' or dl.status = 'F')
+
+    </select>
+</mapper>

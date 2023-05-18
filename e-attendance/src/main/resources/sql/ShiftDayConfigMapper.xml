@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.ShiftDayConfigMapper">
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.shift.ShiftResponsePojo">
+        <id property="id" column="id" />
+        <result property="checkinTime" column="checkin_time" />
+        <result property="checkoutTime" column="checkout_time" />
+        <result property="isWeekend" column="is_weekend" />
+        <result property="nameEn" column="name_en" />
+        <result property="isActive" column="is_active" />
+
+        <collection property="setupPojo" ofType="com.gerp.attendance.Pojo.SetupPojo">
+            <id property="id" column="shift_id" />
+            <result property="nameEn" column="shift_name" />
+        </collection>
+    </resultMap>
+
+
+
+    <select id="getAllShiftDayConfig" resultMap="baseResultMap" >
+      select sdc.id as id,sdc.checkin_time ,sdc.checkout_time ,sdc.is_weekend ,sdc.name_en , sdc.is_active, s.id  as shift_id, s.name_en as shift_name from shift_day_config sdc left join shift s on s.id =sdc.shift_id
+
+    </select>
+
+    <select id="getShiftDayConfigByShift" resultMap="baseResultMap" parameterType="map">
+    select sdc.id as id,sdc.checkin_time ,sdc.checkout_time ,sdc.is_weekend ,sdc.name_en ,sdc.is_active ,sdc.name_np, s.id  as shift_id, s.name_en as shift_name from shift_day_config sdc left join shift s on s.id =sdc.shift_id where sdc.shift_id =#{shiftId}
+   </select>
+
+</mapper>

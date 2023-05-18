@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.delegation.DelegationMapper">
+
+    <resultMap id="delegation" type="com.gerp.usermgmt.pojo.delegation.TempDelegationResponsePojo">
+        <result column="id" property="id"/>
+        <result column="expireDate" property="expireDate"/>
+        <result column="effectiveDate" property="effectiveDate"/>
+        <result column="is_active" property="isActive"/>
+        <result column="is_reassignment" property="isReassignment"/>
+        <result column="is_abort" property="isAbort" />
+        <association property="fromEmployee" resultMap="fromEmployee"/>
+        <association property="fromSection" resultMap="fromSection"/>
+        <association property="toEmployee" resultMap="toEmployee"/>
+        <association property="toSection" resultMap="toSection"/>
+        <association property="createdBy" resultMap="createdBy"/>
+    </resultMap>
+
+    <resultMap id="delegationDetails" type="com.gerp.usermgmt.pojo.delegation.TempDelegationResponsePojo">
+        <result column="id" property="id"/>
+        <result column="is_reassignment" property="isReassignment"/>
+<!--        <result column="expireDate" property="expireDate"/>-->
+<!--        <result column="effectiveDate" property="effectiveDate"/>-->
+        <association property="fromEmployee" resultMap="fromEmployee"/>
+        <association property="fromSection" resultMap="fromSection"/>
+        <association property="toEmployee" resultMap="toEmployee"/>
+        <association property="toSection" resultMap="toSection"/>
+        <association property="fromDesignation" resultMap="fromDesignation"/>
+        <association property="toDesignation" resultMap="toDesignation"/>
+    </resultMap>
+    <resultMap id="fromEmployee" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <result column="e_code" property="code"/>
+        <result column="e_name_en" property="nameEn"/>
+        <result column="e_name_np" property="nameNp"/>
+    </resultMap>
+    <resultMap id="createdBy" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <result column="created_by_code" property="code"/>
+        <result column="created_by_name_en" property="nameEn"/>
+        <result column="created_by_name_np" property="nameNp"/>
+    </resultMap>
+    <resultMap id="fromSection" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <result column="ss_code" property="code"/>
+        <result column="ss_name_en" property="nameEn"/>
+        <result column="ss_name_np" property="nameNp"/>
+    </resultMap>
+    <resultMap id="toEmployee" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <result column="em_code" property="code"/>
+        <result column="em_name_en" property="nameEn"/>
+        <result column="em_name_np" property="nameNp"/>
+    </resultMap>
+    <resultMap id="toSection" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <result column="sd_code" property="code"/>
+        <result column="sd_name_en" property="nameEn"/>
+        <result column="sd_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="fromDesignation" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <result column="f_dg_code" property="code"/>
+        <result column="f_dg_name_en" property="nameEn"/>
+        <result column="f_dg_name_np" property="nameNp"/>
+    </resultMap>
+
+    <resultMap id="toDesignation" type="com.gerp.usermgmt.pojo.transfer.DetailPojo">
+        <result column="t_dg_code" property="code"/>
+        <result column="t_dg_name_en" property="nameEn"/>
+        <result column="t_dg_name_np" property="nameNp"/>
+    </resultMap>
+    <select id="getTemporaryDelegation" resultMap="delegation">
+      select d.id, expire_date as expireDate,
+        case when (effective_date <![CDATA[<=]]> current_timestamp and expire_date >= current_timestamp) then true
+        else false end as is_active,
+       effective_date as effectiveDate,
+       e.pis_code as e_code,
+       concat_ws(' ',e.first_name_np,e.middle_name_np,e.last_name_np) as e_name_np,
+       concat_ws(' ',e.first_name_en,e.middle_name_en,e.last_name_en) as e_name_en,
+
+       ec.pis_code as created_by_code,
+       concat_ws(' ',ec.first_name_np,ec.middle_name_np,ec.last_name_np) as created_by_name_np,
+       concat_ws(' ',ec.first_name_en,ec.middle_name_en,ec.last_name_en) as created_by_name_en,
+
+        em.pis_code as em_code,
+       concat_ws(' ',em.first_name_en,em.middle_name_en,em.last_name_en) as em_name_en,
+       concat_ws(' ',em.first_name_np,em.middle_name_np,em.last_name_np) as em_name_np,
+       ss.id as ss_code,
+       ss.name_en as ss_name_en,
+       ss.name_np as ss_name_np,
+       sd.id as sd_code,
+       sd.name_en as sd_name_en,
+       sd.name_np as sd_name_np,
+       d.is_abort
+
+    from delegation d
+    left join employee e on d.form_piscode = e.pis_code
+    left join users us on d.created_by = us.id
+    left join employee ec on ec.pis_code = us.pis_employee_code
+    left join employee em on d.to_piscode = em.pis_code
+    left join section_subsection ss on ss.id = d.form_section_id
+    left join section_subsection sd on sd.id = d.to_section_id
+    where
+        e.office_code = #{officeCode}
+    <if test="isReassignment != null">
+       and d.is_reassignment = #{isReassignment}
+    </if>
+    order by d.id desc
+    </select>
+<!--    and d.is_active = true and d.expire_date > #{now}-->
+        <select id="getTemporaryDelegationForUser"
+            resultMap="delegation">
+select
+        d.id, expire_date as expireDate,effective_date as effectiveDate,
+        e.pis_code as e_code,
+        concat_ws(' ',e.first_name_np,e.middle_name_np,e.last_name_np) as e_name_np,
+        concat_ws(' ',e.first_name_en,e.middle_name_en,e.last_name_en) as e_name_en,
+        em.pis_code as em_code,
+        concat_ws(' ',em.first_name_en,em.middle_name_en,em.last_name_en) as em_name_en,
+        concat_ws(' ',em.first_name_np,em.middle_name_np,em.last_name_np) as em_name_np,
+        ss.id as ss_code,
+        ss.name_en as ss_name_en,
+        ss.name_np as ss_name_np,
+        sd.id as sd_code,
+        sd.name_en as sd_name_en,
+        sd.name_np as sd_name_np
+
+        from delegation d
+    left join employee e on d.form_piscode = e.pis_code
+    left join employee em on d.to_piscode = em.pis_code
+    left join section_subsection ss on ss.id = d.form_section_id
+    left join section_subsection sd on sd.id = d.to_section_id where
+        <choose>
+            <when test="isDelegatedSelf == true">
+                d.to_piscode = #{pisCode} and d.expire_date > #{now} and d.effective_date <![CDATA[<=]]> #{now}
+            </when>
+            <otherwise>
+                d.form_piscode = #{pisCode}
+            </otherwise>
+        </choose>
+        <if test="isReassignment != null">
+            and d.is_reassignment = #{isReassignment}
+        </if>
+     order by d.id desc
+
+    </select>
+    <select id="getUserDetails" resultMap="delegation">
+        select
+         e.pis_code as e_code,
+        concat_ws(' ',e.first_name_np,e.middle_name_np,e.last_name_np) as e_name_np,
+        concat_ws(' ',e.first_name_en,e.middle_name_en,e.last_name_en) as e_name_en
+        from employee e
+        where e.pis_code = #{pisCode}
+    </select>
+    <select id="getTemporaryDelegationById"
+            resultMap="delegationDetails">
+          select d.id,
+          d.is_reassignment,
+       e.pis_code as e_code,
+       concat_ws(' ',e.first_name_np,e.middle_name_np,e.last_name_np) as e_name_np,
+       concat_ws(' ',e.first_name_en,e.middle_name_en,e.last_name_en) as e_name_en,
+       em.pis_code as em_code,
+       concat_ws(' ',em.first_name_en,em.middle_name_en,em.last_name_en) as em_name_en,
+       concat_ws(' ',em.first_name_np,em.middle_name_np,em.last_name_np) as em_name_np,
+       ss.id as ss_code,
+         ss.name_en as ss_name_en,
+       ss.name_np as ss_name_np,
+       sd.id as sd_code,
+       sd.name_en as sd_name_en,
+       sd.name_np as sd_name_np,
+       fd.code as f_dg_code,
+       fd.name_en as f_dg_name_en,
+       fd.name_np  as f_dg_name_np,
+       fd2.code as t_dg_code,
+       fd2.name_en as t_dg_name_en,
+       fd2.name_np  as t_dg_name_np
+
+    from delegation d
+    left join employee e on d.form_piscode = e.pis_code
+    left join employee em on d.to_piscode = em.pis_code
+    left join section_subsection ss on ss.id = d.form_section_id
+    left join section_subsection sd on sd.id = d.to_section_id
+    left join functional_designation fd on d.form_designation_id  = fd.code
+    left join functional_designation fd2 on d.to_designation_id   = fd2.code
+    where d.id = #{id}
+    </select>
+    <select id="getAllDelegation" resultMap="delegation">
+
+        select
+        d.id, expire_date as expireDate,effective_date as effectiveDate,
+        e.pis_code as e_code,
+        concat_ws(' ',e.first_name_np,e.middle_name_np,e.last_name_np) as e_name_np,
+        concat_ws(' ',e.first_name_en,e.middle_name_en,e.last_name_en) as e_name_en,
+        em.pis_code as em_code,
+        concat_ws(' ',em.first_name_en,em.middle_name_en,em.last_name_en) as em_name_en,
+        concat_ws(' ',em.first_name_np,em.middle_name_np,em.last_name_np) as em_name_np,
+        ss.id as ss_code,
+        ss.name_en as ss_name_en,
+        ss.name_np as ss_name_np,
+        sd.id as sd_code,
+        sd.name_en as sd_name_en,
+        sd.name_np as sd_name_np,
+        d.is_abort,
+        case when (effective_date <![CDATA[<=]]>  current_timestamp and expire_date >= current_timestamp) then true
+        else false end as is_active,
+            d.is_reassignment
+
+        from delegation d
+        left join employee e on d.form_piscode = e.pis_code
+        left join employee em on d.to_piscode = em.pis_code
+        left join section_subsection ss on ss.id = d.form_section_id
+        left join section_subsection sd on sd.id = d.to_section_id
+        where (e.pis_code = #{pisCode} or em.pis_code = #{pisCode})
+        and is_reassignment = #{isReassignment}
+        order by d.id desc;
+    </select>
+</mapper>

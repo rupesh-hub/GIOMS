@@ -1,0 +1,2295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.dartachalani.mapper.ReceivedLetterMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.dartachalani.dto.ReceivedLetterResponsePojo">
+
+        <id property="id" column="id"/>
+        <result property="letterPrivacy" column="letter_privacy"/>
+        <result property="letterPriority" column="letter_priority"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="fiscalYearCode" column="fiscal_year_code"/>
+        <result property="senderOfficeCode" column="sender_office_code"/>
+        <result property="registrationNo" column="registration_no"/>
+        <result property="referenceNo" column="reference_no"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="dispatchNo" column="dispatch_no"/>
+        <result property="dispatchDateEn" column="dispatch_date_en"/>
+        <result property="dispatchDateNp" column="dispatch_date_np"/>
+        <result property="subject" column="subject"/>
+        <result property="content" column="content"/>
+        <result property="documentMasterId" column="document_master_id"/>
+        <result property="entryType" column="entry_type"/>
+        <result property="isDraft" column="is_draft"/>
+        <result property="isActive" column="is_active"/>
+        <result property="letterType" column="letterType"/>
+        <result property="dispatchId" column="dispatch_id"/>
+        <result property="status" column="status"/>
+        <result property="include" column="include"/>
+        <result property="isEnglish" column="is_english"/>
+        <result property="signature" column="signature"/>
+        <result property="signatureIsActive" column="signatureIsActive"/>
+        <result property="remarks" column="rl_remarks"/>
+        <result property="isSingular" column="rl_is_singular"/>
+        <result property="isReceiver" column="rl_is_receiver"/>
+        <result property="remarksSignatureIsActive" column="rl_remarks_signature_is_active"/>
+        <result property="remarksSignature" column="rl_remarks_signature"/>
+        <result property="remarksPisCode" column="rl_remarks_pis_code"/>
+        <result property="salutation" column="rl_salutation"/>
+        <result property="manualIsCc" column="rl_manual_is_cc"/>
+        <result property="isImportant" column="rl_is_important"/>
+        <result property="isImportantHead" column="rl_is_important_head"/>
+        <result property="delegatedId" column="rl_delegated_id"/>
+        <result property="hash_content" column="rl_hash_content"/>
+        <result property="completionStatus" column="completion_status"/>
+
+
+        <association property="details" javaType="com.gerp.dartachalani.dto.ReceivedLetterDetailResponsePojo">
+            <result property="manualId" column="manualId"/>
+            <result property="manualSenderName" column="manualSenderName"/>
+            <result property="manualSenderSection" column="manualSenderSection"/>
+            <result property="manualAddress" column="manualAddress"/>
+            <result property="manualSenderEmail" column="manualSenderEmail"/>
+            <result property="manualSenderPhone" column="manualSenderPhone"/>
+            <result property="manualReceivedType" column="manualReceivedType"/>
+            <result property="manualSectionCode" column="manualSectionCode"/>
+            <result property="isActive" column="mrld_is_active"/>
+        </association>
+
+        <collection property="forwards" ofType="com.gerp.dartachalani.dto.ForwardResponsePojo">
+            <result property="id" column="rlf_id"/>
+            <result property="receiverPisCode" column="receiver_pis_code"/>
+            <result property="receiverSectionId" column="receiver_section_id"/>
+            <result property="senderPisCode" column="sender_pis_code"/>
+            <result property="senderSectionId" column="sender_section_id"/>
+            <result property="description" column="description"/>
+            <result property="createdDate" column="rlf_created_date"/>
+            <result property="status" column="completion_status"/>
+            <result property="isActive" column="rlf_is_active"/>
+            <result property="isCc" column="rlf_is_cc"/>
+            <result property="isSeen" column="rlf_is_seen"/>
+            <result property="isReverted" column="rlf_is_reverted"/>
+            <result property="isImportant" column="rlf_is_important"/>
+            <result property="delegatedId" column="rlf_delegated_id"/>
+            <result property="isTransferred" column="rlf_is_transferred"/>
+
+            <collection property="comments" ofType="com.gerp.dartachalani.dto.ReceivedLetterMessageRequestPojo">
+                <result property="id" column="msg_id"/>
+                <result property="comment" column="comment"/>
+                <result property="createdDate" column="msg_created_date"/>
+                <result property="isActive" column="msg_is_active"/>
+                <result property="pisCode" column="msg_pis_code"/>
+                <result property="delegatedId" column="msg_delegated_id"/>
+            </collection>
+
+        </collection>
+
+        <collection property="document" ofType="com.gerp.dartachalani.dto.document.DocumentPojo">
+            <result property="id" column="document_id"/>
+            <result property="name" column="document_name"/>
+            <result property="isActive" column="document_is_active"/>
+            <result property="isMain" column="document_is_main"/>
+            <result property="fileSize" column="file_size"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="getAllManuallyReceivedLetters" resultMap="baseResultMap">
+        SELECT rl.id,
+               rl.letter_privacy,
+               rl.letter_priority,
+               rl.office_code,
+               rl.fiscal_year_code,
+               rl.sender_office_code,
+               rl.registration_no,
+               rl.reference_no,
+               rl.created_date,
+               rl.dispatch_no,
+               rl.dispatch_date_en,
+               rl.dispatch_date_np,
+               rl.subject,
+               rl.document_master_id,
+               rl.entry_type,
+               rl.is_draft,
+               rl.is_active,
+               rl.status,
+               rl.manual_is_cc as rl_manual_is_cc,
+               mrld.id as manualId,
+               mrld.sender_name as manualSenderName,
+               mrld.sender_office_section_subsection as manualSenderSection,
+               mrld.sender_address as manualAddress,
+               mrld.sender_email as manualSenderEmail,
+               mrld.sender_phone_no as manualSenderPhone,
+               mrld.manual_received_letter_type as manualReceivedType,
+               mrld.is_active as mrld_is_active,
+               rlf.id as rlf_id,
+               rlf.receiver_pis_code,
+               rlf.receiver_section_id,
+               rlf.sender_pis_code,
+               rlf.sender_section_id,
+               rlf.description,
+               rlf.created_date as rlf_created_date,
+               rlf.completion_status,
+               rlf.is_active as rlf_is_active,
+               rd.document_id,
+               rd.document_name
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+        WHERE rl.is_active = true  and rl.office_code = #{officeCode} and rl.pis_code = #{pisCode}
+        ORDER BY rl.id DESC, rlf.id DESC, rd.id DESC
+    </select>
+
+
+    <select id="getReceiverInProgress" resultMap="baseResultMap">
+        select distinct * from
+        (SELECT DISTINCT rl.id, rl.letter_privacy,
+        rl.letter_priority,rl.office_code,rl.fiscal_year_code,rl.sender_office_code,rl.dispatch_no,rl.created_date,
+        rl.dispatch_date_en,rl.dispatch_date_np,rl.subject,rl.is_draft,rl.is_active,rl.content as content, rl.status,
+        'Receive' AS letterType, rl.registration_no, rl.entry_type, rl.manual_is_cc as rl_manual_is_cc, rl.is_important
+        as rl_is_important, rl.is_important_head
+        as rl_is_important_head, rl.delegated_id as rl_delegated_id,
+        max(rlf.created_date) as c_d,
+        max(rlf.last_modified_date) as l_m_d
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+        WHERE rl.is_active = true and rl.office_code = #{officeCode}
+        and rlf.receiver_pis_code in (#{receiverPisCode}
+        <if test="!previousPisCode.isEmpty()">
+            ,
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and rlf.receiver_section_id = #{receiverSectionCode}
+
+        <if test="status != null">
+            and rlf.completion_status = #{status}
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and rl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.senderOfficeCode != null">
+            and rl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField.entryType != null">
+            and rl.entry_type = #{searchField.entryType}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.manualIsCc != null">
+            and rlf.is_cc = #{searchField.manualIsCc}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and rl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.senderName != null">
+            and mrld.sender_name ILIKE CONCAT('%', #{searchField.senderName}, '%')
+        </if>
+
+        <if test="searchField.registrationNo != null">
+            and rl.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField.referenceNo != null">
+            and rl.reference_no = #{searchField.referenceNo}
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and rl.dispatch_no LIKE CONCAT('%', #{searchField.dispatchNo},'%')
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and rlf.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        <if test="searchField.isCc != null">
+            and rlf.is_cc = #{searchField.isCc}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and rlf.is_important = #{searchField.isImportant}
+        </if>
+        group by rl.id
+
+        union all
+        select DISTINCT dl.id,dl.letter_privacy,dl.letter_priority,dl.sender_office_code,dl.fiscal_year_code
+        ,dl.sender_office_code,dl.dispatch_no ,dl.created_date,
+        dl.dispatch_date_en,dl.dispatch_date_np,dl.subject,dl.is_draft, dl.is_active, dl.content as content, dl.status,
+        'Dispatch' AS letterType, null as registration_no, false as entry_type, false as rl_manual_is_cc, false as
+        rl_is_important,false as
+        rl_is_important_head, dl.delegated_id as rl_delegated_id,
+        max(dlri.created_date) as c_d,
+        max(dlri.last_modified_date) as l_m_d
+        from dispatch_letter dl
+        inner join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        left join dispatch_letter_document_details doc on dl.id = doc.dispatch_letter_id
+        where dl.is_draft=false and dl.is_active=true and dl.status = 'A' and dl.sender_office_code = #{officeCode} and
+        dlri.receiver_pis_code in (#{receiverPisCode}
+        <if test="!previousPisCode.isEmpty()">
+            ,
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) and dlri.receiver_section_id = #{receiverSectionCode}
+
+        <if test="status != null">
+            and dlri.completion_status=#{status}
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and dl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and dl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and dl.dispatch_no = #{searchField.dispatchNo}
+        </if>
+
+        <if test="searchField.subject != null">
+            and dl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and dl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.status != null">
+            and dl.status = #{searchField.status}
+        </if>
+
+        <if test="searchField.recPisCode != null">
+            and dlri.receiver_pis_code = #{searchField.recPisCode}
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and dlri.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and dlri.is_important = #{searchField.isImportant}
+        </if>
+
+        <if test="searchField != null and searchField.manualIsCc != null">
+            <choose>
+                <when test="searchField.manualIsCc">
+                    and dlri.tocc = true
+                </when>
+                <otherwise>
+                    and dlri.to_receiver = true;
+                </otherwise>
+            </choose>
+        </if>
+        group by dl.id
+
+        union all
+        SELECT DISTINCT rl.id, rl.letter_privacy,
+        rl.letter_priority,rl.office_code,rl.fiscal_year_code,rl.sender_office_code,rl.dispatch_no,rl.created_date,
+        rl.dispatch_date_en,rl.dispatch_date_np,rl.subject,rl.is_draft,rl.is_active,rl.content as content, rl.status,
+        'Receive' AS letterType, rl.registration_no, rl.entry_type, rl.manual_is_cc as rl_manual_is_cc, rl.is_important
+        as rl_is_important, rl.is_important_head
+        as rl_is_important_head, rl.delegated_id as rl_delegated_id,
+        rl.created_date as c_d,
+        (select case when #{isHead} = true then rl.last_modified_date_imp_head else rl.last_modified_date_imp end
+        as l_m_d)
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+        WHERE rl.is_active = true and rl.office_code = #{officeCode} and #{isImp} = true
+        <choose>
+            <when test="searchField.isImportant and isHead">
+                and rl.is_important_head = true
+            </when>
+            <otherwise>
+                and rl.is_important = true and rl.pis_code in (#{receiverPisCode}
+                <if test="!previousPisCode.isEmpty()">
+                    ,
+                    <foreach item="item" index="index" collection="previousPisCode"
+                             separator=",">
+                        #{item}
+                    </foreach>
+                </if>
+                )
+                and rl.section_code = #{receiverSectionCode}
+            </otherwise>
+        </choose>
+
+        <if test="searchField.manualIsCc != null">
+            and rlf.is_cc = #{searchField.manualIsCc}
+        </if>
+        group by rl.id
+        ) test
+
+        <choose>
+            <when test="searchField.orderBy != null">
+                ORDER BY
+                <choose>
+                    <when test="searchField.orderBy = 1">
+                        t.letter_privacy
+                    </when>
+                    <when test="searchField.orderBy = 2">
+                        t.letter_priority
+                    </when>
+                    <when test="searchField.orderBy = 3">
+                        t.subject
+                    </when>
+                    <when test="searchField.orderBy = 4">
+                        t.status
+                    </when>
+                    <when test="searchField.orderBy = 5">
+                        t.created_date
+                    </when>
+                    <when test="searchField.orderBy = 7">
+                        t.registration_no
+                    </when>
+                    <when test="searchField.orderBy = 8">
+                        t.dispatch_no
+                    </when>
+                    <when test="searchField.orderBy = 9">
+                        t.dispatch_date_en
+                    </when>
+                    <when test="searchField.orderBy = 10">
+                        t.entry_type
+                    </when>
+                    <otherwise>
+                        t.created_date
+                    </otherwise>
+                </choose>
+
+                <choose>
+                    <when test="searchField.orderType != null and searchField.orderType = 0">
+                        ASC
+                    </when>
+                    <otherwise>
+                        DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                order by test.l_m_d desc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="getAllManuallyReceivedLettersByOfficeCode" resultMap="baseResultMap">
+        SELECT rl.id,
+               rl.letter_privacy,
+               rl.letter_priority,
+               rl.office_code,
+               rl.fiscal_year_code,
+               rl.sender_office_code,
+               rl.registration_no,
+               rl.reference_no,
+               rl.created_date,
+               rl.dispatch_no,
+               rl.dispatch_date_en,
+               rl.dispatch_date_np,
+               rl.subject,
+               rl.document_master_id,
+               rl.entry_type,
+               rl.is_draft,
+               rl.is_active,
+               rl.status,
+               rl.manual_is_cc as rl_manual_is_cc,
+               mrld.id as manualId,
+               mrld.sender_name as manualSenderName,
+               mrld.sender_office_section_subsection as manualSenderSection,
+               mrld.sender_address as manualAddress,
+               mrld.sender_email as manualSenderEmail,
+               mrld.sender_phone_no as manualSenderPhone,
+               mrld.manual_received_letter_type as manualReceivedType,
+               mrld.is_active as mrld_is_active,
+               rlf.id as rlf_id,
+               rlf.receiver_pis_code,
+               rlf.receiver_section_id,
+               rlf.sender_pis_code,
+               rlf.sender_section_id,
+               rlf.description,
+               rlf.created_date as rlf_created_date,
+               rlf.completion_status,
+               rlf.is_active as rlf_is_active,
+               rd.document_id,
+               rd.document_name
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+        WHERE rl.is_active = true  and rl.office_code = #{officeCode}
+        ORDER BY rl.id DESC, rlf.id DESC, rd.id DESC
+    </select>
+
+    <select id="getAllManualLettersForward" resultMap="baseResultMap">
+        SELECT rl.id,
+               rl.letter_privacy,
+               rl.letter_priority,
+               rl.office_code,
+               rl.fiscal_year_code,
+               rl.sender_office_code,
+               rl.registration_no,
+               rl.reference_no,
+               rl.created_date,
+               rl.dispatch_no,
+               rl.dispatch_date_en,
+               rl.dispatch_date_np,
+               rl.subject,
+               rl.document_master_id,
+               rl.entry_type,
+               rl.is_draft,
+               rl.is_active,
+               rl.status,
+               rl.manual_is_cc as rl_manual_is_cc,
+               mrld.id as manualId,
+               mrld.sender_name as manualSenderName,
+               mrld.sender_office_section_subsection as manualSenderSection,
+               mrld.sender_address as manualAddress,
+               mrld.sender_email as manualSenderEmail,
+               mrld.sender_phone_no as manualSenderPhone,
+               mrld.manual_received_letter_type as manualReceivedType,
+               mrld.is_active as mrld_is_active,
+               rlf.id as rlf_id,
+               rlf.receiver_pis_code,
+               rlf.receiver_section_id,
+               rlf.sender_pis_code,
+               rlf.sender_section_id,
+               rlf.description,
+               rlf.created_date as rlf_created_date,
+               rlf.completion_status,
+               rlf.is_active as rlf_is_active,
+               rd.document_id,
+               rd.document_name
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+        WHERE rl.is_active = true and rl.entry_type = true and rl.office_code = #{officeCode} and rlf.is_received = false and rlf.sender_pis_code = #{pisCode}
+        ORDER BY rl.id DESC, rlf.id DESC, rd.id DESC
+    </select>
+
+    <select id="getAllReceivedLettersForward" resultMap="baseResultMap">
+        SELECT DISTINCT rl.id, rl.letter_privacy,
+        rl.letter_priority,rl.office_code,rl.fiscal_year_code,rl.sender_office_code,rl.dispatch_no,rl.created_date,
+        rl.pis_code,
+        rl.dispatch_date_en,rl.dispatch_date_np,rl.subject,rl.is_draft,rl.is_active, rl.status, 'Receive' AS letterType,
+        rl.registration_no, rl.entry_type, rl.manual_is_cc as rl_manual_is_cc, rl.is_important as
+        rl_is_important,rl.is_important_head as rl_is_important_head,
+        rl.delegated_id as rl_delegated_id,
+        case when rlf2.completion_status is null then 'FN' else rlf2.completion_status end,
+        max(rlf.created_date) as l_m_d
+        FROM received_letter rl
+        left join   (select received_letter_id,case when count(rlf2.id) > 0 then 'P' else 'FN' end as completion_status from received_letter_forward rlf2
+        where  rlf2.is_active = true and rlf2.completion_status != 'FN'
+        group by received_letter_id)rlf2
+        on rlf2.received_letter_id = rl.id
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+        WHERE rl.is_active = true and rl.office_code = #{officeCode} and rlf.sender_pis_code in (#{senderPisCode}
+        <if test="!previousPisCode.isEmpty()">
+            ,
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) and rlf.is_received = #{isReceived}
+        and rlf.sender_section_id = #{senderSectionCode}
+
+        <if test="searchField.fiscalYearCode != null">
+            and rl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.senderOfficeCode != null">
+            and rl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField.entryType != null">
+            and rl.entry_type = #{searchField.entryType}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.manualIsCc != null">
+            and rl.manual_is_cc = #{searchField.manualIsCc}
+        </if>
+
+        <if test="searchField.status != null">
+            and rlf.completion_status = #{searchField.status}
+        </if>
+
+        <if test="searchField.isCc != null">
+            and rlf.is_cc = #{searchField.isCc}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and rlf.is_important = #{searchField.isImportant}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and rl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.senderName != null">
+            and mrld.sender_name ILIKE CONCAT('%', #{searchField.senderName}, '%')
+        </if>
+
+        <if test="searchField.registrationNo != null">
+            and rl.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField.referenceNo != null">
+            and rl.reference_no = #{searchField.referenceNo}
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and rl.dispatch_no LIKE CONCAT('%', #{searchField.dispatchNo},'%')
+        </if>
+
+        <if test="searchField.recPisCode != null">
+            and rlf.receiver_pis_code = #{searchField.recPisCode}
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and rlf.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+        group by rl.id, rlf2.completion_status
+
+        UNION ALL
+        select DISTINCT dl.id,dl.letter_privacy,dl.letter_priority,dl.sender_office_code,dl.fiscal_year_code
+        ,dl.sender_office_code,dl.dispatch_no ,dl.created_date, dl.sender_pis_code as pis_code,
+        dl.dispatch_date_en,dl.dispatch_date_np,dl.subject,dl.is_draft, dl.is_active, dl.status, 'Dispatch' AS
+        letterType, null as registration_no, false as entry_type, false as rl_manual_is_cc, false as rl_is_important,
+        false as rl_is_important_head,
+        dl.delegated_id as rl_delegated_id,
+        case when dlri2.completion_status is null then 'FN' else dlri2.completion_status end,
+        max(dlri.created_date) as l_m_d
+        from dispatch_letter dl
+        left join (select dispatch_letter_id ,case when count(dlri2.id)>0 then 'P' else 'FN' end as
+        completion_status from dispatch_letter_receiver_internal dlri2 where dlri2.is_active= true and
+        dlri2.completion_status != 'FN' group by dispatch_letter_id) dlri2
+        on dlri2.dispatch_letter_id = dl.id
+        inner join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        left join dispatch_letter_document_details doc on dl.id = doc.dispatch_letter_id
+        where dl.is_draft=false and dl.is_active=true and dl.status = 'A' and dl.sender_office_code = #{officeCode} and
+        dlri.sender_pis_code in (#{senderPisCode}
+        <if test="!previousPisCode.isEmpty()">
+            ,
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) and dlri.sender_section_id = #{senderSectionCode}
+
+        <if test="searchField.fiscalYearCode != null">
+            and dl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and dl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and dl.dispatch_no LIKE CONCAT('%', #{searchField.dispatchNo},'%')
+        </if>
+
+        <if test="searchField.subject != null">
+            and dl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and dl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.status != null">
+            and dl.status = #{searchField.status}
+        </if>
+
+        <if test="searchField.recPisCode != null">
+            and dlri.receiver_pis_code = #{searchField.recPisCode}
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and dlri.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and dlri.is_important = #{searchField.isImportant}
+        </if>
+        group by dl.id, dlri2.completion_status
+
+        <choose>
+            <when test="searchField.orderBy != null">
+                ORDER BY
+                <choose>
+                    <when test="searchField.orderBy = 1">
+                        letter_privacy
+                    </when>
+                    <when test="searchField.orderBy = 2">
+                        letter_priority
+                    </when>
+                    <when test="searchField.orderBy = 3">
+                        subject
+                    </when>
+                    <when test="searchField.orderBy = 4">
+                        status
+                    </when>
+                    <when test="searchField.orderBy = 5">
+                        created_date
+                    </when>
+                    <when test="searchField.orderBy = 7">
+                        registration_no
+                    </when>
+                    <when test="searchField.orderBy = 8">
+                        dispatch_no
+                    </when>
+                    <when test="searchField.orderBy = 9">
+                        dispatch_date_en
+                    </when>
+                    <when test="searchField.orderBy = 10">
+                        entry_type
+                    </when>
+                    <otherwise>
+                        created_date
+                    </otherwise>
+                </choose>
+
+                <choose>
+                    <when test="searchField.orderType != null and searchField.orderType = 0">
+                        ASC
+                    </when>
+                    <otherwise>
+                        DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                order by completion_status desc, l_m_d desc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="getAllReceivedLettersForwardFilterByCC" resultMap="baseResultMap">
+        SELECT DISTINCT rl.id, rl.letter_privacy,
+        rl.letter_priority,rl.office_code,rl.fiscal_year_code,rl.sender_office_code,rl.dispatch_no,rl.created_date,
+        rl.pis_code,
+        rl.dispatch_date_en,rl.dispatch_date_np,rl.subject,rl.is_draft,rl.is_active, rl.status, 'Receive' AS letterType,
+        rl.registration_no, rl.entry_type, rl.manual_is_cc as rl_manual_is_cc, rl.is_important as
+        rl_is_important,rl.is_important_head as rl_is_important_head,
+        rl.delegated_id as rl_delegated_id
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+        WHERE rl.is_active = true and rl.office_code = #{officeCode} and rlf.receiver_pis_code in (#{senderPisCode}
+        <if test="!previousPisCode.isEmpty()">
+            ,
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and rlf.receiver_section_id = #{senderSectionCode}
+        and rl.id in (select distinct rl.id as id from received_letter rl
+        left join received_letter_forward rlf on rl.id = rlf.received_letter_id
+        where rlf.sender_pis_code = #{senderPisCode} and rlf.sender_section_id = #{senderSectionCode}) and
+        rl.office_code = #{officeCode}
+
+        <if test="searchField.fiscalYearCode != null">
+            and rl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.senderOfficeCode != null">
+            and rl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField.entryType != null">
+            and rl.entry_type = #{searchField.entryType}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.manualIsCc != null">
+            and rlf.is_cc = #{searchField.manualIsCc}
+        </if>
+
+        <if test="searchField.status != null">
+            and rlf.completion_status = #{searchField.status}
+        </if>
+
+        <if test="searchField.isCc != null">
+            and rlf.is_cc = #{searchField.isCc}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and rlf.is_important = #{searchField.isImportant}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and rl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.senderName != null">
+            and mrld.sender_name ILIKE CONCAT('%', #{searchField.senderName}, '%')
+        </if>
+
+        <if test="searchField.registrationNo != null">
+            and rl.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField.referenceNo != null">
+            and rl.reference_no = #{searchField.referenceNo}
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and rl.dispatch_no LIKE CONCAT('%', #{searchField.dispatchNo},'%')
+        </if>
+
+        <if test="searchField.recPisCode != null">
+            and rlf.receiver_pis_code = #{searchField.recPisCode}
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and rlf.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        UNION ALL
+        select DISTINCT dl.id,dl.letter_privacy,dl.letter_priority,dl.sender_office_code,dl.fiscal_year_code
+        ,dl.sender_office_code,dl.dispatch_no ,dl.created_date, dl.sender_pis_code as pis_code,
+        dl.dispatch_date_en,dl.dispatch_date_np,dl.subject,dl.is_draft, dl.is_active, dl.status, 'Dispatch' AS
+        letterType, null as registration_no, false as entry_type, false as rl_manual_is_cc, false as
+        rl_is_important,false as rl_is_important_head,
+        dl.delegated_id as rl_delegated_id
+        from dispatch_letter dl
+        inner join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        left join dispatch_letter_document_details doc on dl.id = doc.dispatch_letter_id
+        where dl.is_draft=false and dl.is_active=true and dl.status = 'A' and dl.sender_office_code = #{officeCode} and
+        dlri.receiver_pis_code in (#{senderPisCode}
+        <if test="!previousPisCode.isEmpty()">
+            ,
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) and dlri.receiver_section_id = #{senderSectionCode}
+        and dl.id in (select distinct dl.id as id from dispatch_letter dl
+        left join dispatch_letter_receiver_internal dlri ON dl.id = dlri.dispatch_letter_id
+        where dlri.sender_pis_code = '212310' and dlri.sender_section_id = '186'
+        and dl.is_draft=false and dl.is_active=true and dl.status = 'A' and dl.sender_office_code = #{officeCode})
+
+        <if test="searchField.fiscalYearCode != null">
+            and dl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and dl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and dl.dispatch_no LIKE CONCAT('%', #{searchField.dispatchNo},'%')
+        </if>
+
+        <if test="searchField.subject != null">
+            and dl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and dl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.status != null">
+            and dl.status = #{searchField.status}
+        </if>
+
+        <if test="searchField.recPisCode != null">
+            and dlri.receiver_pis_code = #{searchField.recPisCode}
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and dlri.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and dlri.is_important = #{searchField.isImportant}
+        </if>
+
+        <if test="searchField.manualIsCc != null">
+            and dlri.tocc = #{searchField.manualIsCc}
+        </if>
+
+        order by id desc
+    </select>
+
+    <select id="getReceivedLetter" resultMap="baseResultMap">
+        SELECT rl.id,
+               rl.letter_privacy,
+               rl.letter_priority,
+               rl.pis_code,
+               rl.office_code,
+               rl.fiscal_year_code,
+               rl.sender_office_code,
+               rl.registration_no,
+               rl.reference_no,
+               rl.created_date,
+               rl.dispatch_no,
+               rl.dispatch_date_en,
+               rl.dispatch_date_np,
+               rl.subject,
+               rl.content,
+               rl.document_master_id,
+               rl.entry_type,
+               rl.is_draft,
+               rl.is_active,
+               rl.dispatch_id,
+               rl.status,
+               rl.include,
+               rl.is_english,
+               rl.signature as signature,
+               rl.signature_is_active as signatureIsActive,
+               rl.remarks as rl_remarks,
+               rl.is_singular as rl_is_singular,
+               rl.is_receiver as rl_is_receiver,
+               rl.remarks_pis_code as rl_remarks_pis_code,
+               rl.remarks_signature as rl_remarks_signature,
+               rl.remarks_signature_is_active as rl_remarks_signature_is_active,
+               rl.salutation as rl_salutation,
+               rl.manual_is_cc as rl_manual_is_cc,
+               rl.is_important as rl_is_important,
+               rl.delegated_id as rl_delegated_id,
+               rl.hash_content as rl_hash_content,
+               mrld.id as manualId,
+               mrld.sender_name as manualSenderName,
+               mrld.sender_office_section_subsection as manualSenderSection,
+               mrld.sender_address as manualAddress,
+               mrld.sender_email as manualSenderEmail,
+               mrld.sender_phone_no as manualSenderPhone,
+               mrld.manual_received_letter_type as manualReceivedType,
+               mrld.section_code as manualSectionCode,
+               mrld.is_active as mrld_is_active,
+               rlf.id as rlf_id,
+               rlf.receiver_pis_code,
+               rlf.receiver_section_id,
+               rlf.sender_pis_code,
+               rlf.sender_section_id,
+               rlf.description,
+               rlf.created_date as rlf_created_date,
+               rlf.completion_status,
+               rlf.is_active as rlf_is_active,
+               rlf.is_cc as rlf_is_cc,
+               rlf.is_seen as rlf_is_seen,
+               rlf.is_reverted as rlf_is_reverted,
+               rlf.is_important as rlf_is_important,
+               rlf.delegated_id as rlf_delegated_id,
+               rlf.is_transferred as rlf_is_transferred,
+               msg.id as msg_id,
+               msg.comment,
+               msg.created_date as msg_created_date,
+               msg.is_active as msg_is_active,
+               msg.pis_code as msg_pis_code,
+               msg.delegated_id as msg_delegated_id,
+               rd.document_id,
+               rd.document_name,
+               rd.is_active as document_is_active,
+               rd.is_main as document_is_main,
+               rd.document_size as file_size
+         FROM received_letter rl
+         LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+         LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+         LEFT JOIN received_letter_message msg ON rlf.id = msg.received_letter_forward_id
+         LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+         WHERE rl.is_active = true and rl.id = #{id}
+         ORDER BY rlf.id DESC, msg.id DESC, rd.id ASC
+    </select>
+
+    <select id="getReceiverFinalized" resultMap="baseResultMap">
+        SELECT DISTINCT rl.id, rl.letter_privacy,
+        rl.letter_priority,rl.office_code,rl.fiscal_year_code,rl.sender_office_code,rl.dispatch_no,rl.created_date,
+        rl.dispatch_date_en,rl.dispatch_date_np,rl.subject,rl.is_draft,rl.is_active,rl.content as content, rl.status,
+        'Receive' AS letterType, rl.registration_no, rl.entry_type,
+        rl.manual_is_cc as rl_manual_is_cc, rl.is_important as rl_is_important,rl.is_important_head as
+        rl_is_important_head, rl.delegated_id as rl_delegated_id,
+        max(rlf.last_modified_date) as l_m_d
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+        WHERE rl.is_active = true and rlf.completion_status = 'FN' and rl.office_code = #{officeCode}
+        and rlf.receiver_pis_code in(#{receiverPisCode}
+        <if test="!previousPisCode.isEmpty()">
+            ,
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and rlf.receiver_section_id = #{receiverSectionCode}
+
+        <if test="searchField.fiscalYearCode != null">
+            and rl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.senderOfficeCode != null">
+            and rl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField.entryType != null">
+            and rl.entry_type = #{searchField.entryType}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.manualIsCc != null">
+            and rlf.is_cc = #{searchField.manualIsCc}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and rl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.senderName != null">
+            and mrld.sender_name ILIKE CONCAT('%', #{searchField.senderName}, '%')
+        </if>
+
+        <if test="searchField.registrationNo != null">
+            and rl.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField.referenceNo != null">
+            and rl.reference_no = #{searchField.referenceNo}
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and rl.dispatch_no LIKE CONCAT('%', #{searchField.dispatchNo},'%')
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and rlf.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        <if test="searchField.isCc != null">
+            and rlf.is_cc = #{searchField.isCc}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and rlf.is_important = #{searchField.isImportant}
+        </if>
+        group by rl.id
+
+        union all
+        select DISTINCT dl.id,dl.letter_privacy,dl.letter_priority,dl.sender_office_code,dl.fiscal_year_code
+        ,dl.sender_office_code,dl.dispatch_no ,dl.created_date,
+        dl.dispatch_date_en,dl.dispatch_date_np,dl.subject,dl.is_draft, dl.is_active, dl.content as content, dl.status,
+        'Dispatch' AS letterType, null as registration_no, false as entry_type, false as rl_manual_is_cc, false as
+        rl_is_important,false as
+        rl_is_important_head, dl.delegated_id as rl_delegated_id,
+        max(dlri.last_modified_date) as l_m_d
+        from dispatch_letter dl
+        inner join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        left join dispatch_letter_document_details doc on dl.id = doc.dispatch_letter_id
+        where dl.is_draft=false and dl.is_active=true and dl.status = 'A' and dl.sender_office_code = #{officeCode} and
+        dlri.receiver_pis_code in (#{receiverPisCode}
+        <if test="!previousPisCode.isEmpty()">
+            ,
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) and dlri.completion_status='FN'
+        and dlri.receiver_section_id = #{receiverSectionCode}
+
+        <if test="searchField.fiscalYearCode != null">
+            and dl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and dl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and dl.dispatch_no LIKE CONCAT('%', #{searchField.dispatchNo},'%')
+        </if>
+
+        <if test="searchField.subject != null">
+            and dl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and dl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.status != null">
+            and dl.status = #{searchField.status}
+        </if>
+
+        <if test="searchField.recPisCode != null">
+            and dlri.receiver_pis_code =#{searchField.recPisCode}
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and dlri.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and dlri.is_important = #{searchField.isImportant}
+        </if>
+
+        <if test="searchField != null and searchField.manualIsCc != null">
+            <choose>
+                <when test="searchField.manualIsCc">
+                    and dlri.tocc = true
+                </when>
+                <otherwise>
+                    and dlri.to_receiver = true;
+                </otherwise>
+            </choose>
+        </if>
+        group by dl.id
+
+        <choose>
+            <when test="searchField.orderBy != null">
+                ORDER BY
+                <choose>
+                    <when test="searchField.orderBy = 1">
+                        letter_privacy
+                    </when>
+                    <when test="searchField.orderBy = 2">
+                        letter_priority
+                    </when>
+                    <when test="searchField.orderBy = 3">
+                        subject
+                    </when>
+                    <when test="searchField.orderBy = 4">
+                        status
+                    </when>
+                    <when test="searchField.orderBy = 5">
+                        created_date
+                    </when>
+                    <when test="searchField.orderBy = 7">
+                        registration_no
+                    </when>
+                    <when test="searchField.orderBy = 8">
+                        dispatch_no
+                    </when>
+                    <when test="searchField.orderBy = 9">
+                        dispatch_date_en
+                    </when>
+                    <when test="searchField.orderBy = 10">
+                        entry_type
+                    </when>
+                    <otherwise>
+                        created_date
+                    </otherwise>
+                </choose>
+
+                <choose>
+                    <when test="searchField.orderType != null and searchField.orderType = 0">
+                        ASC
+                    </when>
+                    <otherwise>
+                        DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                order by l_m_d desc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="getAllByReceiverPisCode" resultMap="baseResultMap">
+        SELECT rl.id,
+               rl.letter_privacy,
+               rl.letter_priority,
+               rl.office_code,
+               rl.fiscal_year_code,
+               rl.sender_office_code,
+               rl.registration_no,
+               rl.reference_no,
+               rl.created_date,
+               rl.dispatch_no,
+               rl.dispatch_date_en,
+               rl.dispatch_date_np,
+               rl.subject,
+               rl.document_master_id,
+               rl.entry_type,
+               rl.is_draft,
+               rl.is_active,
+               rl.status,
+               rl.manual_is_cc as rl_manual_is_cc,
+               mrld.id as mrld_id,
+               mrld.sender_name,
+               mrld.sender_office_section_subsection,
+               mrld.sender_address,
+               mrld.sender_email,
+               mrld.sender_phone_no,
+               mrld.manual_received_letter_type,
+               mrld.is_active as mrld_is_active,
+               rlf.id as rlf_id,
+               rlf.receiver_pis_code,
+               rlf.receiver_section_id,
+               rlf.sender_pis_code,
+               rlf.sender_section_id,
+               rlf.description,
+               rlf.created_date as rlf_created_date,
+               rlf.completion_status,
+               rlf.is_active as rlf_is_active,
+               rd.document_id,
+               rd.document_name
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+        WHERE rl.is_active = true and rlf.receiver_pis_code = #{receiverPisCode}
+        ORDER BY rl.id DESC, rlf.id DESC, rd.id DESC
+    </select>
+
+    <select id="filterData" resultMap="baseResultMap">
+        select * from (
+        SELECT DISTINCT rl.id,
+        rl.letter_privacy,
+        rl.letter_priority,
+        rl.pis_code,
+        rl.office_code,
+        rl.fiscal_year_code,
+        rl.sender_office_code,
+        rl.registration_no,
+        rl.reference_no,
+        rl.created_date,
+        rl.dispatch_no,
+        rl.dispatch_date_en,
+        rl.dispatch_date_np,
+        rl.subject,
+        rl.document_master_id,
+        rl.entry_type,
+        rl.is_draft,
+        rl.is_active,
+        rl.status,
+        rl.manual_is_cc as rl_manual_is_cc,
+        rl.is_important as rl_is_important,
+        rl.delegated_id as rl_delegated_id,
+        mrld.id as manualId,
+        mrld.sender_name as manualSenderName,
+        mrld.sender_office_section_subsection as manualSenderSection,
+        mrld.sender_address as manualAddress,
+        mrld.sender_email as manualSenderEmail,
+        mrld.sender_phone_no as manualSenderPhone,
+        mrld.manual_received_letter_type as manualReceivedType,
+        mrld.section_code as manualSectionCode,
+        mrld.is_active as mrld_is_active,
+        max(rlf.created_date) as l_m_d,
+        'Receive' as letterType
+        FROM received_letter rl
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        WHERE rl.is_active = true
+        and rl.office_code = #{officeCode}
+
+        <choose>
+            <when test="searchField.receiverPisCode != null">
+                and rlf.receiver_pis_code in ( #{searchField.receiverPisCode}
+                <if test="!previousPisCode.isEmpty()">
+                    ,
+                    <foreach item="item" index="index" collection="previousPisCode"
+                             separator=",">
+                        #{item}
+                    </foreach>
+                </if>
+                )
+
+                <if test="searchField.receiverSectionCode != null">
+                    and rlf.receiver_section_id = #{searchField.receiverSectionCode}
+                </if>
+
+                <if test="searchField.isActive != null">
+                    and rlf.is_active = #{searchField.isActive}
+                </if>
+
+                <if test="searchField.forwardedFromDate != null and searchField.forwardedToDate != null">
+                    and rlf.created_date between to_timestamp(CONCAT(#{searchField.forwardedFromDate}, ' ', '00:00:00'),
+                    'YYYY-MM-DD
+                    HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.forwardedToDate}, ' ', '23:59:59'), 'YYYY-MM-DD
+                    HH24:MI:SS')
+                </if>
+
+            </when>
+            <when test="searchField.senderPisCode != null">
+                and rlf.sender_pis_code = #{searchField.senderPisCode}
+
+                <if test="searchField.senderSectionCode != null">
+                    and rlf.sender_section_id = #{searchField.senderSectionCode}
+                </if>
+            </when>
+            <otherwise>
+                <if test="pisCode != null">
+                    and (rl.pis_code = #{pisCode}
+                    or rl.entry_type = false)
+                </if>
+            </otherwise>
+        </choose>
+
+        <if test="searchField.sectionCode != null">
+            and rl.section_code = #{searchField.sectionCode}
+        </if>
+
+        <if test="searchField.isReceived != null">
+            and rlf.is_received = #{searchField.isReceived}
+        </if>
+
+        <if test="searchField.isCc != null">
+            and rlf.is_cc = #{searchField.isCc}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and rlf.is_important = #{searchField.isImportant}
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and rlf.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and rl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.senderOfficeCode != null">
+            and rl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField.entryType != null">
+            and rl.entry_type = #{searchField.entryType}
+        </if>
+
+        <if test="searchField.isDraft != null">
+            and rl.is_draft = #{searchField.isDraft}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.manualIsCc != null">
+            and rlf.is_cc = #{searchField.manualIsCc}
+        </if>
+
+        <if test="searchField.status != null">
+            and rlf.completion_status = #{searchField.status}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and rl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.senderName != null">
+            and mrld.sender_name ILIKE CONCAT('%', #{searchField.senderName}, '%')
+        </if>
+
+        <if test="searchField.registrationNo != null">
+            and rl.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField.referenceNo != null">
+            and rl.reference_no = #{searchField.referenceNo}
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and rl.dispatch_no LIKE CONCAT('%', #{searchField.dispatchNo},'%')
+        </if>
+        group by rl.id, mrld.id
+        ) t
+
+        <choose>
+            <when test="searchField.orderBy != null">
+                ORDER BY
+                <choose>
+                    <when test="searchField.orderBy = 1">
+                        t.letter_privacy
+                    </when>
+                    <when test="searchField.orderBy = 2">
+                        t.letter_priority
+                    </when>
+                    <when test="searchField.orderBy = 3">
+                        t.subject
+                    </when>
+                    <when test="searchField.orderBy = 4">
+                        t.status
+                    </when>
+                    <when test="searchField.orderBy = 5">
+                        t.created_date
+                    </when>
+                    <when test="searchField.orderBy = 7">
+                        t.registration_no
+                    </when>
+                    <when test="searchField.orderBy = 8">
+                        t.dispatch_no
+                    </when>
+                    <when test="searchField.orderBy = 9">
+                        t.dispatch_date_en
+                    </when>
+                    <when test="searchField.orderBy = 10">
+                        t.entry_type
+                    </when>
+                    <otherwise>
+                        t.created_date
+                    </otherwise>
+                </choose>
+
+                <choose>
+                    <when test="searchField.orderType != null and searchField.orderType = 0">
+                        ASC
+                    </when>
+                    <otherwise>
+                        DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="searchField.isActive != null">
+                        ORDER BY GREATEST(t.l_m_d, t.created_date) DESC
+                    </when>
+                    <otherwise>
+                        ORDER BY t.created_date DESC
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getArchiveDarta" resultMap="baseResultMap">
+        select * from (
+        SELECT DISTINCT rl.id,
+        rl.letter_privacy,
+        rl.letter_priority,
+        rl.pis_code,
+        rl.office_code,
+        rl.fiscal_year_code,
+        rl.sender_office_code,
+        rl.registration_no,
+        rl.reference_no,
+        rl.created_date,
+        rl.dispatch_no,
+        rl.dispatch_date_en,
+        rl.dispatch_date_np,
+        rl.subject,
+        rl.document_master_id,
+        rl.entry_type,
+        rl.is_draft,
+        rl.is_active,
+        rl.status,
+        rl.manual_is_cc as rl_manual_is_cc,
+        rl.is_important as rl_is_important,
+        rl.delegated_id as rl_delegated_id,
+        rl.last_modified_date as rl_last_modified_date,
+        mrld.id as manualId,
+        mrld.sender_name as manualSenderName,
+        mrld.sender_office_section_subsection as manualSenderSection,
+        mrld.sender_address as manualAddress,
+        mrld.sender_email as manualSenderEmail,
+        mrld.sender_phone_no as manualSenderPhone,
+        mrld.manual_received_letter_type as manualReceivedType,
+        mrld.section_code as manualSectionCode,
+        mrld.is_active as mrld_is_active,
+        max(rlf.created_date) as l_m_d
+        FROM received_letter rl
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        WHERE rl.is_active = false
+        and rl.office_code = #{officeCode} and rl.section_code = #{sectionCode}
+        and rl.pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        group by rl.id, mrld.id
+        ) t
+
+        <choose>
+            <when test="searchField != null and searchField.orderBy != null">
+                ORDER BY
+                <choose>
+                    <when test="searchField.orderBy = 1">
+                        t.letter_privacy
+                    </when>
+                    <when test="searchField.orderBy = 2">
+                        t.letter_priority
+                    </when>
+                    <when test="searchField.orderBy = 3">
+                        t.subject
+                    </when>
+                    <when test="searchField.orderBy = 4">
+                        t.status
+                    </when>
+                    <when test="searchField.orderBy = 5">
+                        t.created_date
+                    </when>
+                    <when test="searchField.orderBy = 7">
+                        t.registration_no
+                    </when>
+                    <when test="searchField.orderBy = 8">
+                        t.dispatch_no
+                    </when>
+                    <when test="searchField.orderBy = 9">
+                        t.dispatch_date_en
+                    </when>
+                    <when test="searchField.orderBy = 10">
+                        t.entry_type
+                    </when>
+                    <otherwise>
+                        created_date
+                    </otherwise>
+                </choose>
+
+                <choose>
+                    <when test="searchField.orderType != null and searchField.orderType = 0">
+                        ASC
+                    </when>
+                    <otherwise>
+                        DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                ORDER BY t.rl_last_modified_date DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="pageData" resultMap="baseResultMap">
+        select * from (
+        SELECT DISTINCT rl.id,
+        rl.letter_privacy,
+        rl.letter_priority,
+        rl.pis_code,
+        rl.office_code,
+        rl.fiscal_year_code,
+        rl.sender_office_code,
+        rl.registration_no,
+        rl.reference_no,
+        rl.created_date,
+        rl.dispatch_no,
+        rl.dispatch_date_en,
+        rl.dispatch_date_np,
+        rl.subject,
+        rl.document_master_id,
+        rl.entry_type,
+        rl.is_draft,
+        rl.is_active,
+        rl.status,
+        rl.manual_is_cc as rl_manual_is_cc,
+        rl.is_important as rl_is_important,
+        rl.is_important_head as rl_is_important_head,
+        rl.delegated_id as rl_delegated_id,
+        mrld.id as manualId,
+        mrld.sender_name as manualSenderName,
+        mrld.sender_office_section_subsection as manualSenderSection,
+        mrld.sender_address as manualAddress,
+        mrld.sender_email as manualSenderEmail,
+        mrld.sender_phone_no as manualSenderPhone,
+        mrld.manual_received_letter_type as manualReceivedType,
+        mrld.section_code as manualSectionCode,
+        mrld.is_active as mrld_is_active,
+        (select max(rlf.created_date) as l_m_d
+        from received_letter_forward rlf
+        where rlf.receiver_pis_code = #{officeHeadCode} and rlf.is_active = true and rlf.received_letter_id = rl.id)
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        WHERE rl.is_active = true and (rl.id not in ( select rlf.received_letter_id from received_letter_forward rlf
+        where rlf.received_letter_id is not null) or
+        (rlf.receiver_pis_code=#{officeHeadCode} and rlf.is_active = true) )
+        and rl.office_code = #{officeCode}
+
+        <if test="pisCode != null">
+            and rl.pis_code = #{pisCode}
+        </if>
+
+        <if test="searchField.sectionCode != null">
+            and rl.section_code = #{searchField.sectionCode}
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and rl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.senderOfficeCode != null">
+            and rl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField.entryType != null">
+            and rl.entry_type = #{searchField.entryType}
+        </if>
+
+        <if test="searchField.manualIsCc != null">
+            and rl.manual_is_cc = #{searchField.manualIsCc}
+        </if>
+
+        <if test="searchField.isDraft != null">
+            and rl.is_draft = #{searchField.isDraft}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.status != null">
+            and rlf.completion_status = #{searchField.status}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and rl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.senderName != null">
+            and mrld.sender_name ILIKE CONCAT('%', #{searchField.senderName}, '%')
+        </if>
+
+        <if test="searchField.registrationNo != null">
+            and rl.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField.referenceNo != null">
+            and rl.reference_no = #{searchField.referenceNo}
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and rl.dispatch_no LIKE #{searchField.dispatchNo}
+        </if>) t
+
+        <choose>
+            <when test="searchField.isActive != null">
+                ORDER BY GREATEST(t.l_m_d, t.created_date) DESC
+            </when>
+            <otherwise>
+                ORDER BY t.created_date DESC
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <resultMap id="referenceResultMap" type="com.gerp.dartachalani.dto.DartaChalaniGenericPojo">
+        <id property="id" column="id"/>
+        <result property="subject" column="subject"/>
+        <result property="createdDate" column="created_date"/>
+    </resultMap>
+
+    <select id="getDataForReference" resultMap="referenceResultMap">
+        SELECT DISTINCT rl.id,
+        rl.created_date,
+        rl.subject
+        FROM received_letter rl
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        WHERE rl.is_active = true
+        and rl.office_code = #{officeCode}
+
+        <if test="searchField.fiscalYearCode != null">
+            and rl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.sectionCode != null">
+            and (
+            (rl.pis_code = #{pisCode} and rl.section_code = #{searchField.sectionCode})
+            or
+            (rlf.receiver_pis_code = #{pisCode} and rlf.receiver_section_id = #{searchField.sectionCode})
+            )
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and rl.dispatch_date_en between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.senderName != null">
+            and mrld.sender_name ILIKE #{searchField.senderName}
+        </if>
+
+        <if test="searchField.fromDartaDate != null and searchField.toDartaDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDartaDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDartaDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dartaNo">
+            and rl.registration_no = #{searchField.dartaNo}
+        </if>
+
+        <if test="searchField.chalaniNo">
+            and rl.dispatch_no ILIKE CONCAT('%', #{searchField.chalaniNo}, '%')
+        </if>
+
+        ORDER BY rl.id DESC
+    </select>
+
+    <select id="getNextPrevValues" resultType="java.lang.Long">
+        SELECT DISTINCT rl.id
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        WHERE rl.is_active = true and rl.id not in ( select rlf.received_letter_id from received_letter_forward rlf)
+        and rl.office_code = #{officeCode}
+
+        <if test="pisCode != null">
+            and rl.pis_code = #{pisCode}
+        </if>
+
+        <if test="searchField.sectionCode != null">
+            and rl.section_code = #{searchField.sectionCode}
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and rl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.senderOfficeCode != null">
+            and rl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField.entryType != null">
+            and rl.entry_type = #{searchField.entryType}
+        </if>
+
+        <if test="searchField.isDraft != null">
+            and rl.is_draft = #{searchField.isDraft}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.status != null">
+            and rlf.completion_status = #{searchField.status}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and rl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.senderName != null">
+            and mrld.sender_name ILIKE CONCAT('%', #{searchField.senderName}, '%')
+        </if>
+
+        <if test="searchField.registrationNo != null">
+            and rl.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField.referenceNo != null">
+            and rl.reference_no = #{searchField.referenceNo}
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and rl.dispatch_no LIKE #{searchField.dispatchNo}
+        </if>
+
+        ORDER BY rl.id DESC
+    </select>
+
+    <select id="getNextPrevValuesUser" resultType="java.lang.Long">
+        SELECT DISTINCT rl.id
+        FROM received_letter rl
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        WHERE rl.is_active = true
+        and rl.office_code = #{officeCode} and rlf.receiver_pis_code = #{pisCode} and rlf.is_active = true
+
+        <if test="searchField.receiverSectionCode != null">
+            and rlf.receiver_section_id = #{searchField.receiverSectionCode}
+        </if>
+
+        <if test="searchField.forwardedFromDate != null and searchField.forwardedToDate != null">
+            and rlf.created_date between to_timestamp(CONCAT(#{searchField.forwardedFromDate}, ' ', '00:00:00'),
+            'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.forwardedToDate}, ' ', '23:59:59'), 'YYYY-MM-DD
+            HH24:MI:SS')
+        </if>
+
+        <if test="searchField.sectionCode != null">
+            and rl.section_code = #{searchField.sectionCode}
+        </if>
+
+        <if test="searchField.isReceived != null">
+            and rlf.is_received = #{searchField.isReceived}
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and rlf.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and rl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.senderOfficeCode != null">
+            and rl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField.entryType != null">
+            and rl.entry_type = #{searchField.entryType}
+        </if>
+
+        <if test="searchField.isDraft != null">
+            and rl.is_draft = #{searchField.isDraft}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.status != null">
+            and rlf.completion_status = #{searchField.status}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and rl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.senderName != null">
+            and mrld.sender_name ILIKE CONCAT('%', #{searchField.senderName}, '%')
+        </if>
+
+        <if test="searchField.registrationNo != null">
+            and rl.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField.referenceNo != null">
+            and rl.reference_no = #{searchField.referenceNo}
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and rl.dispatch_no LIKE #{searchField.dispatchNo}
+        </if>
+
+        ORDER BY rl.id DESC
+    </select>
+
+    <select id="getDartaReportData" resultMap="baseResultMap">
+        select distinct rl.id, rl.letter_privacy,
+        rl.letter_priority,rl.dispatch_no,rl.created_date,
+        rl.dispatch_date_en,rl.dispatch_date_np,rl.subject, rl.status,
+        'Receive' as letterType, rl.registration_no, rl.entry_type,rl.reference_no,
+        rl.sender_office_code
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        where rl.is_active = true and rl.office_code = #{officeCode}
+
+        <if test="searchField != null and searchField.fromDate != null and searchField.toDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField != null and searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and rl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField != null and searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField != null and searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField != null and searchField.entryType != null">
+            and rl.entry_type = #{searchField.entryType}
+        </if>
+
+        <if test="searchField != null and searchField.status != null">
+            <choose>
+                <when test="searchField.status = 'A'">
+                    and dl.status = 'FN'
+                </when>
+                <otherwise>
+                    and dl.status = #{searchField.status}
+                </otherwise>
+            </choose>
+        </if>
+
+        <if test="searchField != null and searchField.registrationNo != null">
+            and rl.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField != null and searchField.dispatchNo != null">
+            and rl.dispatch_no = #{searchField.dispatchNo}
+        </if>
+
+        <if test="searchField != null and searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField != null and searchField.manualSenderName != null">
+            and mrld.sender_name ILIKE CONCAT('%', #{searchField.manualSenderName}, '%')
+        </if>
+
+        <if test="searchField != null and searchField.senderOfficeCode != null">
+            and rl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField != null and searchField.isCc != null">
+            and rl.manual_is_cc = #{searchField.isCc}
+        </if>
+
+        <if test="searchField != null and searchField.sectionCodeLists != null">
+            and rl.section_code in
+            <foreach item="item" index="index" collection="searchField.sectionCodeLists"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+        union all
+        select distinct dl.id,dl.letter_privacy,dl.letter_priority
+        ,dl.dispatch_no ,dl.created_date,
+        dl.dispatch_date_en,dl.dispatch_date_np,dl.subject, dl.status,
+        'Dispatch' as letterType, null as registration_no, false as entry_type, dl.referencef_code as reference_no,
+        dl.sender_office_code
+        from dispatch_letter dl
+        inner join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        left join dispatch_letter_document_details doc on dl.id = doc.dispatch_letter_id
+        where dl.is_active = true and dlri.receiver_office_code = #{officeCode}
+
+        <if test="searchField != null and searchField.fromDate != null and searchField.toDate != null">
+            and dl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField != null and searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and dl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField != null and searchField.letterPriority != null">
+            and dl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField != null and searchField.letterPrivacy != null">
+            and dl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField != null and searchField.entryType != null">
+            <if test="searchField.entryType">
+                and false
+            </if>
+        </if>
+
+        <if test="searchField != null and searchField.status != null">
+            and dl.status = #{searchField.status}
+        </if>
+
+        <if test="searchField != null and searchField.registrationNo != null">
+            and false
+        </if>
+
+        <if test="searchField != null and searchField.dispatchNo != null">
+            and dl.dispatch_no = #{searchField.dispatchNo}
+        </if>
+
+        <if test="searchField != null and searchField.subject != null">
+            and dl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField != null and searchField.manualSenderName != null">
+            and false
+        </if>
+
+        <if test="searchField != null and searchField.senderOfficeCode != null">
+            and dl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField != null and searchField.isCc != null">
+            <choose>
+                <when test="searchField.isCc">
+                    and dlri.tocc = true
+                </when>
+                <otherwise>
+                    and dlri.to_receiver = true
+                </otherwise>
+            </choose>
+        </if>
+
+        and false
+
+        order by id desc
+
+    </select>
+
+    <select id="checkIsReceiver" resultType="boolean">
+        select case when count(*)>0 then false else true end from received_letter rl
+        left join received_letter_forward rlf on rl.id = rlf.received_letter_id
+        where ((rl.pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) and rl.section_code = #{sectionCode} and rl.id = #{id}) or (rlf.receiver_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and rlf.received_letter_id = #{id}
+        and rlf.receiver_section_id = #{sectionCode}))
+    </select>
+
+    <select id="getReceivedLetterForTransfer" resultMap="baseResultMap">
+        select distinct * from
+        (SELECT DISTINCT rl.id, rl.letter_privacy,
+        rl.letter_priority,rl.office_code,rl.fiscal_year_code,rl.sender_office_code,rl.dispatch_no,rl.created_date,
+        rl.dispatch_date_en,rl.dispatch_date_np,rl.subject,rl.is_draft,rl.is_active,rl.content as content, rl.status,
+        'Receive' AS letterType, rl.registration_no, rl.entry_type, rl.manual_is_cc as rl_manual_is_cc, rl.is_important
+        as rl_is_important, rl.delegated_id as rl_delegated_id,
+        max(rlf.last_modified_date) as l_m_d
+        FROM received_letter rl
+        LEFT JOIN manual_received_letter_detail mrld ON rl.id = mrld.received_letter_id
+        LEFT JOIN received_letter_forward rlf ON rl.id = rlf.received_letter_id
+        LEFT JOIN received_letter_document_details rd ON rl.id = rd.received_letter_id
+        WHERE rl.is_active = true and rl.office_code = #{officeCode}
+        and rlf.receiver_pis_code in (#{receiverPisCode}
+        <if test="!previousPisCode.isEmpty()">
+            ,
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and rlf.receiver_section_id = #{receiverSectionCode} and rlf.is_active = true
+
+        <if test="searchField.status != null">
+            and rlf.completion_status = #{searchField.status}
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and rl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.senderOfficeCode != null">
+            and rl.sender_office_code = #{searchField.senderOfficeCode}
+        </if>
+
+        <if test="searchField.entryType != null">
+            and rl.entry_type = #{searchField.entryType}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and rl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and rl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.subject != null">
+            and rl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.manualIsCc != null">
+            and rlf.is_cc = #{searchField.manualIsCc}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and rl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and rl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.senderName != null">
+            and mrld.sender_name ILIKE CONCAT('%', #{searchField.senderName}, '%')
+        </if>
+
+        <if test="searchField.registrationNo != null">
+            and rl.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField.referenceNo != null">
+            and rl.reference_no = #{searchField.referenceNo}
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and rl.dispatch_no LIKE CONCAT('%', #{searchField.dispatchNo},'%')
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and rlf.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        <if test="searchField.isCc != null">
+            and rlf.is_cc = #{searchField.isCc}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and (rlf.is_important = #{searchField.isImportant} or rl.is_important = #{searchField.isImportant})
+        </if>
+        group by rl.id
+
+        union all
+        select DISTINCT dl.id,dl.letter_privacy,dl.letter_priority,dl.sender_office_code,dl.fiscal_year_code
+        ,dl.sender_office_code,dl.dispatch_no ,dl.created_date,
+        dl.dispatch_date_en,dl.dispatch_date_np,dl.subject,dl.is_draft, dl.is_active, dl.content as content, dl.status,
+        'Dispatch' AS letterType, null as registration_no, false as entry_type, false as rl_manual_is_cc, false as
+        rl_is_important, dl.delegated_id as rl_delegated_id,
+        max(dlri.last_modified_date) as l_m_d
+        from dispatch_letter dl
+        inner join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        left join dispatch_letter_document_details doc on dl.id = doc.dispatch_letter_id
+        where dl.is_draft=false and dl.is_active=true and dl.status = 'A' and dl.sender_office_code = #{officeCode} and
+        dlri.receiver_pis_code in (#{receiverPisCode}
+        <if test="!previousPisCode.isEmpty()">
+            ,
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) and dlri.receiver_section_id = #{receiverSectionCode} and dlri.is_active = true
+
+        <if test="searchField.status != null">
+            and dlri.completion_status = #{searchField.status}
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and dl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and dl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and dl.dispatch_no = #{searchField.dispatchNo}
+        </if>
+
+        <if test="searchField.subject != null">
+            and dl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and dl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.status != null">
+            and dl.status = #{searchField.status}
+        </if>
+
+        <if test="searchField.recPisCode != null">
+            and dlri.receiver_pis_code = #{searchField.recPisCode}
+        </if>
+
+        <if test="searchField.recSectionCode != null">
+            and dlri.receiver_section_id = #{searchField.recSectionCode}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and dlri.is_important = #{searchField.isImportant}
+        </if>
+
+        <if test="searchField != null and searchField.manualIsCc != null">
+            <choose>
+                <when test="searchField.manualIsCc">
+                    and dlri.tocc = true
+                </when>
+                <otherwise>
+                    and dlri.to_receiver = true;
+                </otherwise>
+            </choose>
+        </if>
+        group by dl.id
+
+        ) test
+
+        order by l_m_d desc
+    </select>
+
+    <select id="findActive" resultType="com.gerp.dartachalani.model.receive.ReceivedLetterForward">
+        select * from received_letter_forward
+        where received_letter_id = #{id}
+        and is_active = true and receiver_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) and is_cc = false and receiver_section_id =
+        #{sectionCode} LIMIT 1
+    </select>
+
+</mapper>

@@ -1,0 +1,1082 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.dartachalani.mapper.DispatchLetterMapper">
+
+    <resultMap id="dispatchResultMap" type="com.gerp.dartachalani.dto.DispatchLetterDTO">
+        <id property="dispatchId" column="dispatchId"/>
+        <id property="templateFooterId" column="template_footer_id"/>
+        <id property="templateHeaderId" column="template_header_id"/>
+        <result property="content" column="content"/>
+        <result property="dispatchDate" column="dispatchDate"/>
+        <result property="dispatchDateNp" column="dispatchDateNp"/>
+        <result property="dispatchNo" column="dispatchNo"/>
+        <result property="letterPriority" column="letterPriority"/>
+        <result property="letterPrivacy" column="letterPrivacy"/>
+        <result property="receiverType" column="receiverType"/>
+        <result property="senderPisCode" column="senderPisCode"/>
+        <result property="senderOfficeCode" column="senderOfficeCode"/>
+        <result property="senderSectionCode" column="senderSectionCode"/>
+        <result property="signee" column="signee"/>
+        <result property="subject" column="subject"/>
+        <result property="status" column="status"/>
+        <result property="referenceCode" column="referenceCode"/>
+        <result property="singular" column="singular"/>
+        <result property="remarks" column="dl_remarks"/>
+        <result property="isDraft" column="isDraft"/>
+        <result property="include" column="include"/>
+        <result property="isEnglish" column="isEnglish"/>
+        <result property="isAd" column="isAd"/>
+        <result property="fiscalYearCode" column="fiscalYearCode"/>
+        <result property="remarksSignatureIsActive" column="dlRemarksSignatureIsActive"/>
+        <result property="remarksSignatureData" column="dlRemarksSignatureData"/>
+        <result property="remarksPisCode" column="dlRemarksPisCode"/>
+        <result property="remarksSectionCode" column="dlRemarksSectionCode"/>
+        <result property="remarksDesignationCode" column="dlRemarksDesignationCode"/>
+        <result property="delegatedId" column="dl_delegated_id"/>
+        <result property="hash_content" column="dl_hash_content"/>
+        <result property="hasSubject" column="dl_has_subject"/>
+        <result property="isAlreadyApproved" column="dl_is_already_approved"/>
+
+        <association property="signature" javaType="com.gerp.dartachalani.dto.SignaturePojo">
+            <result property="id" column="sg_id"/>
+            <result property="pisCode" column="sg_pis_code"/>
+            <result property="signatureData" column="signature"/>
+            <result property="signatureIsActive" column="signatureIsActive"/>
+            <result property="includeSectionId" column="includeSectionId"/>
+            <result property="includedSectionId" column="includedSectionId"/>
+            <result property="designationCode" column="sg_designation_code"/>
+            <result property="sectionCode" column="sg_section_code"/>
+            <result property="delegatedId" column="sg_delegated_id"/>
+            <result property="hashContent" column="sg_hash_content"/>
+            <result property="includeSectionInLetter" column="sg_include_section_in_letter"/>
+
+        </association>
+
+        <collection property="pdfData" ofType="com.gerp.dartachalani.dto.DispatchPdfResponsePojo">
+            <result property="id" column="pdf_id"/>
+            <result property="pdf" column="pdf"/>
+        </collection>
+
+        <collection property="dispatchLetterInternal" ofType="com.gerp.dartachalani.dto.DispatchLetterInternalDTO">
+            <result property="internalReceiverId" column="internalReceiverId"/>
+            <result property="internalReceiver" column="internalReceiver"/>
+            <result property="internalReceiverCc" column="internalReceiverCc"/>
+            <result property="internalReceiverOfficeCode" column="internalReceiverOfficeCode"/>
+            <result property="internalReceiverPiscode" column="internalReceiverPiscode"/>
+            <result property="internalReceiverSectionId" column="internalReceiverSectionId"/>
+            <result property="internalReceiverSectionName" column="internalReceiverSectionName"/>
+            <result property="receiverOfficeCode" column="receiverOfficeCode"/>
+            <result property="withinOrganization" column="withinOrganization"/>
+            <result property="bodarthaType" column="internalBodarthaType"/>
+            <result property="order" column="internalOrder"/>
+            <result property="salutation" column="internalSalutation"/>
+            <result property="isImportant" column="internalIsImportant"/>
+            <result property="isGroupName" column="dlri_is_group_name"/>
+            <result property="groupId" column="dlri_group_id"/>
+            <result property="isSectionName" column="dlri_is_section_name"/>
+            <result property="remarks" column="dlri_remarks"/>
+            <result property="isTransferred" column="dlri_is_transferred"/>
+            <collection property="comments" ofType="com.gerp.dartachalani.dto.DispatchLetterCommentsPojo">
+                <id property="id" column="id"/>
+                <result property="description" column="description"/>
+                <result property="cStatus" column="cStatus"/>
+                <result property="date" column="date"/>
+                <result property="dateNp" column="dateNp"/>
+            </collection>
+        </collection>
+        <collection property="dispatchLetterExternal" ofType="com.gerp.dartachalani.dto.DispatchLetterExternalDTO">
+            <result property="externalReceiverId" column="externalReceiverId"/>
+            <result property="extenalReceiverAddress" column="extenalReceiverAddress"/>
+            <result property="externalDispatchLetterType" column="externalDispatchLetterType"/>
+            <result property="externalReceiverEmail" column="externalReceiverEmail"/>
+            <result property="externalReceiverPhoneNo" column="externalReceiverPhoneNo"/>
+            <result property="receiverName" column="receiverName"/>
+            <result property="receiverOfficeSectionSubSection" column="receiverOfficeSectionSubSection"/>
+            <result property="isCc" column="externalIsCc"/>
+            <result property="bodarthaType" column="externalBodarthaType"/>
+            <result property="order" column="externalOrder"/>
+            <result property="salutation" column="externalSalutation"/>
+            <result property="isGroupName" column="dlre_is_group_name"/>
+            <result property="groupId" column="dlre_group_id"/>
+            <result property="remarks" column="dlre_remarks"/>
+        </collection>
+
+        <collection property="approval" ofType="com.gerp.dartachalani.dto.DispatchLetterApprovalPojo">
+            <result property="approvalId" column="ap_id"/>
+            <result property="receivedDate" column="ap_received_date"/>
+            <result property="receivedDateNp" column="ap_received_date_np"/>
+            <result property="remarks" column="ap_remarks"/>
+            <result property="approvalStatus" column="ap_status"/>
+            <result property="subject" column="ap_subject"/>
+            <result property="receiverPisCode" column="ap_receiver_pis_code"/>
+            <result property="receiverOfficeName" column="ap_receiver_office_name"/>
+            <result property="approvalIsActive" column="ap_is_active"/>
+            <result property="senderPisCode" column="apSenderPisCode"/>
+            <result property="isSeen" column="ap_is_seen"/>
+            <result property="signatureIsActive" column="ap_signature_is_active"/>
+            <result property="signatureData" column="ap_signature_data"/>
+            <result property="contentLogId" column="ap_content_log_id"/>
+            <result property="reverted" column="ap_reverted"/>
+            <result property="isImportant" column="ap_is_important"/>
+            <result property="senderDesignationCode" column="ap_sender_designation_code"/>
+            <result property="senderSectionCode" column="ap_sender_section_code"/>
+            <result property="delegatedId" column="ap_delegated_id"/>
+            <result property="hash_content" column="ap_hash_content"/>
+            <result property="isTransferred" column="ap_is_transferred"/>
+            <collection property="details" ofType="com.gerp.dartachalani.dto.DlApprovalDetailPojo">
+                <id property="detailsId" column="ad_id"/>
+                <result property="description" column="ad_description"/>
+                <result property="detailsStatus" column="ad_status"/>
+                <result property="detailsIsActive" column="ad_is_active"/>
+                <result property="createdDate" column="ad_created_date"/>
+                <result property="createdDateNp" column="ad_created_date_np"/>
+            </collection>
+        </collection>
+
+        <collection property="documents" ofType="com.gerp.dartachalani.dto.document.DocumentResponsePojo">
+            <result property="id" column="documentId"/>
+            <result property="name" column="documentName"/>
+            <result property="sizeKB" column="sizeKB"/>
+            <result property="include" column="d_include"/>
+            <result property="isActive" column="d_is_active"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="getDispatchLetterDetailById" resultMap="dispatchResultMap">
+        select dl.id as dispatchId,
+        dl.content as content,
+        dl.dispatch_date_en as dispatchDate,
+        dl.dispatch_date_np as dispatchDateNp,
+        dl.dispatch_no as dispatchNo,
+        dl.sender_section_code as senderSectionCode,
+        dl.delegated_id as dl_delegated_id,
+        dl.template_header_id ,
+        dl.template_footer_id,
+        dl.has_subject as dl_has_subject,
+        d.document_id as documentId,
+        d.document_name as documentName,
+        d.sizekb as sizeKB,
+        d.include as d_include,
+        d.is_active as d_is_active,
+        dl.is_draft as isDraft,
+        dl.letter_priority as letterPriority,
+        dl.letter_privacy as letterPrivacy,
+        dl.include as include,
+        dl.is_english as isEnglish,
+        dl.is_ad as isAd,
+        dl.receiver_type as receiverType,
+        dl.sender_pis_code as senderPisCode,
+        dl.sender_office_code as senderOfficeCode,
+        dl.signee as signee,
+        dl.subject as subject,
+        dl.status,
+        dl.referencef_code as referenceCode,
+        dl.singular,
+        dl.remarks as dl_remarks,
+        dl.fiscal_year_code as fiscalYearCode,
+        dl.remarks_signature_is_active as dlRemarksSignatureIsActive,
+        dl.remarks_signature as dlRemarksSignatureData,
+        dl.remarks_pis_code as dlRemarksPisCode,
+        dl.remarks_designation_code as dlRemarksDesignationCode,
+        dl.remarks_section_code as dlRemarksSectionCode,
+        dl.hash_content as dl_hash_content,
+        dl.is_already_approved as dl_is_already_approved,
+        dlri.to_receiver as internalReceiver,
+        dlri.receiver_pis_code as internalReceiverPiscode,
+        dlri.receiver_office_code as internalReceiverOfficeCode,
+        dlri.receiver_section_id as internalReceiverSectionId,
+        dlri.receiver_section_name as internalReceiverSectionName,
+        dlri.is_group_name as dlri_is_group_name,
+        dlri.group_id as dlri_group_id,
+        dlri.id as internalReceiverId,
+        dlri.tocc as internalReceiverCc,
+        dlri.within_organization as withinOrganization,
+        dlri.bodartha_type as internalBodarthaType,
+        dlri.order_number as internalOrder,
+        dlri.salutation as internalSalutation,
+        dlri.is_important as internalIsImportant,
+        dlri.remarks as dlri_remarks,
+        dlri.is_section_name as dlri_is_section_name,
+        dlri.is_transferred as dlri_is_transferred,
+        dlre.receiver_address as extenalReceiverAddress,
+        dlre.receiver_email as externalReceiverEmail,
+        dlre.id as externalReceiverId,
+        dlre.receiver_office_section_subsection as receiverOfficeSectionSubSection,
+        dlre.salutation as externalSalutation,
+        dlre.receiver_phone_no as externalReceiverPhoneNo,
+        dlre.dispatch_letter_type as externalDispatchLetterType,
+        dlre.receiver_name as receiverName,
+        dlre.to_cc as externalIsCc,
+        dlre.bodartha_type as externalBodarthaType,
+        dlre.order_number as externalOrder,
+        dlre.is_group_name as dlre_is_group_name,
+        dlre.group_id as dlre_group_id,
+        dlre.remarks as dlre_remarks,
+        ap.id as ap_id,
+        ap.received_date as ap_received_date,
+        ap.received_date_np as ap_received_date_np,
+        ap.content_log_id as ap_content_log_id,
+        ap.is_important as ap_is_important,
+        ap.receiver_office_name as ap_receiver_office_name,
+        ap.receiver_pis_code as ap_receiver_pis_code,
+        ap.sender_pis_code as apSenderPisCode,
+        ap.is_seen as ap_is_seen,
+        ap.delegated_id as ap_delegated_id,
+        ap.remarks as ap_remarks,
+        ap.status as ap_status,
+        ap.subject as ap_subject,
+        ap.is_active as ap_is_active,
+        ap.reverted as ap_reverted,
+        ap.sender_section_code as ap_sender_section_code,
+        ap.remarks_signature_is_active as ap_signature_is_active,
+        ap.remarks_signature as ap_signature_data,
+        ap.sender_designation_code as ap_sender_designation_code,
+        ap.hash_content as ap_hash_content,
+        ap.is_transferred as ap_is_transferred,
+        ad.id as ad_id,
+        ad.description as ad_description,
+        ad.staus as ad_status,
+        ad.is_active as ad_is_active,
+        ad.created_date as ad_created_date,
+        rid.id,
+        rid.description,
+        rid.staus as cStatus,
+        rid.date,
+        rid.date_np as dateNp,
+        sg.id as sg_id,
+        sg.pis_code as sg_pis_code,
+        sg.delegated_id as sg_delegated_id,
+        sg.signature_is_active as signatureIsActive,
+        sg.signature as signature,
+        sg.include_section_id as includeSectionId,
+        sg.included_section_id as includedSectionId,
+        sg.designation_code as sg_designation_code,
+        sg.section_code as sg_section_code,
+        sg.hash_content as sg_hash_content,
+        sg.include_section_in_letter as sg_include_section_in_letter,
+        dpd.id as pdf_id, dpd.pdf as pdf
+        from dispatch_letter dl
+         left join dispatch_letter_document_details d on d.dispatch_letter_id = dl.id
+         left join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+         left join dispatch_letter_receiver_external dlre on dl.id = dlre.dispatch_letter_id
+         Left JOIN dispatch_letter_review ap on dl.id = ap.dispatch_id
+         LEFT JOIN dispatch_letter_review_detail ad on ap.id = ad.dispatch_letter_review_id
+         LEFT JOIN dispatch_letter_receive_internal_detail rid on rid.dispatch_letter_internal= dlri.id
+         LEFT JOIN signature_data sg on sg.dispatch_letter_id = dl.id
+         LEFT JOIN dispatch_pdf_data dpd on dpd.dispatch_id = dl.id
+        where dl.id=#{dispatchId}  order by ap.id desc, dlri.id asc, dlre.id asc
+    </select>
+
+    <select id="getAllCommentsOfDispatchLetter" resultType="com.gerp.dartachalani.dto.DispatchLetterCommentsPojo">
+        select dlrid.id,  dlrid.staus as cStatus , dlrid.description, dlrid.date  from dispatch_letter dl
+        right join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        right join dispatch_letter_receive_internal_detail dlrid on dlri.id = dlrid.dispatch_letter_internal
+        where dl.id = #{dispatchLetterId} and dlrid.is_active = true order by dlrid.created_date desc
+    </select>
+
+    <resultMap id="dispatchLetterResponsePojo" type="com.gerp.dartachalani.dto.DispatchLetterResponsePojo">
+        <id property="id" column="id"/>
+        <result property="dispatchNo" column="dispatch_no"/>
+        <result property="senderPisCode" column="sender_pis_code"/>
+        <result property="signee" column="signee"/>
+        <result property="letterPrivacy" column="letter_privacy"/>
+        <result property="content" column="content"/>
+        <result property="letterPriority" column="letter_priority"/>
+        <result property="receiverType" column="receiver_type"/>
+        <result property="subject" column="subject"/>
+        <result property="dispatchDateEn" column="dispatch_date_en"/>
+        <result property="dispatchDateNp" column="dispatchDateNp"/>
+        <result property="isDraft" column="is_draft"/>
+        <result property="status" column="status"/>
+        <result property="remarks" column="remarks"/>
+        <result property="withinOrganization" column="withinOrganization"/>
+        <result property="referenceCode" column="referenceCode"/>
+        <result property="isImportant" column="dl_is_important"/>
+        <result property="delegatedId" column="dl_delegated_id"/>
+        <result property="senderOfficeCode" column="sender_office_code"/>
+        <result property="dlStatus" column="dl_status"/>
+
+
+        <collection property="approval" ofType="com.gerp.dartachalani.dto.DispatchLetterApprovalPojo">
+            <result property="approvalId" column="ap_id"/>
+            <result property="receivedDate" column="ap_received_date"/>
+            <result property="receivedDateNp" column="ap_received_date_np"/>
+            <result property="remarks" column="ap_remarks"/>
+            <result property="approvalStatus" column="ap_status"/>
+            <result property="subject" column="ap_subject"/>
+            <result property="receiverPisCode" column="ap_receiver_pis_code"/>
+            <result property="receiverOfficeName" column="ap_receiver_office_name"/>
+            <result property="approvalIsActive" column="ap_is_active"/>
+            <result property="senderPisCode" column="apSenderPisCode"/>
+            <collection property="details" ofType="com.gerp.dartachalani.dto.DlApprovalDetailPojo">
+                <id property="detailsId" column="ad_id"/>
+                <result property="description" column="ad_description"/>
+                <result property="detailsStatus" column="ad_status"/>
+                <result property="detailsIsActive" column="ad_is_active"/>
+                <result property="createdDate" column="ad_created_date"/>
+                <result property="createdDateNp" column="ad_created_date_np"/>
+            </collection>
+        </collection>
+
+    </resultMap>
+    <select id="getAllDispatch" resultMap="dispatchLetterResponsePojo">
+        select
+        dl.id,dl.dispatch_no,dl.sender_pis_code,dl.signee,dl.letter_privacy,dl.content,dl.letter_priority,dl.receiver_type,
+        dl.subject,dl.dispatch_date_en,dl.is_draft,dl.dispatch_date_np as dispatchDateNp, dl.status as status,
+        dl.remarks as remarks, dl.delegated_id as dl_delegated_id,
+        dl from dispatch_letter dl
+
+        where is_draft=false and dl.is_active=true
+        <if test="#{officeHeadPis}==#{pisCode}">
+            and dl.sender_office_code=#{officeCode}
+            and dl.status='FN'
+        </if>
+        <if test="#{officeHeadPis} != #{pisCode}">
+            and dl.sender_pis_code=#{pisCode}
+        </if>
+        order by dl.id desc
+
+    </select>
+
+    <select id="filterData" resultMap="dispatchLetterResponsePojo">
+        select distinct * from (
+        select DISTINCT
+        dl.id,dl.dispatch_no,dl.sender_pis_code,dl.signee,dl.letter_privacy,dl.content,dl.letter_priority,dl.receiver_type,
+        dl.subject,dl.dispatch_date_en,dl.is_draft,dl.dispatch_date_np as dispatchDateNp, dl.status as status,
+        dl.remarks as remarks, dl.referencef_code as referenceCode,dl.created_date, dl.delegated_id as dl_delegated_id,
+        dl.last_modified_date, dl.is_important as dl_is_important,
+        dlr.last_modified_date as l_m_d,
+        dlr.created_date as c_d,
+        <choose>
+            <when test="searchField.isDraft != null and searchField.isDraft">
+                1 as row_num
+            </when>
+            <otherwise>
+                ROW_NUMBER () OVER (
+                partition by dlr.dispatch_id ORDER by
+                <choose>
+                    <when test="searchField.senderPisCode != null">
+                        dlr.created_date
+                    </when>
+                    <when test="searchField.receiverPisCode != null">
+                        <choose>
+                            <when test="searchField.favourite !=null and searchField.favourite">
+                                dlr.last_modified_date
+                            </when>
+                            <otherwise>
+                                dlr.created_date
+                            </otherwise>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        dlr.created_date
+                    </otherwise>
+                </choose>
+                desc nulls last
+                ) as row_num
+            </otherwise>
+        </choose>
+
+        from dispatch_letter dl
+        left join dispatch_letter_review dlr on dlr.dispatch_id = dl.id
+        left join dispatch_letter_receiver_internal dlri on dlri.dispatch_letter_id = dl.id
+        left join dispatch_letter_receiver_external dlre on dlre.dispatch_letter_id = dl.id
+        left join draft_share ds on ds.dispatch_id = dl.id
+        where dl.is_active = true
+
+        <choose>
+            <when test="searchField.isApprover != null and searchField.isApprover">
+                <if test="searchField.pisCode != null and searchField.appSectionCode != null">
+                    and ((dl.sender_pis_code in (#{searchField.pisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    ) and dl.sender_section_code =
+                    #{searchField.appSectionCode})
+                    or (dlr.receiver_pis_code in (#{searchField.pisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    ) and dlr.receiver_section_code =
+                    #{searchField.appSectionCode})
+                    or (dlr.sender_pis_code in ( #{searchField.pisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    ) and dlr.sender_section_code =
+                    #{searchField.appSectionCode}))
+                </if>
+            </when>
+            <otherwise>
+                <if test="searchField.receiverPisCode != null">
+                    and dlr.receiver_pis_code in ( #{searchField.receiverPisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    )
+
+                    <if test="searchField.isActive != null">
+                        and dlr.is_active = #{searchField.isActive}
+                    </if>
+
+                    <if test="searchField.forwardedFromDate != null and searchField.forwardedToDate != null">
+                        and dlr.created_date between to_timestamp(CONCAT(#{searchField.forwardedFromDate}, ' ',
+                        '00:00:00'),
+                        'YYYY-MM-DD
+                        HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.forwardedToDate}, ' ', '23:59:59'),
+                        'YYYY-MM-DD
+                        HH24:MI:SS')
+                    </if>
+                </if>
+            </otherwise>
+        </choose>
+
+        <if test="officeCode != null">
+            and dl.sender_office_code = #{officeCode}
+        </if>
+
+        <if test="pisCode != null">
+            <choose>
+                <when test="searchField.isDraft != null and searchField.isDraft">
+                    and ((dl.sender_pis_code in (#{pisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    ) and dl.sender_section_code = #{searchField.sectionCode} ) or ((ds.receiver_pis_code in (#{pisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    )) and ds.is_active = true and ds.receiver_section_code =
+                    #{searchField.sectionCode}))
+                </when>
+                <otherwise>
+                    and dl.sender_pis_code in (#{pisCode}
+                    <if test="!previousPisCode.isEmpty()">
+                        ,
+                        <foreach item="item" index="index" collection="previousPisCode"
+                                 separator=",">
+                            #{item}
+                        </foreach>
+                    </if>
+                    ) and dl.sender_section_code = #{searchField.sectionCode}
+                </otherwise>
+            </choose>
+        </if>
+
+        <if test="searchField.subject != null">
+            and dl.subject ILIKE CONCAT('%', #{searchField.subject},'%')
+        </if>
+
+        <if test="searchField.dispatchNo != null">
+            and dl.dispatch_no LIKE CONCAT('%', #{searchField.dispatchNo},'%')
+        </if>
+
+        <if test="searchField.status != null">
+            and dl.status = #{searchField.status}
+        </if>
+
+        <if test="searchField.fromDate != null and searchField.toDate != null">
+            and dl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and dl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField.receivedType != null">
+            and dl.receiver_type = #{searchField.receiverType}
+        </if>
+
+        <if test="searchField.fiscalYearCode != null">
+            and dl.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField.status != null">
+            and dl.status = #{searchField.status}
+        </if>
+
+        <if test="searchField.letterPriority != null">
+            and dl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField.letterPrivacy != null">
+            and dl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField.isDraft != null">
+            and dl.is_draft = #{searchField.isDraft}
+        </if>
+
+        <if test="searchField.dispatchReceiverOfficeCode != null">
+            and dlri.receiver_office_code = #{searchField.dispatchReceiverOfficeCode}
+
+            <if test="searchField.dispatchReceiverPisCode != null">
+                and dlri.receiver_pis_code in (#{searchField.dispatchReceiverPisCode}
+                <if test="!previousPisCode.isEmpty()">
+                    ,
+                    <foreach item="item" index="index" collection="previousPisCode"
+                             separator=",">
+                        #{item}
+                    </foreach>
+                </if>
+                )
+            </if>
+
+            <if test="searchField.dispatchReceiverSectionCode != null">
+                and dlri.receiver_section_id = #{searchField.dispatchReceiverSectionCode}
+            </if>
+
+        </if>
+
+        <if test="searchField.externalReceiver != null">
+            and dlre.receiver_name ILIKE CONCAT('%', #{searchField.externalReceiver}, '%')
+        </if>
+
+        <if test="searchField.receiverSectionCode != null">
+            and dlr.receiver_section_code = #{searchField.receiverSectionCode}
+        </if>
+
+        <if test="searchField.senderPisCode != null">
+            and dlr.sender_pis_code in ( #{searchField.senderPisCode}
+            <if test="!previousPisCode.isEmpty()">
+                ,
+                <foreach item="item" index="index" collection="previousPisCode"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            )
+        </if>
+
+        <if test="searchField.senderSectionCode != null">
+            and dlr.sender_section_code = #{searchField.senderSectionCode}
+        </if>
+
+        <if test="searchField.isImportant != null">
+            and dlr.is_important = #{searchField.isImportant}
+        </if>
+
+        <choose>
+            <when test="searchField.isArchive != null">
+                and dl.is_archive = #{searchField.isArchive}
+            </when>
+            <otherwise>
+                and dl.is_archive = false
+            </otherwise>
+        </choose>
+
+        union all
+        select DISTINCT
+        dl.id,dl.dispatch_no,dl.sender_pis_code,dl.signee,dl.letter_privacy,dl.content,dl.letter_priority,dl.receiver_type,
+        dl.subject,dl.dispatch_date_en,dl.is_draft,dl.dispatch_date_np as dispatchDateNp, dl.status as status,
+        dl.remarks as remarks, dl.referencef_code as referenceCode,dl.created_date, dl.delegated_id as dl_delegated_id,
+        dl.last_modified_date, dl.is_important as dl_is_important,
+        dl.last_modified_date_imp as l_m_d ,
+        dl.created_date as c_d,
+        1 as row_num
+        from dispatch_letter dl
+        left join dispatch_letter_review dlr on dlr.dispatch_id = dl.id
+        left join dispatch_letter_receiver_internal dlri on dlri.dispatch_letter_id = dl.id
+        left join dispatch_letter_receiver_external dlre on dlre.dispatch_letter_id = dl.id
+        where dl.is_active = true and #{searchField.favourite} = true and dl.is_important = true and dl.is_archive = false
+        <if test="searchField.receiverPisCode!=null">
+            and dl.sender_pis_code in (#{searchField.receiverPisCode}
+            <if test="!previousPisCode.isEmpty()">
+                ,
+                <foreach item="item" index="index" collection="previousPisCode"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            )
+        </if>
+        <if test="searchField.receiverSectionCode!=null">
+            and dl.sender_section_code = #{searchField.receiverSectionCode}
+        </if>
+        <if test="officeCode != null">
+            and dl.sender_office_code = #{officeCode}
+        </if>
+        ) test where test.row_num = 1
+
+        <choose>
+            <when test="searchField.orderBy != null">
+                order by
+                <choose>
+                    <when test="searchField.orderBy == 1">
+                        test.letter_privacy
+                    </when>
+                    <when test="searchField.orderBy == 2">
+                        test.letter_priority
+                    </when>
+                    <when test="searchField.orderBy == 3">
+                        test.subject
+                    </when>
+                    <when test="searchField.orderBy == 4">
+                        test.status
+                    </when>
+                    <when test="searchField.orderBy == 5">
+                        test.created_date
+                    </when>
+                    <when test="searchField.orderBy == 8">
+                        test.dispatch_no
+                    </when>
+                    <when test="searchField.orderBy == 9">
+                        test.dispatch_date_en
+                    </when>
+
+                    <otherwise>
+                        test.created_date
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="searchField.orderType == 0">
+                        ASC
+                    </when>
+                    <otherwise>
+                        DESC
+                    </otherwise>
+                </choose>
+
+            </when>
+            <otherwise>
+                <choose>
+                    <when test="searchField.status != null and searchField.status.equals('A')">
+                        order by test.last_modified_date desc
+                    </when>
+                    <when test="searchField.receiverPisCode != null">
+                        <choose>
+                            <when test="searchField.favourite !=null and searchField.favourite">
+                                order by test.l_m_d desc
+                            </when>
+                            <otherwise>
+                                order by test.c_d desc
+                            </otherwise>
+                        </choose>
+                    </when>
+                    <when test="searchField.isDraft != null">
+                        order by test.created_date desc
+                    </when>
+                    <when test="searchField.senderPisCode != null">
+                        order by test.status desc, test.c_d desc
+                    </when>
+                    <otherwise>
+                        order by test.last_modified_date desc
+                    </otherwise>
+                </choose>
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="getArchiveChalani" resultMap="dispatchLetterResponsePojo">
+        select DISTINCT
+        dl.id,dl.dispatch_no,dl.sender_pis_code,dl.signee,dl.letter_privacy,dl.content,dl.letter_priority,dl.receiver_type,
+        dl.subject,dl.dispatch_date_en,dl.is_draft,dl.dispatch_date_np as dispatchDateNp, dl.status as status,
+        dl.remarks as remarks, dl.referencef_code as referenceCode,dl.created_date, dl.delegated_id as dl_delegated_id,
+        dl.last_modified_date, dl.is_important as dl_is_important
+        from dispatch_letter dl
+        left join dispatch_letter_review dlr on dlr.dispatch_id = dl.id
+        left join dispatch_letter_receiver_internal dlri on dlri.dispatch_letter_id = dl.id
+        left join dispatch_letter_receiver_external dlre on dlre.dispatch_letter_id = dl.id
+        where dl.is_active = false and dl.sender_office_code = #{officeCode} and dl.sender_section_code = #{sectionCode}
+        and dl.sender_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        <choose>
+            <when test="searchField != null and searchField.orderBy != null">
+                order by
+                <choose>
+                    <when test="searchField.orderBy == 1">
+                        letter_privacy
+                    </when>
+                    <when test="searchField.orderBy == 2">
+                        letter_priority
+                    </when>
+                    <when test="searchField.orderBy == 3">
+                        subject
+                    </when>
+                    <when test="searchField.orderBy == 4">
+                        status
+                    </when>
+                    <when test="searchField.orderBy == 5">
+                        created_date
+                    </when>
+                    <when test="searchField.orderBy == 8">
+                        dispatch_no
+                    </when>
+                    <when test="searchField.orderBy == 9">
+                        dispatch_date_en
+                    </when>
+
+                    <otherwise>
+                        l_m_d
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="searchField.orderType == 0">
+                        ASC
+                    </when>
+                    <otherwise>
+                        DESC
+                    </otherwise>
+                </choose>
+
+            </when>
+            <otherwise>
+                order by last_modified_date desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <resultMap id="referenceResultMap" type="com.gerp.dartachalani.dto.DartaChalaniGenericPojo">
+        <id property="id" column="id"/>
+        <result property="subject" column="subject"/>
+        <result property="createdDate" column="created_date"/>
+    </resultMap>
+
+    <select id="getDataForReference" resultMap="referenceResultMap">
+        select DISTINCT
+        dl.id,
+        dl.subject,
+        dl.created_date
+        from dispatch_letter dl
+        left join dispatch_letter_review dlr on dl.id = dlr.dispatch_id
+        left join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+
+        <where>
+            <if test="officeCode != null">
+                and dl.sender_office_code = #{officeCode}
+            </if>
+
+            <if test="pisCode != null and searchField.sectionCode != null">
+                and (
+                (dl.sender_pis_code = #{pisCode} and dl.sender_section_code = #{searchField.sectionCode} )
+                or
+                (dlr.receiver_pis_code = #{pisCode} and dlr.receiver_section_code = #{searchField.sectionCode})
+                or
+                (dlri.receiver_pis_code = #{pisCode} and dlri.receiver_section_id = #{searchField.sectionCode}))
+            </if>
+
+            <if test="searchField.subject != null">
+                and dl.subject ILIKE CONCAT('%', #{searchField.subject},'%')
+            </if>
+
+            <if test="searchField.chalaniNo != null">
+                and dl.dispatch_no LIKE CONCAT('%', #{searchField.chalaniNo},'%')
+            </if>
+
+            <if test="searchField.fromDate != null and searchField.toDate != null">
+                and dl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+                HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+            </if>
+
+            <if test="searchField.dispatchFrom != null and searchField.dispatchTo != null">
+                and dl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+                to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+            </if>
+
+            <if test="searchField.receivedType != null">
+                and dl.receiver_type = #{searchField.receiverType}
+            </if>
+
+            <if test="searchField.fiscalYearCode != null">
+                and dl.fiscal_year_code = #{searchField.fiscalYearCode}
+            </if>
+
+            <if test="searchField.status != null">
+                and dl.status = #{searchField.status}
+            </if>
+
+            <if test="searchField.letterPriority != null">
+                and dl.letter_priority = #{searchField.letterPriority}
+            </if>
+
+            <if test="searchField.letterPrivacy != null">
+                and dl.letter_privacy = #{searchField.letterPrivacy}
+            </if>
+
+            <if test="searchField.receiverOfficeCode != null">
+                and dlri.receiver_office_code = #{searchField.receiverOfficeCode}
+            </if>
+
+            <if test="searchField.receiverPisCode != null">
+                and dlri.receiver_pis_code = #{searchField.receiverPisCode}
+            </if>
+
+            <if test="searchField.receiverSectionCode != null">
+                and dlri.receiver_section_id = #{searchField.receiverSectionCode}
+            </if>
+
+        </where>
+        and dl.is_active = true and dl.is_draft = false and dl.status = 'A' and dl.is_archive = false
+        ORDER BY dl.id DESC
+    </select>
+
+    <resultMap id="dispatchedResponsePojoResultMap" type="com.gerp.dartachalani.dto.DispatchedResponsePojo">
+
+        <id property="id" column="id"/>
+        <result property="senderPisCode" column="sender_pis_code"/>
+        <result property="dispatchNo" column="dispatch_no"/>
+        <result property="dispatchDateEn" column="dispatch_date_en"/>
+        <result property="dispatchDateNp" column="dispatch_date_np"/>
+        <result property="subject" column="subject"/>
+        <result property="signee" column="signee"/>
+        <result property="content" column="content"/>
+        <result property="letterPriority" column="letter_priority"/>
+        <result property="letterPrivacy" column="letter_privacy"/>
+        <result property="isDraft" column="is_draft"/>
+        <result property="receiverType" column="receiver_type"/>
+        <result property="receiverType" column="receiver_type"/>
+
+    </resultMap>
+
+    <select id="getInternalLetters" resultMap="dispatchedResponsePojoResultMap">
+        select distinct dl.id,
+        dl.dispatch_no,
+        dl.sender_pis_code,
+        dl.signee,
+        dl.letter_privacy,
+        dl.content,
+        dl.letter_priority,
+        dl.receiver_type,
+        dl.subject,
+        dl.dispatch_date_en,
+        dl.is_draft,
+        dl.dispatch_date_np,
+        dl.last_modified_date as l_m_d,
+        'Dispatch' as letterType
+        from dispatch_letter dl
+        left join dispatch_letter_receiver_internal dlri on dl.id = dlri.dispatch_letter_id
+        left join signature_data sd on dl.id = sd.dispatch_letter_id
+        where dl.is_draft = false and dl.is_active=true and dl.status='A' and dlri.receiver_pis_code in (
+        <if test="!previousPisCodes.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCodes"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) and
+        dlri.completion_status = 'P' and dlri.receiver_section_id = #{sectionId}
+        and dlri.is_active = true
+
+        <if test="searchField != null and searchField.subject != null">
+            and dl.subject ILIKE CONCAT('%', #{searchField.subject}, '%')
+        </if>
+
+        <if test="searchField != null and searchField.senderPisCode != null">
+            and sd.pis_code = #{searchField.senderPisCode}
+        </if>
+
+        <if test="searchField != null and searchField.manualIsCc != null">
+            <choose>
+                <when test="searchField.manualIsCc">
+                    and dlri.tocc = true
+                </when>
+                <otherwise>
+                    and dlri.to_receiver = true;
+                </otherwise>
+            </choose>
+        </if>
+        order by l_m_d desc
+    </select>
+
+    <select id="getChalaniReportData" resultMap="dispatchLetterResponsePojo">
+        select DISTINCT
+        dl.id,dl.dispatch_no,dl.letter_privacy,dl.letter_priority,
+        dl.subject,dl.dispatch_date_en,dl.dispatch_date_np as dispatchDateNp, dl.status as status,
+        dl.referencef_code as referenceCode, dl.sender_office_code, dl.status as dl_status, dl.sender_pis_code
+        from dispatch_letter dl
+        left join dispatch_letter_review dlr on dlr.dispatch_id = dl.id
+        left join dispatch_letter_receiver_internal dlri on dlri.dispatch_letter_id = dl.id
+        left join dispatch_letter_receiver_external dlre on dlre.dispatch_letter_id = dl.id
+        where dl.is_active = true and dl.sender_office_code = #{officeCode}
+
+        <if test="searchField != null and searchField.subject != null">
+            and dl.subject ILIKE CONCAT('%', #{searchField.subject},'%')
+        </if>
+
+        <if test="searchField != null and searchField.dispatchNo != null">
+            and dl.dispatch_no = #{searchField.dispatchNo}
+        </if>
+
+        <if test="searchField != null and searchField.status != null">
+            and dl.status = #{searchField.status}
+        </if>
+
+        <if test="searchField != null and searchField.fromDate != null and searchField.toDate != null">
+            and dl.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField != null and searchField.dispatchFrom != null and searchField.dispatchTo != null">
+            and dl.dispatch_date_en between to_date(#{searchField.dispatchFrom}, 'YYYY-MM-DD') and
+            to_date(#{searchField.dispatchTo}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="searchField != null and searchField.letterPriority != null">
+            and dl.letter_priority = #{searchField.letterPriority}
+        </if>
+
+        <if test="searchField != null and searchField.letterPrivacy != null">
+            and dl.letter_privacy = #{searchField.letterPrivacy}
+        </if>
+
+        <if test="searchField != null and searchField.dispatchReceiverOfficeCode != null">
+            and dlri.receiver_office_code = #{searchField.dispatchReceiverOfficeCode}
+        </if>
+
+        <if test="searchField != null and searchField.isCc != null">
+            <choose>
+                <when test="searchField.isCc">
+                    and dlri.tocc = true
+                </when>
+                <otherwise>
+                    and dlri.to_receiver = true
+                </otherwise>
+            </choose>
+        </if>
+
+        <if test="searchField != null and searchField.sectionCodeLists != null">
+            and dl.sender_section_code in
+            <foreach item="item" index="index" collection="searchField.sectionCodeLists"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+        order by dl.id desc
+    </select>
+
+    <select id="checkApproverList" resultType="boolean">
+        select case when count(*)>0 then false else true end from dispatch_letter_review dlr where dlr.is_active = true
+        and dlr.dispatch_id = #{id}
+        and dlr.receiver_section_code = #{sectionCode} and dlr.receiver_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+    </select>
+
+    <select id="checkReviewerList" resultType="boolean">
+        select case when count(*)> 0 then false else true end from
+        (select dlr.receiver_pis_code from dispatch_letter_review dlr where dlr.is_active = true and dlr.dispatch_id =
+        #{id}
+        and dlr.receiver_section_code = #{sectionCode} and dlr.receiver_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        union all
+        select dl.sender_pis_code from dispatch_letter dl where dl.is_active = true and dl.status != 'A' and dl.id =
+        #{id}
+        and dl.sender_section_code = #{sectionCode} and dl.sender_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and dl.id not in (select dlr.dispatch_id from dispatch_letter_review dlr where dlr.is_active = true)) t
+    </select>
+
+    <select id="findActiveLetters" resultType="com.gerp.dartachalani.model.dispatch.DispatchLetterReceiverInternal">
+        select * from dispatch_letter_receiver_internal dlri
+        where dlri.dispatch_letter_id = #{dispatchLetterId}
+        and dlri.receiver_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and dlri.receiver_section_id = #{sectionId}
+        and dlri.is_active = true
+        and (dlri.tocc is null or dlri.tocc = false)
+    </select>
+
+    <select id="findActiveCCLetters" resultType="com.gerp.dartachalani.model.dispatch.DispatchLetterReceiverInternal">
+        select * from dispatch_letter_receiver_internal dlri
+        where dlri.dispatch_letter_id = #{dispatchLetterId}
+        and dlri.receiver_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and dlri.receiver_section_id = #{sectionId}
+        and dlri.is_active = true
+        and (dlri.tocc is not null or dlri.tocc = true)
+    </select>
+
+    <select id="checkIsReceiver" resultType="boolean">
+        select case when count(*)>0 then false else true end from dispatch_letter_receiver_internal dlri
+        where dlri.dispatch_letter_id = #{dispatchLetterId}
+        and dlri.receiver_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        )
+        and dlri.receiver_section_id = #{sectionId}
+    </select>
+
+    <select id="getActive" resultType="boolean">
+        SELECT case when count(*)>0 then true else false end
+        FROM dispatch_letter_review WHERE dispatch_id = #{id} AND is_active = true
+        and receiver_pis_code in (
+        <if test="!previousPisCode.isEmpty()">
+            <foreach item="item" index="index" collection="previousPisCode"
+                     separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) and receiver_section_code = #{sectionCode}
+    </select>
+
+</mapper>

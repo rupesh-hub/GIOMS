@@ -1,0 +1,15 @@
+rabbit:
+  queue-1:
+    name: email
+    route: email-key
+    exchange: email-exchange
+  queue-2:
+    name: notification
+    route: notification-key
+    exchange: notification-exchange
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:rabbitmq}
+    password: ${RABBITMQ_PASSWORD:rabbitmq}

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.orgtransfer.OrgTransferRequestMapper">
+    <resultMap id="orgTransferRequestPojo"
+               type="com.gerp.usermgmt.pojo.organization.orgtransfer.OrgTransferRequestPojo">
+        <id property="id" column="id"/>
+        <result property="transferStatus" column="transfer_status"/>
+        <result property="acknowledged" column="acknowledged"/>
+        <result property="fromSectionId" column="from_section_id"/>
+        <result property="approvedDateEn" column="approved_date_en"/>
+        <result property="approvedDateNp" column="approved_date_np"/>
+        <result property="requestedDateEn" column="requested_date_en"/>
+        <result property="requestedDateNp" column="requested_date_np"/>
+        <result property="requestedDateNp" column="requested_date_np"/>
+
+        <result property="expectedJoinDateEn" column="expected_join_date_en"/>
+        <result property="expectedJoinDateNp" column="expected_join_date_np"/>
+
+        <result property="transferType" column="transfer_type"/>
+        <result property="remark" column="remark"/>
+        <collection property="employee" ofType="com.gerp.shared.pojo.employee.EmployeeMinimalPojo">
+            <id property="pisCode" column="employee_pis_code"/>
+            <result property="employeeNameEn" column="employee_name_en"/>
+            <result property="email" column="employee_email"/>
+            <result property="employeeNameNp" column="employee_name_np"/>
+        <collection property="employeeOffice" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="employee_office_code"/>
+            <result property="name" column="employee_office_name_en"/>
+            <result property="nameN" column="employee_office_name_np"/>
+        </collection>
+            <collection property="section" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="employee_section_code"/>
+            <result property="name" column="employee_section_name_en"/>
+            <result property="nameN" column="employee_section_name_np"/>
+        </collection>
+            <collection property="functionalDesignation" ofType="com.gerp.shared.pojo.IdNamePojo">
+                <id property="code" column="employee_designation_code"/>
+                <result property="name" column="employee_designation_name_en"/>
+                <result property="nameN" column="employee_designation_name_np"/>
+            </collection>
+        </collection>
+        <collection property="targetOffice" ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="target_office_code"/>
+            <result property="name" column="target_office_name_en"/>
+            <result property="nameN" column="target_office_name_np"/>
+            <result property="officeDistrictCode" column="target_district_code"/>
+        </collection>
+
+
+    </resultMap>
+
+    <select id="searchCurrentOfficeTransfersPaginated"
+            resultMap="orgTransferRequestPojo">
+        select otr.id,otr.transfer_status, otr.approved_date_en, otr.approved_date_np,
+               otr.requested_date_en, otr.requested_date_np,otr.from_section_id,otr.expected_join_date_en,
+        otr.expected_join_date_np,
+               otr.remark,otr.transfer_type,otr.acknowledged,
+               case
+                   when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+               e.pis_code as employee_pis_code,
+               e.email_address,
+               fd.code as employee_designation_code,
+               fd.name_en as employee_designation_name_en,
+               fd.name_np as employee_designation_name_np,
+               eo.code as employee_office_code,
+               eo.name_en as employee_office_name_en,
+               eo.name_np as employee_office_name_np,
+        ss.id as employee_section_code,
+        ss.name_en as employee_section_name_en,
+        ss.name_np as employee_section_name_np,
+
+
+
+
+        targetoffice.code as target_office_code,
+        targetoffice.name_en as target_office_name_en,
+        targetoffice.name_np as target_office_name_np,
+        case
+        when otr.transfer_status = 'P' then 0
+        when (otr.transfer_status = 'C') then 1
+        when (otr.transfer_status = 'A') then 2
+        when (otr.transfer_status = 'R') then 3 else 4
+        end as transfer_order
+
+
+        from org_transfer_request otr
+                 inner join employee e on e.pis_code = otr.employee_pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 inner join office targetoffice  on targetoffice.code = otr.target_office_code
+                 inner join office eo on eo.code = e.office_code
+        left join section_designation sd on e.pis_code = sd.employee_pis_code and sd.is_active = true
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        where otr.requested_office_code = #{officeCode}
+
+            <if test="searchField.transferStatus!=null and searchField.transferStatus!=''">
+                and  otr.transfer_status = #{searchField.transferStatus}
+            </if>
+        <if test="searchField.nameEn!=null and searchField.nameEn!=''">
+            <bind name="pattern_en" value="searchField.nameEn + '%'"/>
+            and(
+            case
+            WHEN  COALESCE(e.middle_name_en, '') != '' then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+            else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+            OR
+            case WHEN  COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+            else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+        </if>
+        order by transfer_order ,otr.created_date desc
+
+    </select>
+    <select id="transferDetail"
+            resultMap="orgTransferRequestPojo">
+        select
+               otr.id,otr.acknowledged,otr.from_section_id,
+               otr.transfer_status, otr.approved_date_en, otr.approved_date_np,
+               otr.requested_date_en, otr.requested_date_np,
+               otr.remark,otr.expected_join_date_en,otr.expected_join_date_np,otr.transfer_type,
+               case
+                   when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+               e.pis_code as employee_pis_code,
+               e.email_address,
+               fd.code as employee_designation_code,
+               fd.name_en as employee_designation_name_en,
+               fd.name_np as employee_designation_name_np,
+               eo.code as employee_office_code,
+               eo.name_en as employee_office_name_en,
+               eo.name_np as employee_office_name_np,
+
+               ss.id as employee_section_code,
+               ss.name_en as employee_section_name_en,
+               ss.name_np as employee_section_name_np,
+
+
+
+               targetoffice.code as target_office_code,
+               targetoffice.name_en as target_office_name_en,
+               targetoffice.name_np as target_office_name_np,
+               targetoffice.district_code as target_district_code
+
+
+        from org_transfer_request otr
+                 inner join employee e on e.pis_code = otr.employee_pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 inner join office targetoffice  on targetoffice.code = otr.target_office_code
+                 inner join office eo on eo.code = e.office_code
+                 left join section_designation sd on e.pis_code = sd.employee_pis_code and sd.is_active = true
+                  left join section_subsection ss on sd.section_subsection_id = ss.id
+        where otr.id = #{id}
+
+    </select>
+    <select id="searchAllOfficeTransfersPaginated"
+            resultMap="orgTransferRequestPojo">
+        select otr.id,otr.transfer_status, otr.approved_date_en, otr.approved_date_np,
+        otr.requested_date_en, otr.requested_date_np,otr.transfer_type,otr.acknowledged,
+        otr.remark,otr.from_section_id,otr.expected_join_date_en,otr.expected_join_date_np,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+        e.pis_code as employee_pis_code,
+        e.email_address,
+        fd.code as employee_designation_code,
+        fd.name_en as employee_designation_name_en,
+        fd.name_np as employee_designation_name_np,
+        eo.code as employee_office_code,
+        eo.name_en as employee_office_name_en,
+        eo.name_np as employee_office_name_np,
+
+        ss.id as employee_section_code,
+        ss.name_en as employee_section_name_en,
+        ss.name_np as employee_section_name_np,
+
+
+
+        targetoffice.code as target_office_code,
+        targetoffice.name_en as target_office_name_en,
+        targetoffice.name_np as target_office_name_np,
+
+        case
+        when otr.transfer_status = 'P' then 0
+        when (otr.transfer_status = 'C') then 1
+        when (otr.transfer_status = 'A') then 2
+        when (otr.transfer_status = 'R') then 3 else 4
+        end as transfer_order
+
+
+        from org_transfer_request otr
+        inner join employee e on e.pis_code = otr.employee_pis_code
+        left join functional_designation fd on e.designation_code = fd.code
+        inner join office targetoffice  on targetoffice.code = otr.target_office_code
+        inner join office eo on eo.code = e.office_code
+        left join section_designation sd on e.pis_code = sd.employee_pis_code and sd.is_active = true
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        <where>
+            <if test="searchField.transferStatus!=null and searchField.transferStatus!=''">
+                otr.transfer_status = #{searchField.transferStatus}
+            </if>
+
+            <if test="searchField.targetOfficeCode!=null and searchField.targetOfficeCode!=''">
+                and otr.target_office_code = #{searchField.targetOfficeCode}
+            </if>
+            <if test="searchField.requestedOfficeCode!=null and searchField.requestedOfficeCode!=''">
+                and otr.requested_office_code = #{searchField.requestedOfficeCode}
+            </if>
+            <if test="searchField.nameEn!=null and searchField.nameEn!=''">
+                <bind name="pattern_en" value="searchField.nameEn + '%'"/>
+                and(
+                case
+                WHEN  COALESCE(e.middle_name_en, '') != '' then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                OR
+                case WHEN  COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+            </if>
+        </where>
+        order by transfer_order ,otr.last_modified_date desc
+
+    </select>
+    <select id="pendingTransferOfEmployee"
+            resultType="com.gerp.usermgmt.pojo.organization.orgtransfer.OrgTransferRequestPojo">
+        select otr.id, otr.employee_pis_code, otr.requested_office_code,otr.acknowledged,otr.from_section_id,
+               otr.expected_join_date_en,otr.expected_join_date_np,otr.expected_join_date_np,otr.transfer_type,
+               otr.target_office_code from org_transfer_request otr where otr.transfer_status='P' and otr.employee_pis_code = #{pisCode}
+    </select>
+</mapper>

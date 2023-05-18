@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.dartachalani.mapper.KasamuMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.dartachalani.dto.kasamu.KasamuResponsePojo">
+
+        <id property="id" column="id"/>
+        <result property="priority" column="letter_priority"/>
+        <result property="privacy" column="letter_privacy"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="sectionCode" column="section_code"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="employeePisCode" column="employee_pis_code"/>
+        <result property="employeeSectionCode" column="employee_section_code"/>
+        <result property="employeeOfficeCode" column="employee_office_code"/>
+        <result property="registrationNo" column="registration_no"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="subject" column="subject"/>
+        <result property="status" column="completion_status"/>
+        <result property="isExternalEmployee" column="is_external_employee"/>
+
+        <collection property="kasamuState" ofType="com.gerp.dartachalani.dto.kasamu.KasamuStateResponsePojo">
+            <result property="id" column="ks_id"/>
+            <result property="receiverPisCode" column="receiver_pis_code"/>
+            <result property="receiverSectionCode" column="receiver_section_code"/>
+            <result property="senderPisCode" column="sender_pis_code"/>
+            <result property="senderSectionCode" column="sender_section_code"/>
+            <result property="description" column="description"/>
+            <result property="createdDate" column="state_created_date"/>
+            <result property="status" column="ks_completion_status"/>
+            <result property="isCc" column="is_cc"/>
+            <result property="isSeen" column="is_seen"/>
+            <result property="isReverted" column="is_reverted"/>
+            <result property="isImportant" column="is_important"/>
+            <result property="delegatedId" column="delegated_id"/>
+
+            <collection property="comments" ofType="com.gerp.dartachalani.dto.kasamu.KasamuCommentPojo">
+                <result property="comment" column="comment"/>
+                <result property="createdDate" column="msg_created_date"/>
+            </collection>
+        </collection>
+
+        <collection property="document" ofType="com.gerp.dartachalani.dto.kasamu.KasamuDocumentPojo">
+            <result property="id" column="document_id"/>
+            <result property="name" column="document_name"/>
+            <result property="isMain" column="document_is_main"/>
+            <result property="fileSize" column="file_size"/>
+            <result property="documentId" column="document_id"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="getCreatedKasamuList" resultMap="baseResultMap">
+        select
+        distinct
+        k.id,
+        k.letter_privacy,
+        k.letter_priority,
+        k.pis_code,
+        k.section_code,
+        k.office_code,
+        k.employee_pis_code,
+        k.employee_section_code,
+        k.employee_office_code,
+        k.registration_no,
+        k.created_date,
+        k.subject,
+        k.completion_status,
+        k.is_external_employee
+        from kasamu k
+        left join kasamu_state ks on k.id = ks.kasamu_id
+        left join kasamu_comment kc on ks.id = kc.kasamu_state_id
+        left join external_kasamu_employee eke on k.id = eke.kasamu_id
+        where k.pis_code = #{pisCode} and k.section_code = #{sectionCode}
+        <if test="searchField != null and searchField.fiscalYearCode != null">
+            and k.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+        <if test="searchField != null and searchField.employeePisCode != null">
+            and k.employee_pis_code = #{searchField.employeePisCode}
+        </if>
+
+        <if test="searchField != null and searchField.registrationNo != null">
+            and k.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField != null and searchField.fromDate != null and searchField.toDate != null">
+            and k.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField != null and searchField.subjectType != null">
+            and k.subject_type = #{searchField.subjectType}
+        </if>
+        <if test="searchField != null and searchField.externalName != null">
+            and eke.name ilike concat('%', #{searchField.externalName}, '%')
+        </if>
+
+        <if test="searchField != null and searchField.subject != null">
+            and k.subject ilike concat('%', #{searchField.subject}, '%')
+        </if>
+
+        order by k.id desc
+    </select>
+
+    <select id="getFinalizedKasamuList" resultMap="baseResultMap">
+        select
+        distinct
+        k.id,
+        k.letter_privacy,
+        k.letter_priority,
+        k.pis_code,
+        k.section_code,
+        k.office_code,
+        k.employee_pis_code,
+        k.employee_section_code,
+        k.employee_office_code,
+        k.registration_no,
+        k.created_date,
+        k.subject,
+        k.completion_status,
+        k.is_external_employee
+        from kasamu k
+        left join kasamu_state ks on k.id = ks.kasamu_id
+        left join kasamu_comment kc on ks.id = kc.kasamu_state_id
+        left join external_kasamu_employee eke on k.id = eke.kasamu_id
+        where ks.receiver_pis_code = #{pisCode} and ks.receiver_section_code = #{sectionCode} and k.completion_status =
+        'FN'
+        <if test="searchField != null and searchField.fiscal_year_code != null">
+            and k.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+        <if test="searchField != null and searchField.employeePisCode != null">
+            and k.employee_pis_code = #{searchField.employeePisCode}
+        </if>
+
+        <if test="searchField != null and searchField.registrationNo != null">
+            and k.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField != null and searchField.fromDate != null and searchField.toDate != null">
+            and k.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField != null and searchField.subjectType != null">
+            and k.subject_type = #{searchField.subjectType}
+        </if>
+        <if test="searchField != null and searchField.externalName != null">
+            and eke.name ilike concat('%', #{searchField.externalName}, '%')
+        </if>
+
+        <if test="searchField != null and searchField.subject != null">
+            and k.subject ilike concat('%', #{searchField.subject}, '%')
+        </if>
+        order by k.id desc
+    </select>
+
+    <select id="getEmployeeKasamuList" resultMap="baseResultMap">
+        select
+        distinct
+        k.id,
+        k.letter_privacy,
+        k.letter_priority,
+        k.pis_code,
+        k.section_code,
+        k.office_code,
+        k.employee_pis_code,
+        k.employee_section_code,
+        k.employee_office_code,
+        k.registration_no,
+        k.created_date,
+        k.subject,
+        k.completion_status,
+        k.is_external_employee
+        from kasamu k
+        left join kasamu_state ks on k.id = ks.kasamu_id
+        left join kasamu_comment kc on ks.id = kc.kasamu_state_id
+        left join external_kasamu_employee eke on k.id = eke.kasamu_id
+        where k.employee_pis_code = #{employeePisCode} and k.employee_section_code = #{employeeSectionCode}
+        <if test="searchField != null and searchField.fiscal_year_code != null">
+            and k.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+        <if test="searchField != null and searchField.employeePisCode != null">
+            and k.employee_pis_code = #{searchField.employeePisCode}
+        </if>
+
+        <if test="searchField != null and searchField.registrationNo != null">
+            and k.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField != null and searchField.fromDate != null and searchField.toDate != null">
+            and k.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField != null and searchField.subjectType != null">
+            and k.subject_type = #{searchField.subjectType}
+        </if>
+        <if test="searchField != null and searchField.externalName != null">
+            and eke.name ilike concat('%', #{searchField.externalName}, '%')
+        </if>
+        <if test="searchField != null and searchField.subject != null">
+            and k.subject ilike concat('%', #{searchField.subject}, '%')
+        </if>
+        order by k.id desc
+    </select>
+
+    <select id="getKasamuInboxList" resultMap="baseResultMap">
+        select
+        distinct
+        k.id,
+        k.letter_privacy,
+        k.letter_priority,
+        k.pis_code,
+        k.section_code,
+        k.office_code,
+        k.employee_pis_code,
+        k.employee_section_code,
+        k.employee_office_code,
+        k.registration_no,
+        k.created_date,
+        k.subject,
+        k.completion_status,
+        k.is_external_employee
+        from kasamu k
+        left join kasamu_state ks on k.id = ks.kasamu_id
+        left join kasamu_comment kc on ks.id = kc.kasamu_state_id
+        left join external_kasamu_employee eke on k.id = eke.kasamu_id
+        where ks.receiver_pis_code = #{receiverPisCode} and ks.receiver_section_code = #{receiverSectionCode} and
+        k.completion_status != 'FN'
+        <if test="searchField != null and searchField.fiscal_year_code != null">
+            and k.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+        <if test="searchField != null and searchField.employeePisCode != null">
+            and k.employee_pis_code = #{searchField.employeePisCode}
+        </if>
+
+        <if test="searchField != null and searchField.registrationNo != null">
+            and k.registration_no = #{searchField.registrationNo}
+        </if>
+
+        <if test="searchField != null and searchField.fromDate != null and searchField.toDate != null">
+            and k.created_date between to_timestamp(CONCAT(#{searchField.fromDate}, ' ', '00:00:00'), 'YYYY-MM-DD
+            HH24:MI:SS') and to_timestamp(CONCAT(#{searchField.toDate}, ' ', '23:59:59'), 'YYYY-MM-DD HH24:MI:SS')
+        </if>
+
+        <if test="searchField != null and searchField.subjectType != null">
+            and k.subject_type = #{searchField.subjectType}
+        </if>
+        <if test="searchField != null and searchField.externalName != null">
+            and eke.name ilike concat('%', #{searchField.externalName}, '%')
+        </if>
+        <if test="searchField != null and searchField.subject != null">
+            and k.subject ilike concat('%', #{searchField.subject}, '%')
+        </if>
+        order by k.id desc
+    </select>
+
+    <select id="getPisCodeInboxList" resultType="java.lang.String">
+        select distinct employee_pis_code
+        from kasamu k
+        left join kasamu_state ks on k.id = ks.kasamu_id
+        where ks.receiver_pis_code = #{receiverPisCode} and ks.receiver_section_code = #{receiverSectionCode} and
+        k.completion_status != 'FN'
+        <if test="searchField != null and searchField.fiscalYearCode != null">
+            and k.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+    </select>
+
+    <select id="getExternalEmployeeInboxList" resultType="java.lang.String">
+        select distinct eke.name
+        from kasamu k
+        left join kasamu_state ks on k.id = ks.kasamu_id
+        left join external_kasamu_employee eke on k.id = eke.kasamu_id
+        where ks.receiver_pis_code = #{receiverPisCode} and ks.receiver_section_code = #{receiverSectionCode} and
+        k.completion_status != 'FN'
+        <if test="searchField != null and searchField.fiscalYearCode != null">
+            and k.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+    </select>
+
+    <select id="getPisCodeCreatedList" resultType="java.lang.String">
+        select distinct employee_pis_code
+        from kasamu k
+        where k.pis_code = #{pisCode} and k.section_code = #{sectionCode}
+        <if test="searchField != null and searchField.fiscalYearCode != null">
+            and k.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+    </select>
+
+    <select id="getExternalEmployeeCreatedList" resultType="java.lang.String">
+        select distinct eke.name
+        from kasamu k
+        left join external_kasamu_employee eke on k.id = eke.kasamu_id
+        where k.pis_code = #{pisCode} and k.section_code = #{sectionCode}
+        <if test="searchField != null and searchField.fiscalYearCode != null">
+            and k.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+    </select>
+
+    <select id="getPisCodeFinalizedList" resultType="java.lang.String">
+        select distinct employee_pis_code
+        from kasamu k
+        left join kasamu_state ks on k.id = ks.kasamu_id
+        where ks.receiver_pis_code = #{receiverPisCode} and ks.receiver_section_code = #{receiverSectionCode} and
+        k.completion_status = 'FN'
+        <if test="searchField != null and searchField.fiscalYearCode != null">
+            and k.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+    </select>
+
+    <select id="getExternalEmployeeFinalizedList" resultType="java.lang.String">
+        select distinct employee_pis_code
+        from kasamu k
+        left join kasamu_state ks on k.id = ks.kasamu_id
+        left join external_kasamu_employee eke on k.id = eke.kasamu_id
+        where ks.receiver_pis_code = #{receiverPisCode} and ks.receiver_section_code = #{receiverSectionCode} and
+        k.completion_status = 'FN'
+        <if test="searchField != null and searchField.fiscalYearCode != null">
+            and k.fiscal_year_code = #{searchField.fiscalYearCode}
+        </if>
+
+    </select>
+
+</mapper>

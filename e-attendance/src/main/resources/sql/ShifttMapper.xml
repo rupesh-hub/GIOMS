@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.ShiftMapper">
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.shift.ShiftPojo">
+        <id property="id" column="id" />
+        <result property="nameEn" column="name_en" />
+        <result property="nameNp" column="name_np" />
+        <result property="fromDateEn" column="from_date_en" />
+        <result property="toDateEn" column="to_date_en" />
+        <result property="fromDateNp" column="from_date_np" />
+        <result property="toDateNp" column="to_date_np" />
+        <result property="isDefault" column="is_default" />
+        <collection property="days" column="sd_id" ofType="com.gerp.attendance.Pojo.shift.ShiftDayPojo">
+<!--            <id property="id" column="id" />-->
+            <result property="day" column="sd_day" />
+            <result property="isWeekend" column="sd_is_weekend" />
+            <collection property="shiftTimes" column="st_id" ofType="com.gerp.attendance.Pojo.shift.ShiftTimePojo">
+<!--                <id property="id" column="st_id" />-->
+                <result property="checkinTime" column="st_checkin_time" />
+                <result property="checkoutTime" column="st_checkout_time" />
+                <result property="halfTime" column="st_half_time" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <resultMap id="baseGetAll" type="com.gerp.attendance.Pojo.shift.ShiftPojo">
+        <id property="id" column="id" />
+        <result property="nameEn" column="name_en" />
+        <result property="nameNp" column="name_np" />
+        <result property="fromDateEn" column="from_date_en" />
+        <result property="toDateEn" column="to_date_en" />
+        <result property="fromDateNp" column="from_date_np" />
+        <result property="toDateNp" column="to_date_np" />
+        <result property="isDefault" column="is_default" />
+        <result property="isActive" column="is_active" />
+        <collection property="employeeGroup" ofType="com.gerp.attendance.Pojo.shift.MappingCount">
+            <result property="employeeCount" column="employee_count" />
+            <result property="groupCount" column="group_count" />
+        </collection>
+    </resultMap>
+
+    <select id="findAllByOfficeCode" resultMap="baseGetAll">
+        select s.id,
+               s.name_en,
+               s.name_np,
+               s.from_date_en,
+               s.to_date_en,
+               s.from_date_np,
+               s.to_date_np,
+               s.is_default,
+               s.is_active,
+               count(distinct sec.id) as employee_count,
+               count(distinct segc.id) as group_count
+        from shift s
+                 left join shift_employee_config sec on s.id = sec.shift_id
+                 left join shift_employee_group_config segc on s.id = segc.shift_id
+        where
+        case when s.is_default = true then office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        else
+        office_code = #{officeCodeSelf} end
+        group by s.id,s.created_date
+        order by s.created_date
+    </select>
+
+    <select id="filterData" resultMap="baseGetAll">
+        select s.id,
+        s.name_en,
+        s.name_np,
+        s.from_date_en,
+        s.to_date_en,
+        s.from_date_np,
+        s.to_date_np,
+        s.is_default,
+        s.is_active,
+        count(distinct sec.id)  as employee_count,
+        count(distinct segc.id) as group_count
+        from shift s
+        left join shift_employee_config sec on s.id = sec.shift_id
+        left join shift_employee_group_config segc on s.id = segc.shift_id
+        where
+          case when s.is_default = true then office_code in
+        <foreach item="item" index="index" collection="officeCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        else
+            office_code = #{officeCodeSelf} end
+
+        <if test="fiscalYear != null">
+            and s.fiscal_year = #{fiscalYear}
+        </if>
+
+        <if test="searchField != null">
+
+            <if test="(searchField.status != null)">
+                and s.is_active = #{searchField.status}
+            </if>
+
+            <if test="(searchField.groupId != null and searchField.groupId != '')">
+                and segc.shift_employee_group_id = #{searchField.groupId}
+            </if>
+
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                and sec.pis_code = #{searchField.pisCode}
+            </if>
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and ((s.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR s.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD') ))
+            </if>
+
+            <if test="(searchField.nameEn != null and searchField.nameEn != '')">
+                <bind name="name_en_p" value="'%' + searchField.nameEn + '%'" />
+                and upper(s.name_en) like upper(#{name_en_p})
+            </if>
+
+            <if test="(searchField.nameNp != null and searchField.nameNp != '')">
+                <bind name="name_np_p" value="'%' + searchField.nameNp + '%'" />
+                and s.name_np like #{name_np_p}
+            </if>
+
+            <if test="searchField.name!=null and searchField.name!=''">
+                <bind name="pattern_en" value="searchField.name + '%'"/>
+                and (upper(s.name_en) like upper(#{pattern_en}) OR
+                upper(s.name_np) like upper(#{pattern_en})
+               )
+            </if>
+
+
+        </if>
+        group by s.id, s.created_date
+        order by s.created_date
+    </select>
+
+    <select id="getEmployeeShift" resultType="Long">
+        select distinct c.shift_id from
+            (select segc.shift_id as shift_id from shift_employee_group_mapping segm
+                    left join shift_employee_group_config segc on segc.shift_employee_group_id=segm.shift_employee_group_id
+                    where segm.pis_code=#{pisCode}
+                    union distinct
+                    select sec.shift_id as shift_id from shift_employee_config sec
+                    where sec.pis_code=#{pisCode}) as c
+    left join shift s on s.id=shift_id
+    where s.office_code = #{officeCode} and s.is_active = true;
+    </select>
+</mapper>

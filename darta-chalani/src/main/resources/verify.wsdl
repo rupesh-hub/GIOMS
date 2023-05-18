@@ -1,0 +1,84 @@
+<wsdl:definitions xmlns:ns1="http://cxf.apache.org/bindings/xformat" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ds.ws.emas/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DSVerifyWSImplService" targetNamespace="http://ds.ws.emas/">
+    <wsdl:types>
+        <xs:schema xmlns:tns="http://ds.ws.emas/" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" targetNamespace="http://ds.ws.emas/" version="1.0">
+            <xs:element name="verify" type="tns:verify"/>
+            <xs:element name="verifyDetached" type="tns:verifyDetached"/>
+            <xs:element name="verifyDetachedResponse" type="tns:verifyDetachedResponse"/>
+            <xs:element name="verifyResponse" type="tns:verifyResponse"/>
+            <xs:complexType name="verify">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+                    <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+                    <xs:element minOccurs="0" name="arg2" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="verifyResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="verifyDetached">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+                    <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+                    <xs:element minOccurs="0" name="arg2" type="xs:string"/>
+                    <xs:element minOccurs="0" name="arg3" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="verifyDetachedResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="verifyResponse">
+        <wsdl:part element="tns:verifyResponse" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="verify">
+        <wsdl:part element="tns:verify" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="verifyDetachedResponse">
+        <wsdl:part element="tns:verifyDetachedResponse" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="verifyDetached">
+        <wsdl:part element="tns:verifyDetached" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="DSVerifyWS">
+        <wsdl:operation name="verify">
+            <wsdl:input message="tns:verify" name="verify"> </wsdl:input>
+            <wsdl:output message="tns:verifyResponse" name="verifyResponse"> </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="verifyDetached">
+            <wsdl:input message="tns:verifyDetached" name="verifyDetached"> </wsdl:input>
+            <wsdl:output message="tns:verifyDetachedResponse" name="verifyDetachedResponse"> </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="DSVerifyWSImplServiceSoapBinding" type="tns:DSVerifyWS">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="verify">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input name="verify">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="verifyResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="verifyDetached">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input name="verifyDetached">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="verifyDetachedResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="DSVerifyWSImplService">
+        <wsdl:port binding="tns:DSVerifyWSImplServiceSoapBinding" name="DSVerifyWSImplPort">
+<!--            <soap:address location="http://emas.radiantnepal.com:8082/emas3/services/dsverifyWS"/>-->
+            <soap:address location="http://103.69.124.130:8090/emas3/services/dsverifyWS"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

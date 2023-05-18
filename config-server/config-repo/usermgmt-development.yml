@@ -1,0 +1,145 @@
+server:
+  port: 9001
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: always
+spring:
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+  resources:
+    add-mappings: false
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+      FAIL_ON_EMPTY_BEANS: false
+  datasource:
+    jdbcUrl: jdbc:postgresql://103.69.127.118:5432/gerp_db
+#    jdbcUrl: jdbc:postgresql://localhost:5432/gerp_db_latest
+#    jdbcUrl: jdbc:postgresql://localhost:5432/grep_db_nov24
+#    jdbcUrl:  jdbc:postgresql://103.69.124.84:5432/organization_test
+#    jdbcUrl:  jdbc:postgresql://103.69.127.56:5432/gerp_db
+#    jdbcUrl:  jdbc:postgresql://103.69.124.84:5432/gerp_db
+#    jdbcUrl:  jdbc:postgresql://103.69.124.84:5432/organization_test
+
+    username: postgres
+    password: D0!T@.db
+#    password: postgres
+
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800
+      leak-detection-threshold: 600000
+  second-datasource:
+    jdbcUrl: jdbc:postgresql://103.69.127.118:5432/gerp_db
+    username: postgres
+    password: D0!T@.db
+    driver-class-name:  org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800
+      leak-detection-threshold: 600000
+    #      auto-commit: false
+#    if there is sql file
+#    initialization-mode: always
+  jpa:
+    show-sql: true
+    hibernate:
+#      naming:
+#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update
+    database: postgresql
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        jdbc:
+          time-zone-as-region: Asia/kathmandu
+          lob:
+            non_contextual_creation: true
+      format_sql: true
+# discovery server
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 160000000
+        readTimeout: 160000000
+gerp:
+  key: qazwsxedcrfvtgby
+  initVector: plmnkoijbvghuytr
+  transformation: AES/CBC/PKCS5PADDING
+  somelist:
+    - value1
+    - value2
+    - value3
+link:
+  front-reset-url : http://192.168.40.205:3400/#/forget-password?link=
+authorization-mode: READ
+keycloak:
+  # turn off Spring-Boots Keycloak AutoConfiguration:
+  # We only want to use Spring-Security without servlet container specific infrastructure.
+  # This allows us to pull the Keycloak configuration from here instead of keycloak.json
+#  enabled: false
+  auth-server-url: http://103.69.127.118:9091/auth
+  #auth-server-url: http://localhost:9000/auth
+#  auth-server-url: http://103.69.127.56:9090/auth
+  realm: gerp-services
+  #client id
+  resource: gerp-main
+  enable-basic-auth: true
+  credentials:
+    secret: gerp-main
+  ssl-required: none
+  principal-attribute: preferred_username
+  use-resource-role-mappings: true
+#  admin-user: admin
+#  admin-password: admin
+
+#mybatis:
+#  configuration:
+#    #  specification If the database field is order_id, then the entity field should be written as orderId
+#    map-underscore-to-camel-case: true
+#  #Mybatis mapper.xml file location
+#  mapper-locations: classpath*:**/sql/*.xml
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/*Mapper.xml
+
+logging:
+  level:
+    com.gerp.usermgmt.mapper: DEBUG
+    com.zaxxer.hikari.HikariConfig: DEBUG
+
+storage:
+  location: /Users/diwakar/Downloads/grep
+
+dms:
+  ribbon:
+    listOfServers: http://103.69.124.84:9094
+
+url:
+  ribbon:
+    listOfServers: http://103.69.124.84:9090

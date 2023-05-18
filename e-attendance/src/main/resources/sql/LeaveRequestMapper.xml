@@ -1,0 +1,3350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.LeaveRequestMapper">
+
+    <resultMap id="leaveByIdBaseMap" type="com.gerp.attendance.Pojo.LeaveResponsePojo">
+        <id property="id" column="id"/>
+        <result property="requesterFullNameEn" column="requesterFullNameEn"/>
+        <result property="requesterFullNameNp" column="requesterFullNameNp"/>
+        <result property="requestedEmployeeServiceCode" column="requestedEmployeeServiceCode"/>
+        <result property="requesterDesignationEn" column="requesterDesignationEn"/>
+        <result property="requesterDesignationNp" column="requesterDesignationNp"/>
+        <result property="requesterOfficeNameEn" column="requesterOfficeNameEn"/>
+        <result property="requesterOfficeNameNp" column="requesterOfficeNameNp"/>
+        <result property="requesterPisCode" column="requesterPisCode"/>
+        <result property="officeCode" column="officeCode"/>
+        <result property="appPisCode" column="appPisCode"/>
+        <result property="approver" column="isApprover"/>
+        <result property="employeeCode" column="employeeCode"/>
+
+        <result property="leaveEmpPisCode" column="leaveEmpPisCode"/>
+        <result property="leaveEmpFullNameEn" column="leaveEmpFullNameEn"/>
+        <result property="leaveEmpFullNameNp" column="leaveEmpFullNameNp"/>
+        <result property="leaveEmpDesignationEn" column="leaveEmpDesignationEn"/>
+        <result property="leaveEmpDesignationNp" column="leaveEmpDesignationNp"/>
+        <result property="leaveEmpOfficeNameEn" column="leaveEmpOfficeNameEn"/>
+        <result property="leaveEmpOfficeNameNp" column="leaveEmpOfficeNameNp"/>
+
+        <result property="appFullNameEn" column="appFullNameEn"/>
+        <result property="appFullNameNp" column="appFullNameNp"/>
+        <result property="appDesignationEn" column="appDesignationEn"/>
+        <result property="appDesignationNp" column="appDesignationNp"/>
+        <result property="appOfficeNameEn" column="appOfficeNameEn"/>
+        <result property="appOfficeNameNp" column="appOfficeNameNp"/>
+        <result property="appPisCode" column="appPisCode"/>
+
+        <result property="reviewerFullNameEn" column="reviewerFullNameEn"/>
+        <result property="reviewerFullNameNp" column="reviewerFullNameNp"/>
+        <result property="reviewerDesignationEn" column="reviewerDesignationEn"/>
+        <result property="reviewerDesignationNp" column="reviewerDesignationNp"/>
+        <result property="reviewerOfficeNameEn" column="reviewerOfficeNameEn"/>
+        <result property="reviewerOfficeNameNp" column="reviewerOfficeNameNp"/>
+
+        <result property="leaveNameEn" column="leaveNameEn"/>
+        <result property="leaveNameNp" column="leaveNameNp"/>
+
+        <result property="fromDateEn" column="fromDateEn"/>
+        <result property="toDateEn" column="toDateEn"/>
+        <result property="fromDateNp" column="fromDateNp"/>
+        <result property="toDateNp" column="toDateNp"/>
+        <result property="appliedDate" column="appliedDate"/>
+        <result property="approvedDate" column="approvedDate"/>
+
+        <result property="description" column="leaveDescription"/>
+
+        <result property="appliedForOthers" column="appliedForOthers"/>
+
+        <result property="leavePolicyId" column="leavePolicyId"/>
+        <result property="leaveSetupId" column="leaveSetupId"/>
+        <result property="year" column="year"/>
+        <result property="actualDays" column="actualDays"/>
+
+        <result property="holidayName" column="holidayName"/>
+        <result property="isHoliday" column="isHoliday"/>
+        <result property="totalLeave" column="totalLeave"/>
+        <result property="remainingLeave" column="remainingLeave"/>
+        <result property="accumulatedLeave" column="accumulatedLeave"/>
+        <result property="accumulatedLeaveFy" column="accumulatedLeaveFy"/>
+
+        <result property="status" column="status"/>
+        <result property="deligated" column="isDeligated"/>
+        <result property="reassignment" column="isReassignment"/>
+        <result property="delIsOfficeHead" column="isOfficeHeadDeligated"/>
+        <result property="remarks" column="remarks"/>
+
+        <result property="approvalHashContent" column="approvalHashContent"/>
+        <result property="approvalSignature" column="approvalSignature"/>
+        <result property="approvalContent" column="approvalContent"/>
+
+        <result property="leaveRequestHashContent" column="leave_request_hash_content"/>
+        <result property="leaveRequestSignature" column="leave_request_signature"/>
+        <result property="leaveRequestContent" column="leaveRequestContent"/>
+
+        <result property="fromTravelDays" column="fromTravelDays"/>
+        <result property="toTravelDays" column="toTravelDays"/>
+        <result property="forwardedStatus" column="forwardedStatus"/>
+        <result property="travelDays" column="travelDays"/>
+        <result property="leaveFor" column="leaveFor"/>
+
+    </resultMap>
+
+    <resultMap id="baseEmployeePaginatedLeave" type="com.gerp.attendance.Pojo.LeaveRequestMainPojo">
+        <id property="detailId" column="detailId"/>
+        <result property="appliedForOthers" column="appliedForOthers"/>
+        <result property="leaveName" column="leaveName"/>
+        <result property="leaveNameNp" column="leaveNameNp"/>
+        <result property="appliedDate" column="appliedDate"/>
+        <result property="approvedDate" column="approvedDate"/>
+        <result property="forwardedStatus" column="forwardedStatus"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="status" column="status"/>
+        <result property="leaveApproveDartaNo" column="leaveApproveDartaNo"/>
+        <result property="approverNameEn" column="approverNameEn"/>
+        <result property="approverNameNp" column="approverNameNp"/>
+        <result property="requesterNameEn" column="requesterNameEn"/>
+        <result property="requesterNameNp" column="requesterNameNp"/>
+        <result property="approverPisCode" column="approverPisCode"/>
+    </resultMap>
+
+    <resultMap id="baseLeaveMap" type="com.gerp.attendance.Pojo.LeaveRequestMainPojo">
+
+        <id property="detailId" column="id"/>
+        <result property="leaveFor" column="leaveFor"/>
+        <result property="approverPisCode" column="approverPisCode"/>
+        <result property="appliedForOthers" column="appliedForOthers"/>
+        <result property="actualDay" column="actualDay"/>
+        <result property="leaveSetupId" column="leaveSetupId"/>
+        <result property="leaveName" column="leaveName"/>
+        <result property="leaveNameNp" column="leaveNameNp"/>
+        <result property="leavePolicyId" column="leavePolicyId"/>
+        <result property="appliedDate" column="appliedDate"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="year" column="year"/>
+        <result property="leaveFor" column="leaveFor"/>
+        <result property="actualDay" column="actualDay"/>
+        <result property="appliedPisCode" column="appliedPisCode"/>
+
+        <result property="employeeCode" column="employeeCode"/>
+        <result property="recordId" column="record_id"/>
+        <result property="isHoliday" column="is_holiday"/>
+        <result property="description" column="description"/>
+        <result property="periodicHolidayId" column="periodic_holiday_id"/>
+        <result property="holidayName" column="holiday_name"/>
+        <result property="holidayNameNp" column="holiday_name_np"/>
+        <result property="documentId" column="document_id"/>
+        <result property="leaveName" column="name_en"/>
+        <result property="leaveNameNp" column="name_np"/>
+        <result property="status" column="status"/>
+        <result property="totalDays" column="totalDays"/>
+        <result property="actualLeaveDays" column="actual_leave_days"/>
+        <result property="fiscalYear" column="fiscal_year"/>
+        <result property="appliedForOthers" column="applied_for_others"/>
+        <result property="leaveApproveDartaNo" column="leaveApproveDartaNo"/>
+
+        <result property="approvalHashContent" column="hash_content"/>
+        <result property="approvalSignature" column="signature"/>
+        <result property="approvalContent" column="approvalContent"/>
+        <result property="leaveRequestHashContent" column="leave_request_hash_content"/>
+        <result property="leaveRequestSignature" column="leave_request_signature"/>
+        <result property="leaveRequestContent" column="leaveRequestContent"/>
+
+        <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo"
+                    select="selectDocument"
+                    column="{detailId=id}">
+        </collection>
+
+        <collection property="approvalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverPisCode" column="ra_approver_pis_code"/>
+            <result property="remarks" column="ra_remarks"/>
+            <result property="status" column="ra_status"/>
+            <result property="isApprover" column="is_approver"/>
+            <result property="approvedDate" column="approvedDate"/>
+            <result property="forwardedDate" column="created_date"/>
+            <result property="isActive" column="isActive"/>
+            <result property="approverPisCode" column="ra_approver_pis_code"/>
+            <result property="remarks" column="ra_remarks"/>
+            <result property="status" column="ra_status"/>
+            <result column="is_delegated" property="isDelegated"/>
+            <result property="isOfficeHead" column="is_office_head_delegated"/>
+        </collection>
+
+    </resultMap>
+
+    <resultMap id="appliedForOtherResultMap" type="com.gerp.attendance.Pojo.LeaveAppliedOthersPojo">
+        <result property="detailId" column="detailId"/>
+        <result property="groupOrder" column="groupOrder"/>
+        <result property="pisCode" column="pisCode"/>
+
+
+        <collection property="appliedDateList" ofType="com.gerp.attendance.Pojo.GeneralDateListPojo"
+                    select="dateSelect" column="{leaveId=leaveId, groupOrder=groupOrder}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.LeaveRequestLatestPojo">
+
+        <id property="id" column="id"/>
+
+        <result property="leaveFor" column="leaveFor"/>
+        <result property="actualDay" column="actualDay"/>
+        <result property="leaveSetupId" column="leaveSetupId"/>
+        <result property="leaveName" column="leaveName"/>
+        <result property="leaveNameNp" column="leaveNameNp"/>
+        <result property="leavePolicyId" column="leavePolicyId"/>
+        <result property="appliedDate" column="appliedDate"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="year" column="year"/>
+        <result property="leaveFor" column="leaveFor"/>
+        <result property="actualDay" column="actualDay"/>
+
+        <result property="recordId" column="record_id"/>
+        <result property="employeeCode" column="employeeCode"/>
+        <result property="isHoliday" column="is_holiday"/>
+        <result property="description" column="description"/>
+        <result property="periodicHolidayId" column="periodic_holiday_id"/>
+        <result property="holidayName" column="holiday_name"/>
+        <result property="holidayNameNp" column="holiday_name_np"/>
+        <result property="leaveFor" column="leave_for"/>
+        <result property="documentId" column="document_id"/>
+        <result property="status" column="status"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="travelDays" column="travel_days"/>
+        <result property="totalDays" column="totalDays"/>
+        <result property="finalDate" column="finalDate"/>
+        <result property="actualLeaveDays" column="actual_leave_days"/>
+        <result property="cancelRemarks" column="cancelRemarks"/>
+        <result property="fromTravelDaysEn" column="fromTravelDays"/>
+        <result property="toTravelDaysEn" column="toTravelDays"/>
+        <result property="fiscalYear" column="fiscal_year"/>
+        <result property="approvalHashContent" column="hash_content"/>
+        <result property="approvalSignature" column="signature"/>
+        <result property="approvalContent" column="approvalContent"/>
+        <result property="leaveRequestHashContent" column="leave_request_hash_content"/>
+        <result property="leaveRequestSignature" column="leave_request_signature"/>
+        <result property="leaveRequestContent" column="leaveRequestContent"/>
+        <result property="year" column="year"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="isActive" column="is_active"/>
+        <result property="appliedForOthers" column="applied_for_others"/>
+
+        <collection property="approvalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverPisCode" column="ra_approver_pis_code"/>
+            <result property="remarks" column="ra_remarks"/>
+            <result property="status" column="ra_status"/>
+            <result property="isApprover" column="is_approver"/>
+            <result property="approvedDate" column="approvedDate"/>
+            <result property="forwardedDate" column="created_date"/>
+            <result property="isActive" column="isActive"/>
+        </collection>
+
+        <collection property="delegatedApprovalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverPisCode" column="delegated_approver_pis_code"/>
+            <result property="approverNameEn" column="delegated_approver_name_en"/>
+            <result property="approverNameNp" column="delegated_approver_name_np"/>
+            <result property="isOfficeHead" column="is_office_head_delegated"/>
+            <result property="isActive" column="isActive"/>
+        </collection>
+
+        <collection property="previousLeaveDetail" ofType="com.gerp.attendance.Pojo.LeaveLogDetailPojo">
+            <result property="id" column="previousLeaveLog"/>
+            <result property="fromDateEn" column="previousFromDateEn"/>
+            <result property="toDateEn" column="previousToDateEn"/>
+            <result property="actualDays" column="previousActualDays"/>
+            <result property="travelDays" column="previousTravelDays"/>
+        </collection>
+
+        <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo">
+            <result property="id" column="document_id"/>
+            <result property="name" column="document_name"/>
+            <result property="createdDate" column="docCreatedDate"/>
+            <result property="lastUpdatedDate" column="docModifiedDate"/>
+        </collection>
+
+    </resultMap>
+
+    <resultMap id="dashboardEmployeeOnLeave" type="com.gerp.attendance.Pojo.EmployeeOnLeavePojo">
+        <id property="id" column="id"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="leaveNameEn" column="name_en"/>
+        <result property="leaveNameNp" column="name_np"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="isHoliday" column="is_holiday"/>
+        <result property="holidayNameEn" column="holiday_name_en"/>
+        <result property="holidayNameNp" column="holiday_name_np"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="durationType" column="duration_type"/>
+        <result property="actualDays" column="actualDays"/>
+    </resultMap>
+
+    <resultMap id="leaveTaken" type="com.gerp.attendance.Pojo.LeaveTakenPojo">
+        <result property="leaveTaken" column="leaveTaken"/>
+        <result property="leaveTakenFy" column="leaveTakenFy"/>
+        <result property="accumulatedLeaveFy" column="accumulatedLeaveFy"/>
+        <result property="accumulatedLeave" column="accumulatedLeave"/>
+        <result property="leaveMonthly" column="leaveMonthly"/>
+        <result property="homeLeave" column="homeLeave"/>
+    </resultMap>
+
+    <resultMap id="minimalResultMap" type="com.gerp.attendance.Pojo.LeaveRequestMinimalPojo">
+
+        <id property="id" column="id"/>
+        <result property="appliedDate" column="created_date"/>
+        <result property="description" column="description"/>
+        <result property="holidayName" column="holiday_name"/>
+        <result property="holidayNameNp" column="holiday_name_np"/>
+        <result property="leaveFor" column="leave_for"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="leaveName" column="name_en"/>
+        <result property="leaveNameNp" column="name_np"/>
+        <result property="status" column="status"/>
+        <result property="travelDays" column="travel_days"/>
+        <result property="countHoliday" column="count_public_holiday"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="isActive" column="is_active"/>
+        <result property="remainingLeave" column="remaining_leave"/>
+        <result property="leaveTaken" column="leave_taken"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="isActive" column="isActive"/>
+
+        <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo">
+            <result property="id" column="document_id"/>
+            <result property="name" column="document_name"/>
+            <result property="size" column="document_size"/>
+            <result property="createdDate" column="docCreatedDate"/>
+            <result property="lastUpdatedDate" column="docModifiedDate"/>
+        </collection>
+
+        <!--TODO: Document Date-->
+        <!--        <result property="createdDate" column="docCreated"/>-->
+        <!--        <result property="lastUpdatedDate" column="docLastUpdated"/>-->
+    </resultMap>
+
+    <resultMap id="leaveRequestReportMap" type="com.gerp.attendance.Pojo.LeaveReportDataPojo">
+        <id property="id" column="id"/>
+        <result property="isHoliday" column="is_holiday"/>
+        <result property="holidayNameEn" column="holiday_name_en"/>
+        <result property="holidayNameNp" column="holiday_name_np"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="travelDays" column="travel_days"/>
+        <result property="fromTravelDays" column="fromTravelDays"/>
+        <result property="toTravelDays" column="toTravelDays"/>
+        <result property="leaveNameEn" column="name_en"/>
+        <result property="leaveNameNp" column="name_np"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="status" column="status"/>
+        <result property="totalDays" column="totalDays"/>
+        <result property="approvedDate" column="approvedDate"/>
+        <result property="leaveApproveDartaNo" column="leaveApproveDartaNo"/>
+        <result property="appliedDateEn" column="appliedDateEn"/>
+        <result property="appliedForOthers" column="applied_for_others"/>
+
+        <collection property="approvalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">
+            <result property="approverPisCode" column="ra_approver_pis_code"/>
+            <result property="remarks" column="ra_remarks"/>
+            <result property="status" column="ra_status"/>
+            <result column="is_delegated" property="isDelegated"/>
+            <result property="isOfficeHead" column="is_office_head_delegated"/>
+        </collection>
+
+        <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo">
+            <result property="id" column="document_id"/>
+            <result property="name" column="document_name"/>
+            <result property="size" column="document_size"/>
+            <result property="createdDate" column="docCreatedDate"/>
+            <result property="lastUpdatedDate" column="docModifiedDate"/>
+        </collection>
+        <!--TODO DOCUMENT Date -->
+        <!--        <result property="createdDate" column="docCreated"/>-->
+        <!--        <result property="lastUpdatedDate" column="docLastUpdated"/>-->
+
+    </resultMap>
+
+    <resultMap id="sameMonthMap" type="com.gerp.attendance.Pojo.LeaveOnSameMonthPojo">
+        <result property="days" column="days"/>
+        <result property="month" column="month"/>
+    </resultMap>
+
+    <resultMap id="differentMonthMap" type="com.gerp.attendance.Pojo.DifferentMonthPojo">
+        <result property="fromDateEn" column="fromDate"/>
+        <result property="toDateEn" column="to_date_en"/>
+    </resultMap>
+
+    <select id="getAllLeaveRequest" resultMap="baseResultMap">
+        select rd.id,
+               rd.is_active          as isActive,
+               lr.created_date,
+               rd.from_date_en,
+               rd.to_date_en,
+               rd.from_date_np,
+               rd.to_date_np,
+               ls.name_en,
+               ls.name_np,
+               lr.emp_pis_code       as pis_code,
+               p.name_en             as holiday_name,
+               p.name_np             as holiday_name_np,
+               ra.approver_pis_code  as ra_approver_pis_code,
+               ra.remarks            as ra_remarks,
+               ra.status             as ra_status,
+               rd.status,
+               lp.office_code,
+               lr.is_active,
+               rd.document_id,
+               rd.document_name,
+               rd.created_date       as docCreatedDate,
+               rd.last_modified_date as docModifiedDate,
+               rd.document_size
+        from leave_request_detail rd
+                 left join leave_request lr on lr.id = rd.leave_request_id
+                 left join decision_approval ra on rd.id = ra.leave_request_detail_id
+                 left join leave_policy lp on rd.leave_policy_id = lp.id
+                 left join leave_setup ls on ls.id = lp.leave_setup_id
+                 left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+                 left join public_holiday p on ph.public_holiday_id = p.id
+        where rd.id = #{id} and ra.status =rd.status and ra.is_active = true
+
+    </select>
+
+    <!--    change approver pis code-->
+    <select id="getLeaveRequestById" resultMap="baseResultMap">
+        select rd.id,
+               rd.is_active         as isActive,
+               rd.record_id,
+               ra.is_approver,
+               lr.is_holiday,
+               rd.periodic_holiday_id,
+               rd.description,
+               rd.leave_for,
+               lr.emp_pis_code      as pis_code,
+               p.name_en            as holiday_name,
+               p.name_np            as holiday_name_np,
+               rd.document_id,
+               rd.actual_leave_days as totalDays,
+               rd.status,
+               ra.approver_pis_code as ra_approver_pis_code,
+               ls.id                as leaveSetupId,
+               ls.name_en           as leaveName,
+               ls.name_np           as leaveNameNp,
+               rd.leave_policy_id   as leavePolicyId,
+               rd.created_date      as appliedDate,
+               rd.from_date_en,
+               rd.to_date_en,
+               rd.from_date_np,
+               rd.to_date_np,
+               rd.year as year,
+               rd.leave_for as leaveFor,
+               rd.actual_leave_days as actualDay,
+               case
+                   when (ra.status = 'A') then
+                       ra.last_modified_date
+        end
+        as approvedDate,
+               ra.remarks            as ra_remarks,
+               ra.status             as ra_status,
+               lr.office_code,
+               lr.is_active,
+               rd.travel_days,
+               rd.document_id,
+               rd.document_name,
+               lr.fiscal_year,
+               rd.document_size,
+               rd.created_date       as docCreated,
+               rd.last_modified_date as docLastUpdated,
+               rd.created_date       as docCreated,
+               rd.last_modified_date as docLastUpdated,
+               de.pis_code           as delegated_approver_pis_code,
+               case
+                   when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ',
+                                                                  de.last_name_en)
+                   else concat(de.first_name_en, ' ', de.last_name_en)
+        end
+        as delegated_approver_name_en,
+               case
+                   when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ',
+                                                                  de.last_name_np)
+                   else concat(de.first_name_np, ' ', de.last_name_np)
+        end
+        as delegated_approver_name_np,
+               case when d.is_office_head is null then false else d.is_office_head
+        end
+        as is_office_head_delegated,
+               case
+                   when (rd.travel_days is not null and rd.travel_days !=0) then
+                       rd.to_date_en + interval '1' day
+        end
+        as fromTravelDays,
+               case
+                   when (rd.travel_days is not null and rd.travel_days !=0) then
+                       rd.to_date_en + interval '1' day * rd.travel_days
+        end
+        as toTravelDays,
+               rd.remarks            as cancelRemarks,
+               lrcl.id               as previousLeaveLog,
+               lrcl.from_date_en     as previousFromDateEn,
+               lrcl.to_date_en       as previousToDateEn,
+               lrcl.actual_days      as previousActualDays,
+               lrcl.travel_days      as previousTravelDays,
+               rd.document_size,
+               rd.created_date       as docCreated,
+               rd.last_modified_date as docLastUpdated,
+               ra.hash_content,
+               ra.content            as approvalContent,
+               ra.signature,
+               lr.leave_request_hash_content,
+               lr.leave_request_signature,
+               lr.content            as leaveRequestContent,
+               lr.applied_for_others as appliedForOthers,
+               de.employee_code      as employeeCode,
+               lr.content                                                              as leaveRequestContent,
+               lr.applied_for_others as appliedForOthers
+        from leave_request_detail rd
+                 left join leave_request lr on lr.id = rd.leave_request_id
+                 left join leave_request_cancel_log lrcl on lrcl.leave_request_detail_id = rd.id
+                 left join decision_approval ra on rd.id = ra.leave_request_detail_id
+                 left join leave_policy lp on rd.leave_policy_id = lp.id
+                 left join leave_setup ls on ls.id = lp.leave_setup_id
+                 left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+                 left join public_holiday p on ph.public_holiday_id = p.id
+                 left join delegation d on ra.delegated_id = d.id
+                 left join employee de on de.pis_code = d.to_piscode
+        where rd.id =
+        #{id} and  ra.status = rd.status and ra.is_active = true
+    </select>
+
+    <!--TODO: leave request details by leave request id-->
+    <select id="leaveRequestBulk" resultMap="baseLeaveMap">
+        select rd.id,
+               ls.id                 as leaveSetupId,
+               ls.name_en            as leaveName,
+               ls.name_np            as leaveNameNp,
+               rd.leave_policy_id    as leavePolicyId,
+               rd.created_date       as appliedDate,
+               rd.pis_code           as appliedPisCode,
+               lr.applied_for_others as appliedForOthers,
+               ra.approver_pis_code  as approverPisCode,
+               rd.from_date_en,
+               rd.to_date_en,
+               rd.from_date_np,
+               rd.to_date_np,
+               rd.year as year,
+               rd.leave_for        as leaveFor,
+               rd.actual_leave_days as actualDay,
+               lr.emp_pis_code           as employeeCode,
+               rd.record_id,
+               rd.is_active              as isActive,
+               ra.is_approver,
+               lr.is_holiday,
+               rd.leave_policy_id,
+               rd.periodic_holiday_id,
+               rd.description,
+               rd.leave_for,
+               lr.emp_pis_code                                                         as pis_code,
+               p.name_en                 as holiday_name,
+               p.name_np                 as holiday_name_np,
+               rd.document_id,
+               lr.created_date,
+               rd.from_date_en,
+               rd.to_date_en,
+               rd.actual_leave_days      as totalDays,
+               rd.from_date_np,
+               rd.to_date_np,
+               rd.status,
+               ra.approver_pis_code      as ra_approver_pis_code,
+               rd.leave_approve_darta_no as leaveApproveDartaNo,
+               case when (ra.status = 'A')
+               		then ra.last_modified_date
+        end
+        as approvedDate,
+               ra.remarks                as ra_remarks,
+               ra.status                 as ra_status,
+               lr.office_code,
+               lr.is_active,
+               rd.travel_days,
+               lr.fiscal_year,
+               lr.emp_pis_code           as empPisCode,
+               lr.created_date,
+               rd.document_id,
+               rd.document_name,
+               rd.document_size,
+               rd.created_date,
+               rd.last_modified_date,
+               rd.created_date,
+               rd.last_modified_date,
+               de.pis_code               as delegated_approver_pis_code,
+               case
+                   when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ', de.last_name_en)
+                   else concat(de.first_name_en, ' ', de.last_name_en)
+        end
+        as delegated_approver_name_en,
+               case
+                   when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ', de.last_name_np)
+                   else concat(de.first_name_np, ' ', de.last_name_np)
+        end
+        as delegated_approver_name_np,
+                case
+	               when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ', de.last_name_np)
+                   else concat(de.first_name_np, ' ', de.last_name_np)
+        end
+        as delegated_approver_name_np,
+               case when d.is_office_head is null then false else d.is_office_head
+        end
+        as is_office_head_delegated,
+               case when (rd.travel_days is not null and rd.travel_days != 0) then
+                       rd.to_date_en + interval '1' day
+        end
+        as fromTravelDays,
+               case
+                   when (rd.travel_days is not null and rd.travel_days != 0) then
+                       rd.to_date_en + interval '1' day * rd.travel_days
+        end
+        as toTravelDays,
+               rd.remarks                as cancelRemarks,
+               lrcl.id                   as previousLeaveLog,
+               lrcl.from_date_en         as previousFromDateEn,
+               lrcl.to_date_en           as previousToDateEn,
+               lrcl.actual_days          as previousActualDays,
+               lrcl.travel_days          as previousTravelDays,
+               rd.created_date           as createdDate,
+               rd.last_modified_date     as lastUpdatedDate,
+               ra.hash_content,
+               ra.content                as approvalContent,
+               ra.signature,
+               lr.leave_request_hash_content,
+               lr.leave_request_signature,
+               lr.content                as leaveRequestContent,
+               lr.applied_for_others
+        from leave_request_detail rd
+                 left join leave_request lr on lr.id = rd.leave_request_id
+                 left join leave_request_cancel_log lrcl on lrcl.leave_request_detail_id = rd.id
+                 left join decision_approval ra on rd.id = ra.leave_request_detail_id
+                 left join leave_policy lp on rd.leave_policy_id = lp.id
+                 left join leave_setup ls on ls.id = lp.leave_setup_id
+                 left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+                 left join public_holiday p on ph.public_holiday_id = p.id
+                 left join delegation d on ra.delegated_id = d.id
+                 left join employee de on de.pis_code = d.to_piscode
+        where rd.id = #{id} and ra.status = rd.status and ra.is_active = true;
+    </select>
+
+    <select id="leaveAppliedForOther" resultMap="appliedForOtherResultMap">
+        select lrd.pis_code    as pisCode,
+               lrd.id          as detailId,
+               lrd.group_order as groupOrder
+        select lrd.pis_code as pisCode, lrd.group_order as groupOrder, lrd.leave_request_id as leaveId
+        from leave_request_detail lrd
+        where lrd.leave_request_id = #{detailId}
+    </select>
+
+    <select id="getLeaveRequestByEmpPisCode" resultMap="baseResultMap">
+        select
+        rd.id,
+        rd.is_active as isActive,
+        lr.created_date,
+        case when (rd.travel_days is not null or rd.travel_days !=0)then
+        rd.to_date_en + interval '1' day * rd.travel_days
+        else rd.to_date_en end as finalDate,
+        rd.actual_leave_days,
+        rd.from_date_en,
+        rd.to_date_en,
+        rd.from_date_np,
+        rd.to_date_np,
+        rd.travel_days,
+        ls.name_en,
+        ls.name_np,
+        lr.emp_pis_code as pis_code,
+        p.name_en as holiday_name,
+        p.name_np as holiday_name_np,
+        rd.status,
+        ra.approver_pis_code as ra_approver_pis_code,
+        ra.remarks as ra_remarks,
+        ra.status as ra_status,
+        lp.office_code,
+        lr.is_active,
+        rd.document_id,
+        rd.document_name,
+        rd.created_date as docCreatedDate,
+        rd.last_modified_date as docModifiedDate,
+        rd.document_size
+        from leave_request_detail rd
+        left join leave_request lr on lr.id = rd.leave_request_id
+        left join decision_approval ra on rd.id = ra.leave_request_detail_id
+        left join leave_policy lp on rd.leave_policy_id = lp.id
+        left join leave_setup ls on ls.id = lp.leave_setup_id
+        left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+        left join public_holiday p on ph.public_holiday_id = p.id
+        where
+        <!--             lr.emp_pis_code = #{empPisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        rd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        and rd.is_active = true
+        and ra.is_active = true
+        <if test="dateEn !=null">
+            and ((#{dateEn} between rd.from_date_en and rd.to_date_en) or
+            (case when(rd.travel_days is not null or rd.travel_days !=0) then
+            #{dateEn} between rd.to_date_en + interval '1' day and
+            rd.to_date_en + interval '1' day * rd.travel_days end))
+        </if>
+        order by rd.created_date desc
+    </select>
+
+    <select id="getLeaveRequestByApproverPisCode" resultMap="baseResultMap">
+        select rd.id,
+               rd.is_active          as isActive,
+               lr.created_date,
+               rd.from_date_en,
+               rd.to_date_en,
+               rd.from_date_np,
+               rd.to_date_np,
+               rd.travel_days,
+               ls.name_en,
+               ls.name_np,
+               lr.emp_pis_code       as pis_code,
+               p.name_en             as holiday_name,
+               p.name_np             as holiday_name_np,
+               rd.status,
+               ra.approver_pis_code  as ra_approver_pis_code,
+               ra.remarks            as ra_remarks,
+               ra.status             as ra_status,
+               lp.office_code,
+               lr.is_active,
+               rd.document_id,
+               rd.document_name,
+               rd.created_date       as docCreatedDate,
+               rd.last_modified_date as docModifiedDate,
+               rd.document_size
+        from leave_request_detail rd
+                 left join leave_request lr on lr.id = rd.leave_request_id
+                 left join decision_approval ra on rd.id = ra.leave_request_detail_id
+                 left join leave_policy lp on rd.leave_policy_id = lp.id
+                 left join leave_setup ls on ls.id = lp.leave_setup_id
+                 left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+                 left join public_holiday p on ph.public_holiday_id = p.id
+        where ra.approver_pis_code = #{approverPisCode}
+          and rd.is_active = true
+          and ra.is_active = true
+        order by rd.created_date desc
+    </select>
+
+    <select id="getKararEmployeeDetail" resultType="com.gerp.attendance.Pojo.KararEmployeeDetailPojo">
+        (select case
+        when (e.presentDays<![CDATA[ <=]]> lr.actualDays) then 0
+        else e.presentDays - lr.actualDays end as remainingDays,
+        e.presentDays                              as totalAllowedDays,
+        lr.actualDays                              as leaveTakenDays
+        from (select case
+        when (((count(distinct split_part(ea.date_np, '-', 2))) * 1) > 0)
+        then ((count(distinct split_part(ea.date_np, '-', 2))) * 1)
+        else 0 end as presentDays
+
+        from employee_attendance ea
+        where ea.pis_code = #{pisCode}
+        and ea.date_en between #{fromDate} and #{toDate}
+        and ea.attendance_status in ('MA', 'KAAJ', 'DEVICE')) as e,
+        (select COALESCE(sum(lrd.actual_leave_days), 0) as actualDays
+        from leave_request lr
+        left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        where lrd.is_active = true and lrd.status='A'
+        and (lrd.from_date_en between #{fromDate} and #{toDate})
+        and (lrd.to_date_en between #{fromDate} and #{toDate})
+        and
+        <!--                    lr.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        ) as lr)
+    </select>
+
+    <select id="getLeaveRequestByOfficeCode" resultMap="baseResultMap">
+        select rd.id,
+               rd.is_active          as isActive,
+               lr.created_date,
+               rd.from_date_en,
+               rd.to_date_en,
+               rd.from_date_np,
+               rd.to_date_np,
+               rd.travel_days,
+               ls.name_en,
+               ls.name_np,
+               lr.emp_pis_code       as pis_code,
+               p.name_en             as holiday_name,
+               p.name_np             as holiday_name_np,
+               rd.status,
+               ra.approver_pis_code  as ra_approver_pis_code,
+               ra.remarks            as ra_remarks,
+               ra.status             as ra_status,
+               lp.office_code,
+               lr.is_active,
+               rd.document_id,
+               rd.document_name,
+               rd.created_date       as docCreatedDate,
+               rd.last_modified_date as docModifiedDate,
+               rd.document_size
+        from leave_request_detail rd
+                 left join leave_request lr on lr.id = rd.leave_request_id
+                 left join decision_approval ra on rd.id = ra.leave_request_detail_id
+                 left join leave_policy lp on rd.leave_policy_id = lp.id
+                 left join leave_setup ls on ls.id = lp.leave_setup_id
+                 left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+                 left join public_holiday p on ph.public_holiday_id = p.id
+        where lr.office_code = #{officeCode}
+          and rd.is_active = true
+          and ra.is_active = true
+        order by rd.created_date desc
+    </select>
+
+    <select id="getLeaveRequestByEmpPisCodeAndDateRange" resultType="Long">
+        select count(*)
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        where case when (lr.applied_for_others) then lrd.pis_code = #{pisCode} else lr.emp_pis_code = #{pisCode} end
+        and lrd.status in
+        <foreach item='item' index='index' collection='approvalStatus' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and lr.is_active=true and lrd.is_active=true
+        and ((#{fromDateEn} between lrd.from_date_en and lrd.to_date_en or
+        #{toDateEn} between lrd.from_date_en and lrd.to_date_en)
+        or (lrd.from_date_en between #{fromDateEn} and #{toDateEn} or
+        lrd.to_date_en between #{fromDateEn} and #{toDateEn})
+        ) and lr.year=#{year}
+    </select>
+
+    <select id="checkAllowedDays" resultType="Boolean">
+        select case when (b.totalDays >= c.days + 1) then true else false end as allowed
+        from (select lp.total_allowed_days_fy as totalDays from leave_policy lp where lp.id = #{policyId}) as b,
+             (SELECT DATE_PART('day', #{toDateEn}::timestamp - #{fromDateEn}::timestamp) days) as c;
+    </select>
+
+    <select id="checkForRepetitionFy" resultType="Boolean">
+        select
+        case when (c.totalDays>b.count) then true else false end as repetition
+        from
+        (select count(*) as count
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        where
+        <!--             lr.emp_pis_code = #{empCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{empCode}
+        else
+        lr.emp_pis_code = #{empCode}
+        end
+        and lrd.status in
+        <foreach item='item' index='index' collection='approvalStatus' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and lp.id= #{policyId} and lr.fiscal_year= #{fiscalYear})as b,
+        (select lp.total_allowed_repetition_fy as totalDays from leave_policy lp
+        where lp.id= #{policyId}) as c;
+    </select>
+
+    <select id="checkForRepetition" resultType="Boolean">
+        select
+        case when (c.totalDays>b.count) then true else false end as repetition
+        from
+        (select count(*) as count
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        where
+        <!--             lr.emp_pis_code = #{empCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{empCode}
+        else
+        lr.emp_pis_code = #{empCode}
+        end
+        and lrd.status in
+        <foreach item='item' index='index' collection='approvalStatus' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and lp.id= #{policyId})as b,
+        (select lp.total_allowed_repetition as totalDays from leave_policy lp
+        where lp.id= #{policyId}) as c;
+    </select>
+
+    <select id="checkForTotalAllowed" resultType="Boolean">
+        select case
+        when (lp.total_allowed_days != 0) then
+        case
+        when (coalesce(sum((SELECT DATE_PART('day',
+        lrd.to_date_en::timestamp - lrd.from_date_en::timestamp)) +
+        1), 0) + coalesce(sum(
+        (SELECT DATE_PART('day', #{toDateEn}::timestamp - #{fromDateEn}::timestamp)) +
+        1), 0) <![CDATA[<=]]>
+        lp.total_allowed_days) then true
+        else false end
+        else true end As "allowedDays"
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        where
+        <!--             lr.emp_pis_code = #{pisCode} -->
+
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        and lp.id = #{policyId}
+        group by lp.total_allowed_days;
+    </select>
+
+    <select id="getAccumulatedLeave" resultType="Long">
+        select coalesce(sum(b.accumulatedLeave), 0) - coalesce(sum(c.days + 1), 0) count
+        from (select coalesce (sum (rl.accumulated_leave_fy), 0) - coalesce (sum (rl.leave_taken_fy), 0) accumulatedLeave,
+            rl.is_active as status
+            from remaining_leave rl
+            where rl.pis_code = #{pisCode}
+            and rl.leave_policy_id = #{policyId}
+            group by rl.is_active) as b,
+            (SELECT DATE_PART('day', #{toDateEn}:: timestamp - #{fromDateEn}:: timestamp) days) as c
+        where b.status = true
+        group by b.accumulatedLeave, c.days
+    </select>
+
+    <select id="getPreviousLeave" resultType="Long">
+        select count(*)
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        where
+        <!--             lr.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        <if test="leaveId !=null">
+            and lrd.id not in (#{leaveId})
+        </if>
+        and lp.id = #{policyId}
+        and (lrd.from_date_en between #{fromDateEn} and #{toDateEn}
+        or lrd.to_date_en between #{fromDateEn} and #{toDateEn})
+        and lr.is_active=true and lrd.is_active=true;
+    </select>
+
+    <select id="getPreviousLeaveTaken" resultType="Long">
+        select COALESCE(SUM(x.previousLeave), 0)
+        from (select COALESCE(SUM(DATE_PART('day', lrd.to_date_en::timestamp - lrd.from_date_en::timestamp) + 1), 0)
+        as previousLeave
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        where
+        <!--                   lr.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        and lp.id = #{policyId}
+        and lr.fiscal_year = #{fiscalYear}
+        and lr.office_code = #{officeCode}
+        and lrd.status = 'A'
+        and lrd.id not in (#{leaveDetailId})
+        group by lrd.to_date_en, lrd.from_date_en) as x;
+    </select>
+
+    <select id="getMonthlyLeaveTaken" resultType="Double">
+        select COALESCE(SUM(x.previousLeave), 0)
+        from (select lrd.actual_leave_days
+        as previousLeave
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        where
+        <!--                   lr.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        and lp.id = #{leavePolicyId}
+        and lr.fiscal_year = #{fiscalYear}
+        and lrd.is_active = true
+        and lr.is_active = true
+        and lrd.status = 'A'
+        and (lrd.from_date_en between #{fromDate} and #{toDate}
+        or lrd.to_date_en between #{fromDate} and #{toDate})
+        group by lrd.actual_leave_days) as x;
+    </select>
+
+    <select id="getRepetitionLeave" resultType="Integer">
+        select SUM(x.countLeave)
+        from (select count(*) as countLeave
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        left join leave_policy lp on lrd.leave_policy_id = lp.id
+        where
+        <!--                   lr.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        and lp.id = #{policyId}
+        and lr.year = #{year}
+        and lrd.status = 'A'
+        and (lrd.from_date_en between #{fromDate} and #{toDate}
+        or lrd.to_date_en between #{fromDate} and #{toDate})
+        and lrd.is_active = true
+        and lr.is_active = true
+        group by lrd.to_date_en, lrd.from_date_en, lrd.leave_for) as x;
+    </select>
+
+    <select id="getTotalLeaveTaken" resultType="java.lang.Double">
+        select COALESCE(SUM(lrd.actual_leave_days), 0)
+        as leaveTaken
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        where
+        <!--             lr.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        lrd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        and lr.fiscal_year = #{fiscalYear}
+        and lr.office_code = #{officeCode}
+        and lrd.status = 'A'
+        group by lrd.to_date_en, lrd.from_date_en;
+    </select>
+
+    <select id="getAccumulatedLeaveForEmployee" resultType="Long">
+        select count(*)
+        from remaining_leave rl
+        where rl.pis_code = #{pisCode}
+          and rl.leave_policy_id = #{policyId};
+    </select>
+
+    <select id="saveLeave" resultType="Long">
+        select case
+                   when ((coalesce(sum(b.totalDays), 0) - coalesce(sum(c.days + 1), 0) +
+                          coalesce(sum(d.accumulatedLeaveFy), 0))) >= b.maxAccumulatedDays then b.maxAccumulatedDays
+                   else (coalesce(sum(b.totalDays), 0) - coalesce(sum(c.days + 1), 0) +
+                         coalesce(sum(d.accumulatedLeaveFy), 0)) end as check
+        from (select lp.total_allowed_days_fy as totalDays, lp.max_allowed_accumulation as maxAccumulatedDays
+            from leave_policy lp
+            where lp.id = #{policyId}) as b,
+            (select rl.accumulated_leave_fy as accumulatedLeaveFy
+            from remaining_leave rl
+            where rl.leave_policy_id = #{policyId}
+            and rl.pis_code = #{pisCode}) as d,
+            (SELECT DATE_PART('day', #{toDateEn}:: timestamp - #{fromDateEn}:: timestamp) days) as c
+        group by b.maxAccumulatedDays;
+    </select>
+
+    <select id="getLeaveByMonthYear" resultMap="minimalResultMap">
+        select rd.id,
+        rd.is_active            as isActive,
+        lr.created_date,
+        rd.from_date_en,
+        rd.to_date_en,
+        rd.from_date_np,
+        rd.to_date_np,
+        rd.travel_days,
+        ls.name_en,
+        ls.name_np,
+        lr.emp_pis_code         as pis_code,
+        p.name_en               as holiday_name,
+        p.name_np               as holiday_name_np,
+        rd.status,
+        lr.office_code,
+        lr.is_active,
+        rl.accumulated_leave_fy as remaining_leave,
+        rl.leave_taken_fy       as leave_taken,
+        rd.document_id,
+        rd.document_name,
+        rd.document_size
+        from leave_request_detail rd
+        left join leave_request lr on lr.id = rd.leave_request_id
+        left join decision_approval ra on rd.id = ra.leave_request_detail_id
+        left join leave_policy lp on rd.leave_policy_id = lp.id
+        left join leave_setup ls on ls.id = lp.leave_setup_id
+        left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+        left join public_holiday p on ph.public_holiday_id = p.id
+        left join remaining_leave rl on lp.id = rl.leave_policy_id
+        where rd.is_active = true
+        and ra.is_active = true
+        and ((SELECT EXTRACT(MONTH FROM DATE (rd.from_date_en))) = #{month} or
+        (SELECT EXTRACT(MONTH FROM DATE (rd.to_date_en))) = #{month})
+        and ((SELECT EXTRACT(Year FROM DATE (rd.from_date_en))) = #{year} or
+        (SELECT EXTRACT(Year FROM DATE (rd.to_date_en))) = #{year})
+        and
+        <!--             lr.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        rd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        order by rd.created_date
+    </select>
+
+    <select id="getLeaveByDateRange" resultMap="minimalResultMap">
+        select rd.id,
+        rd.is_active            as isActive,
+        lr.created_date,
+        rd.from_date_en,
+        rd.to_date_en,
+        rd.from_date_np,
+        rd.to_date_np,
+        rd.travel_days,
+        ls.name_en,
+        ls.name_np,
+        lr.emp_pis_code         as pis_code,
+        rd.status,
+        lr.office_code,
+        lr.is_active,
+        rl.accumulated_leave_fy as remaining_leave,
+        rl.leave_taken_fy       as leave_taken,
+        lp.count_public_holiday,
+        rd.document_id,
+        rd.document_name,
+        rd.document_size
+        from leave_request_detail rd
+        left join leave_request lr on lr.id = rd.leave_request_id
+        left join decision_approval ra on rd.id = ra.leave_request_detail_id
+        left join leave_policy lp on rd.leave_policy_id = lp.id
+        left join leave_setup ls on ls.id = lp.leave_setup_id
+        left join remaining_leave rl on lp.id = rl.leave_policy_id
+        where rd.is_active = true
+        and ra.is_active = true
+        and (rd.from_date_en BETWEEN #{fromDate} AND #{toDate}
+        OR rd.to_date_en BETWEEN #{fromDate} AND #{toDate})
+        and
+        <!--             lr.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then
+        rd.pis_code = #{pisCode}
+        else
+        lr.emp_pis_code = #{pisCode}
+        end
+        order by rd.created_date
+    </select>
+
+    <select id="getTotalLeave" resultMap="leaveTaken">
+        select case
+                   when (b.totalAllowedDays != 0) then
+                       (coalesce(sum(b.leaveTaken), 0) + #{days})
+                   else (coalesce(sum(b.leaveTaken), 0)) end        as leaveTaken,
+
+               case
+                   when (b.totalAllowedDaysFy != 0 and (((#{days}) +
+                       (coalesce (sum (b.leaveTakenFy), 0))) > (b.totalAllowedDaysFy)
+                       )) then
+                       ((coalesce(sum(b.accumulatedFy), 0)) - (#{days} -
+                                                               ((coalesce(sum(b.totalAllowedDaysFy), 0)) -
+                                                                (coalesce(sum(b.leaveTakenFy), 0)))))
+
+                   when (b.maxAllowedAccumulation!=0) then
+                       case
+                           when (((coalesce(sum(b.accumulatedFy), 0)) + #{additionalLeave}) > #{days}) then
+                               case
+                                   when ((coalesce(sum(b.accumulatedFy), 0)) + #{additionalLeave} - #{days}) >
+                                        b.maxAllowedAccumulation
+                                       then b.maxAllowedAccumulation
+                                   else ((coalesce(sum(b.accumulatedFy), 0)) + #{additionalLeave} - #{days}) end
+                           else 0 end
+
+                   when (b.maxAllowedAccumulation = 0 and b.unlimitedAllowedAccumulated) then
+                       case
+                           when (b.totalAllowedDaysFy != 0 and (((#{days}) + (coalesce (sum (b.leaveTakenFy), 0))) >
+                               (b.totalAllowedDaysFy))) then
+                               ((coalesce(sum(b.accumulatedFy), 0)) - (#{days} -
+                                                                       ((coalesce(sum(b.totalAllowedDaysFy), 0)) -
+                                                                        (coalesce(sum(b.leaveTakenFy), 0)))))
+                           else (coalesce(sum(b.accumulatedFy), 0)) end
+
+                   else (coalesce(sum(b.accumulatedFy), 0)) end     as accumulatedLeaveFy,
+
+               case
+                   when (b.maxAllowedAccumulation!=0 and lower(b.leaveName) like 'home leave') then
+                       case
+                           when (#{days} > ((coalesce(sum(b.accumulatedFy), 0)) + #{additionalLeave})) then
+                               (b.accumulatedLeave -
+                                (#{days} - (coalesce(sum(b.accumulatedFy), 0)) + #{additionalLeave}))
+                           else b.accumulatedLeave end
+                   else 0
+                   end                                              as accumulatedLeave,
+
+               case
+                   when (b.maxAllowedAccumulation!=0) then
+                       (coalesce(sum(b.homeLeave), 0) + #{days})
+                   else (coalesce(sum(b.homeLeave), 0)) end         as homeLeave,
+
+
+               case
+                   when (b.totalAllowedDaysFy != 0) then
+                       case
+                           when (b.totalAllowedDaysFy != 0 and
+                         (((#{days}) + (coalesce (sum (b.leaveTakenFy), 0))) >
+                               (coalesce (sum (b.totalAllowedDaysFy), 0)))) then
+                               (coalesce(sum(b.totalAllowedDaysFy), 0))
+                           else ((#{days}) + (coalesce(sum(b.leaveTakenFy), 0))) end
+                   else (coalesce(sum(b.leaveTakenFy), 0)) end      as leaveTakenFy,
+
+               case
+                   when (b.allowedLeaveMonthly != 0) then
+                       (coalesce(sum(b.leaveTakenMonthly), 0) + #{days})
+                   else (coalesce(sum(b.leaveTakenMonthly), 0)) end as leaveMonthly,
+
+               case
+                   when (b.maxLeaveLimitAtOnce != 0) then
+                       (coalesce(sum(b.homeLeave), 0) + #{days})
+                   else (coalesce(sum(b.homeLeave), 0)) end         as leaveTakenObsequies
+
+
+        from (select rl.leave_taken_fy                 as leaveTakenFy,
+                     rl.leave_taken                    as leaveTaken,
+                     ls.name_en                        as leaveName,
+                     rl.remaining_leave                as homeLeave,
+                     rl.monthly_leave_taken            as leaveTakenMonthly,
+                     rl.accumulated_leave              as accumulatedLeave,
+                     rl.accumulated_leave_fy           as accumulatedFy,
+                     lp.total_allowed_days_fy          as totalAllowedDaysFy,
+                     lp.total_allowed_days             as totalAllowedDays,
+                     lp.max_allowed_accumulation       as maxAllowedAccumulation,
+                     lp.maximum_leave_limit_at_once    as maxLeaveLimitAtOnce,
+                     ls.unlimited_allowed_accumulation as unlimitedAllowedAccumulated,
+                     lp.allowed_leave_monthly          as allowedLeaveMonthly
+              from remaining_leave rl
+                       left join leave_policy lp on lp.id = rl.leave_policy_id
+                       left join leave_setup ls on ls.id = lp.leave_setup_id
+              where rl.pis_code = #{pisCode}
+                and rl.leave_policy_id = #{policyId}
+                and rl.is_active = true) as b
+        group by b.totalAllowedDays, b.totalAllowedDaysFy, b.leaveTaken, b.leaveTakenFy, b.allowedLeaveMonthly,
+                 b.maxAllowedAccumulation, b.homeLeave, b.maxLeaveLimitAtOnce, b.unlimitedAllowedAccumulated,
+                 b.accumulatedLeave, b.leaveName;
+    </select>
+
+    <select id="getTotalLeaveReverted" resultMap="leaveTaken">
+        select case
+                   when (b.totalAllowedDays != 0) then
+                       (coalesce(sum(b.leaveTaken), 0) - #{days})
+                   else (coalesce(sum(b.leaveTaken), 0)) end        as leaveTaken,
+
+               case
+                   when (b.totalAllowedDaysFy != 0 and  b.maxAllowedAccumulation!=0 and ((coalesce(sum(b.totalAllowedDaysFy), 0)) =
+                                                         (coalesce(sum(b.leaveTakenFy), 0)))) then
+                       ((coalesce(sum(b.accumulatedFy), 0)) + ((#{days} + (coalesce(sum(b.leaveTakenFy), 0))) -
+                                                               (coalesce(sum(b.totalAllowedDaysFy), 0))))
+                   when (b.maxAllowedAccumulation!=0) then
+                       case
+                           when ((coalesce(sum(b.accumulatedFy), 0)) + #{days}) > b.maxAllowedAccumulation
+                               then b.maxAllowedAccumulation
+                           else ((coalesce(sum(b.accumulatedFy), 0)) + #{days}) end
+
+
+                   when (b.allowedLeaveMonthly != 0) then 0
+
+                   else (coalesce(sum(b.accumulatedFy), 0)) end     as accumulatedLeaveFy,
+
+
+               case
+                   when (b.maxAllowedAccumulation!=0) then
+                       (coalesce(sum(b.homeLeave), 0) - #{days})
+                   else (coalesce(sum(b.homeLeave), 0)) end         as homeLeave,
+
+               0                                                    as accumulatedLeave,
+
+               case
+                   when (b.totalAllowedDaysFy != 0)
+                       then
+                       ((coalesce(sum(b.leaveTakenFy), 0)) - #{days})
+                   else (coalesce(sum(b.leaveTakenFy), 0)) end      as leaveTakenFy,
+               case
+                   when (b.allowedLeaveMonthly != 0) then
+                       (coalesce(sum(b.leaveTakenMonthly), 0) - #{days})
+                   else (coalesce(sum(b.leaveTakenMonthly), 0)) end as leaveMonthly,
+
+               case
+                   when (b.maxLeaveLimitAtOnce != 0) then
+                       (coalesce(sum(b.homeLeave), 0) - #{days})
+                   else (coalesce(sum(b.homeLeave), 0)) end         as leaveTakenObsequies
+
+        from (select rl.leave_taken_fy              as leaveTakenFy,
+                     rl.leave_taken                 as leaveTaken,
+                     rl.remaining_leave             as homeLeave,
+                     ls.name_en                     as leaveName,
+                     rl.accumulated_leave           as accumulatedLeave,
+                     rl.accumulated_leave_fy        as accumulatedFy,
+                     rl.monthly_leave_taken         as leaveTakenMonthly,
+                     lp.total_allowed_days_fy       as totalAllowedDaysFy,
+                     lp.maximum_leave_limit_at_once as maxLeaveLimitAtOnce,
+                     lp.max_allowed_accumulation    as maxAllowedAccumulation,
+                     lp.total_allowed_days          as totalAllowedDays,
+                     lp.allowed_leave_monthly       as allowedLeaveMonthly
+              from remaining_leave rl
+                       left join leave_policy lp on lp.id = rl.leave_policy_id
+                       left join leave_setup ls on ls.id = lp.leave_setup_id
+              where rl.pis_code = #{pisCode}
+                and rl.leave_policy_id = #{policyId}
+                and rl.is_active = true) as b
+        group by b.totalAllowedDays, b.totalAllowedDaysFy, b.leaveTaken, b.leaveTakenFy, b.allowedLeaveMonthly,
+                 b.homeLeave, b.maxAllowedAccumulation, b.maxLeaveLimitAtOnce, b.accumulatedLeave, b.leaveName;
+    </select>
+
+    <select id="getHomeLeaveReverted" resultMap="leaveTaken">
+        select case
+                   when (b.accumulatedLeave = b.previousAccumulated) then
+                       b.accumulatedLeave
+                   else
+                       case
+                           when ((#{days} - (b.previousAccumulatedFy)) > 0) then
+                               b.accumulatedLeave + (#{days} - (b.previousAccumulatedFy))
+                           else b.accumulatedLeave end
+                   end                         as accumulatedLeave,
+
+               case
+                   when (b.accumulatedLeave !=b.previousAccumulated) then
+                       b.previousAccumulatedFy
+
+                   else ((b.accumulatedFy) + #{days})
+                   end                         as accumulatedLeaveFy,
+
+               ((b.leaveTaken) - #{days})      as leaveTaken,
+               b.leaveTakenFy,
+               ((b.totalLeaveTaken) - #{days}) as homeLeave,
+               b.leaveTakenMonthly             as leaveMonthly,
+               b.totalLeaveTaken               as leaveTakenObsequies
+        from (select rl.leave_taken_fy              as leaveTakenFy,
+                     rl.leave_taken                 as leaveTaken,
+                     rl.remaining_leave             as totalLeaveTaken,
+                     ls.name_en                     as leaveName,
+                     rl.accumulated_leave           as accumulatedLeave,
+                     rl.accumulated_leave_fy        as accumulatedFy,
+                     ahll.accumulated_leave         as previousAccumulated,
+                     ahll.accumulated_leave_fy      as previousAccumulatedFy,
+                     rl.monthly_leave_taken         as leaveTakenMonthly,
+                     lp.total_allowed_days_fy       as totalAllowedDaysFy,
+                     lp.maximum_leave_limit_at_once as maxLeaveLimitAtOnce,
+                     lp.max_allowed_accumulation    as maxAllowedAccumulation,
+                     lp.total_allowed_days          as totalAllowedDays,
+                     lp.allowed_leave_monthly       as allowedLeaveMonthly
+              from remaining_leave rl
+                       left join accumulated_home_leave_log ahll on ahll.remaining_leave_id = rl.id
+                       left join leave_policy lp on lp.id = rl.leave_policy_id
+                       left join leave_setup ls on ls.id = lp.leave_setup_id
+              where rl.id = #{remainingLeaveId}
+                and rl.is_active = true) as b
+        group by b.leaveTaken, b.leaveTakenFy, b.accumulatedFy, b.accumulatedLeave, b.totalLeaveTaken,
+                 b.previousAccumulatedFy, b.previousAccumulated, b.leaveTakenMonthly;
+    </select>
+
+    <select id="filterData" resultMap="leaveRequestReportMap">
+        select rd.id,
+        rd.from_date_en,
+        rd.to_date_en,
+        rd.actual_leave_days as totalDays,
+        case when (lp.count_public_holiday) then
+        date_part('day', rd.to_date_en::timestamp - rd.from_date_en::timestamp)+1
+        end as totalDays,
+        rd.document_id,
+        rd.document_name,
+        rd.document_size,
+        rd.from_date_np,
+        rd.to_date_np,
+        rd.travel_days,
+        ls.name_en,
+        ls.name_np,
+        e.first_name_en,
+        lr.emp_pis_code as pis_code,
+        rd.created_date as appliedDateEn,
+        lr.is_holiday,
+        da.approver_pis_code as ra_approver_pis_code,
+        case when(da.status='A') then da.last_modified_date
+        else null end as approvedDate,
+        da.remarks as ra_remarks,
+        da.status as ra_status,
+        p.name_np as holiday_name_np,
+        p.name_en as holiday_name_en,
+        rd.leave_approve_darta_no as leaveApproveDartaNo,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        rd.status
+        from leave_request_detail rd
+        left join leave_request lr on lr.id = rd.leave_request_id
+        left join decision_approval da on rd.id = da.leave_request_detail_id
+        left join employee e on e.pis_code=lr.emp_pis_code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position po on e.position_code = po.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        inner join users u on e.pis_code = u.pis_employee_code
+        inner join users_roles ur on u.id = ur.user_id
+        inner join role_group rg on ur.role_id = rg.id
+        left join leave_policy lp on rd.leave_policy_id = lp.id
+        left join leave_setup ls on ls.id = lp.leave_setup_id
+        left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+        left join public_holiday p on ph.public_holiday_id = p.id
+
+        where rd.is_active = true
+        and (rd.status = da.status or da.status='F')
+        <choose>
+            <when test="isApprover != null and isApprover == true">
+                and rd.status != 'C'
+            </when>
+            <otherwise>
+                and da.is_active = true
+            </otherwise>
+        </choose>
+
+        <if test="year != null">
+            and lr.year = #{year}
+        </if>
+
+        <choose>
+            <when test="isApprover != null and isApprover == true">
+                and da.approver_pis_code = #{approverPisCode}
+                <if test="pisCode != null and pisCode != ''">
+                    and
+                    <!--                  lr.emp_pis_code = #{pisCode}-->
+                    case
+                    when lr.applied_for_others = true
+                    then
+                    rd.pis_code = #{pisCode}
+                    else
+                    lr.emp_pis_code = #{pisCode}
+                    end
+                    and lr.office_code=#{officeCode}
+                </if>
+            </when>
+            <otherwise>
+                and
+                <!--             lr.emp_pis_code = #{pisCode}-->
+                case
+                when lr.applied_for_others = true
+                then
+                rd.pis_code = #{pisCode}
+                else
+                lr.emp_pis_code = #{pisCode}
+                end
+                and lr.office_code=#{officeCode}
+            </otherwise>
+
+
+        </choose>
+
+        <if test="searchField != null">
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and ((rd.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR rd.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD') ))
+            </if>
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and rd.status = #{searchField.approvalStatus}
+            </if>
+
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and po.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+            <if test="(searchField.appliedDateEn != null and searchField.appliedDateEn != '')">
+                and rd.created_date::date BETWEEN to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD')
+            </if>
+            <if test="isApprover != null">
+                <if test="searchField.name!=null and searchField.name!='' and isApprover != null and isApprover == true">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and (upper(e.first_name_en) like upper(#{pattern_en}) OR
+                    upper(e.first_name_np) like upper(#{pattern_en})
+                    )
+                </if>
+            </if>
+        </if>
+
+
+        <choose>
+            <when test="isApprover != null and isApprover == true">
+                order by rd.created_date desc
+            </when>
+            <when test="isApprover != null and isApprover == false">
+                order by rd.created_date desc
+            </when>
+            <otherwise>
+                order by e_order,po.order_no,e.current_position_app_date_bs, e.first_name_en
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="employeePaginatedLeave" resultMap="baseEmployeePaginatedLeave">
+        select *,
+        (select name_en from leave_setup where id = b.setUpId) as leaveName,
+        (select name_np from leave_setup where id = b.setUpId) as leaveNameNp,
+        (SELECT CONCAT(first_name_en, ' ', COALESCE(middle_name_en, ''), ' ', last_name_en) FROM employee WHERE pis_code = b.requesterPis) AS requesterNameEn,
+        (SELECT CONCAT(first_name_np, ' ', COALESCE(middle_name_np, ''), ' ', last_name_np) FROM employee WHERE pis_code = b.requesterPis) AS requesterNameNp
+        from (select distinct lrd.id as detailId,
+            lr.applied_for_others                                     as appliedForOthers,
+            lrd.from_date_en,
+            lrd.to_date_en,
+            lrd.from_date_np,
+            lrd.to_date_np,
+            lrd.last_modified_date                                    as modifiedDate,
+            lrd.created_date                                          as appliedDate,
+            lr.emp_pis_code as requesterPis,
+        (SELECT CASE WHEN COUNT(*) > 0 THEN created_date ELSE null END FROM decision_approval WHERE leave_request_detail_id = lrd.id AND status = 'A'
+            group by created_date
+            order by created_date desc limit 1)  as approvedDate,
+        <!--(select case when (count_public_holiday)
+            then date_part('day', lrd.to_date_en::timestamp - lrd.from_date_en::timestamp) + 1
+            end from leave_policy where id = lrd.leave_policy_id)-->
+        lrd.actual_leave_days as actualDays,
+        (select leave_setup_id from leave_policy where id = lrd.leave_policy_id) as setUpId,
+            lrd.leave_approve_darta_no                                as leaveApproveDartaNo,
+        (select case when (lrd.status = 'P') and da.approver_pis_code = COALESCE(#{approverPisCode}, #{pisCode})
+            then (select da.status from decision_approval da where da.approver_pis_code = COALESCE(#{approverPisCode}, #{pisCode})
+            and da.leave_request_detail_id = lrd.id order by created_date desc limit 1)
+            else lrd.status end) as status,
+        case
+            when lrd.status = 'P' then 0
+            when (lrd.status = 'A') then 1
+            when (lrd.status = 'R') then 2
+            when (lrd.status = 'RV') then 3
+            when (lrd.status = 'C') then 4
+            else 0
+        end                                                   as e_order,
+        CONCAT(app.first_name_en, ' ', COALESCE(app.middle_name_en, ''), ' ', app.last_name_en) AS approverNameEn,
+        CONCAT(app.first_name_np, ' ', COALESCE(app.middle_name_np, ''), ' ', app.last_name_np) AS approverNameNp,
+        CONCAT(e.first_name_en, ' ', COALESCE(e.middle_name_en, ''), ' ', e.last_name_en) as employeeNameEn,
+        CONCAT(e.first_name_np, ' ', COALESCE(e.middle_name_np, ''), ' ', e.last_name_np) as employeeNameNp
+        from leave_request lr
+        inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+        inner join decision_approval da on lrd.id = da.leave_request_detail_id
+        left join employee e on e.pis_code = case when lr.applied_for_others = true then lrd.pis_code else lr.emp_pis_code end
+        left join employee app on app.pis_code = (select case
+                                                    when status in ('C') then lead(approver_pis_code) over(order by created_date desc)
+                                                    when (lead(status) over(order by created_date desc))  = 'F'
+                                                    and (#{approverPisCode} = (lead(approver_pis_code) over(order by created_date desc))) then approver_pis_code
+                                                    else approver_pis_code end
+                                                    from decision_approval where leave_request_detail_id = lrd.id limit 1)
+        where lrd.is_active = true
+        and (lrd.status = da.status or da.status = 'F')
+        and da.in_active_status != 'INACTIVE'
+
+        <if test="pisCode != null">
+            and (lr.emp_pis_code = #{pisCode} AND applied_for_others = false AND NOT #{isManualLeave})
+            OR (lrd.pis_code = #{pisCode} AND lrd.status = 'A')
+            OR (lr.emp_pis_code = #{pisCode} AND NOT applied_for_others)
+            OR (lr.emp_pis_code = #{pisCode} AND applied_for_others AND #{isManualLeave})
+        </if>
+
+        <if test="approverPisCode != null">
+            and lrd.status != 'C'
+            and ((da.status = 'P' and da.approver_pis_code = #{approverPisCode} and da.is_active = true)
+            or (da.status in('F','R','A' )and da.approver_pis_code = #{approverPisCode}))
+        </if>
+
+        <if test="forReport !=null">
+            and lr.office_code=#{officeCode}
+            and da.is_active = true
+        </if>
+
+<!--        <if test="(currentDate != null and currentDate != '')">-->
+<!--            and case when da.status != 'P' then (lrd.from_date_en >= to_date(#{currentDate}, 'YYYY-MM-DD')) else 1=1 end-->
+<!--        </if>-->
+
+        <if test="searchField != null">
+
+            <if test="(searchField.appliedDateEn != null and searchField.appliedDateEn != '')">
+                and lrd.created_date::date BETWEEN to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD')
+            </if>
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and ((lrd.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR lrd.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD') ))
+            </if>
+
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and lrd.status = #{searchField.approvalStatus}
+            </if>
+
+            <if test="isApprover != null">
+                <if test="searchField.name!=null and searchField.name!='' and isApprover == true">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and(
+                    case
+                    WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en,
+                    ' ', e.last_name_en))
+                    else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                    OR
+                    case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, '
+                    ', e.last_name_np)
+                    else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en} )
+                </if>
+            </if>
+
+            <if test="isApprover == false">
+                <if test="searchField.name!=null and searchField.name!=''">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and(
+                    case
+                    WHEN COALESCE(app.middle_name_en, '') != '' then upper(concat(app.first_name_en, ' ', app.middle_name_en,
+                    ' ', app.last_name_en))
+                    else upper(concat(app.first_name_en, ' ', app.last_name_en)) end like upper(#{pattern_en})
+                    OR
+                    case WHEN COALESCE(app.middle_name_np, '') != '' then concat(app.first_name_np, ' ', app.middle_name_np, '
+                    ', app.last_name_np)
+                    else concat(app.first_name_np, ' ', app.last_name_np) end like #{pattern_en} )
+                </if>
+            </if>
+        </if>)b
+        order by b.e_order,
+        CASE
+        WHEN b.modifiedDate = b.appliedDate
+        THEN b.appliedDate
+        ELSE b.modifiedDate
+        END DESC
+    </select>
+
+    <select id="detailOnCancelLeave" resultType="com.gerp.attendance.Pojo.LatestApprovalActivityPojo">
+        select case
+                   when (lrd.remarks is not null) then
+                       split_part(lrd.remarks, ' ', 1) end as dateNp,
+               lrd.remarks                                 as remarks
+        from leave_request_detail lrd
+        where lrd.id = #{leaveId};
+    </select>
+
+    <!--OPTIMIZED QUERY FOR EMPLOYEE PAGINATION-->
+    <select id="paginatedLeave" resultMap="baseLeaveMap">
+        select * from
+        (select distinct rd.id,
+        lr.emp_pis_code as employeeCode,
+        lr.created_date as appliedDate,
+        lr.applied_for_others as appliedForOthers,
+        rd.from_date_en,
+        rd.to_date_en,
+        rd.pis_code as appliedPisCode,
+        rd.actual_leave_days as totalDays,
+        case when (lp.count_public_holiday) then
+        date_part('day', rd.to_date_en::timestamp - rd.from_date_en::timestamp)+1
+        end as totalDays,
+        rd.from_date_np,
+        rd.to_date_np,
+        rd.travel_days,
+        ls.id as leaveSetupId,
+        rd.year as year,
+        rd.leave_for as leaveFor,
+        rd.actual_leave_days as actualDay,
+        case when(rd.travel_days is not null or rd.travel_days !=0) then
+        rd.to_date_en + interval '1' day end as fromTravelDays,
+        case when(rd.travel_days is not null or rd.travel_days !=0) then
+        rd.to_date_en + interval '1' day * rd.travel_days end as toTravelDays,
+        ls.name_en,
+        ls.name_np,
+        e.first_name_en,
+        rd.created_date as appliedDateEn,
+        lr.is_holiday,
+        lr.applied_for_others,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as delegated_approver_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+        e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as delegated_approver_name_np,
+        case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated,
+        case when(da.delegated_id IS NOT NULL) then
+        d.to_piscode else da.approver_pis_code end as ra_approver_pis_code,
+        case when(da.status='A') then da.last_modified_date
+        else null end as approvedDate,
+        da.status as ra_status,
+        rd.status as status,
+        da.hash_content,
+        da.content as approvalContent,
+        da.signature,
+        da.remarks as ra_remarks,
+        da.is_approver,
+        p.name_np as holiday_name_np,
+        p.name_en as holiday_name_en,
+        po.order_no,
+        e.current_position_app_date_bs,
+        rd.leave_approve_darta_no as leaveApproveDartaNo,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        fd.name_np as fd_name_np,
+        case when da.delegated_id is not null then true else false end as is_delegated,
+        case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+        from leave_request_detail rd
+        left join leave_request lr on lr.id = rd.leave_request_id
+        left join decision_approval da on rd.id = da.leave_request_detail_id
+        left join employee e on e.pis_code=lr.emp_pis_code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position po on e.position_code = po.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        inner join users u on e.pis_code = u.pis_employee_code
+        inner join users_roles ur on u.id = ur.user_id
+        inner join role_group rg on ur.role_id = rg.id
+        left join leave_policy lp on rd.leave_policy_id = lp.id
+        left join leave_setup ls on ls.id = lp.leave_setup_id
+        left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+        left join public_holiday p on ph.public_holiday_id = p.id
+        left join delegation d on da.delegated_id = d.id
+        where rd.is_active = true
+        and (rd.status = da.status or da.status='F')
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="pisCode != null">
+            and
+            <!--             lr.emp_pis_code = #{pisCode}-->
+            case
+            when lr.applied_for_others = true
+            then
+            rd.pis_code = #{pisCode}
+            else
+            lr.emp_pis_code = #{pisCode}
+            end
+            and lr.office_code=#{officeCode}
+            and da.is_active = true
+        </if>
+        <if test="approverPisCode != null">
+            and rd.status != 'C'
+            and ((da.status = 'P' and da.approver_pis_code = #{approverPisCode} and da.is_active = true)
+            or (da.status in('F','R','A' )and da.approver_pis_code = #{approverPisCode}))
+        </if>
+        <if test="forReport !=null">
+            and lr.office_code=#{officeCode}
+            and da.is_active = true
+        </if>
+        <if test="searchField != null">
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and po.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+            <if test="(searchField.appliedDateEn != null and searchField.appliedDateEn != '')">
+                and rd.created_date::date BETWEEN to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD')
+            </if>
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and ((rd.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR rd.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD') ))
+            </if>
+
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and rd.status = #{searchField.approvalStatus}
+            </if>
+            <if test="isApprover != null">
+                <if test="searchField.name!=null and searchField.name!='' and isApprover == true">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and(
+                    case
+                    WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en,
+                    ' ', e.last_name_en))
+                    else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                    OR
+                    case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, '
+                    ', e.last_name_np)
+                    else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en} )
+                </if>
+            </if>
+
+            <if test="forReport != null">
+                <if test="searchField.name!=null and searchField.name!=''">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and(
+                    case
+                    when e.middle_name_np IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+                    e.last_name_en)
+                    else concat(e.first_name_en, ' ', e.last_name_en) end like upper(#{pattern_en})
+                    OR
+                    case when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+                    e.last_name_np)
+                    else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+                </if>
+            </if>
+        </if>
+
+        )b
+        <if test="pisCode != null">
+            order by b.appliedDateEn desc
+        </if>
+        <if test="approverPisCode != null">
+            order by b.appliedDateEn desc
+        </if>
+        <if test="forReport !=null">
+            order by b.e_order,b.order_no,b.current_position_app_date_bs, b.first_name_en
+        </if>
+    </select>
+
+    <select id="filterDataPaginatedLeave" resultMap="leaveRequestReportMap">
+        select * from
+        (select distinct rd.id,
+        rd.from_date_en,
+        rd.to_date_en,
+        rd.actual_leave_days as totalDays,
+        case when (lp.count_public_holiday) then
+        date_part('day', rd.to_date_en::timestamp - rd.from_date_en::timestamp)+1
+        end as totalDays,
+        rd.document_id,
+        rd.document_name,
+        rd.document_size,
+        rd.from_date_np,
+        rd.to_date_np,
+        rd.travel_days,
+        case when(rd.travel_days is not null or rd.travel_days !=0) then
+        rd.to_date_en + interval '1' day end as fromTravelDays,
+        case when(rd.travel_days is not null or rd.travel_days !=0) then
+        rd.to_date_en + interval '1' day * rd.travel_days end as toTravelDays,
+        ls.name_en,
+        ls.name_np,
+        e.first_name_en,
+        lr.emp_pis_code as pis_code,
+        rd.created_date as appliedDateEn,
+        lr.is_holiday,
+        lr.applied_for_others,
+        case
+        when(da.delegated_id IS NOT NULL) then
+        d.to_piscode else da.approver_pis_code end as ra_approver_pis_code,
+        case when(da.status='A') then da.last_modified_date
+        else null end as approvedDate,
+        da.remarks as ra_remarks,
+        da.status as ra_status,
+        rd.status as status,
+        p.name_np as holiday_name_np,
+        p.name_en as holiday_name_en,
+        po.order_no,
+        e.current_position_app_date_bs,
+        rd.leave_approve_darta_no as leaveApproveDartaNo,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        fd.name_np as fd_name_np,
+        case when da.delegated_id is not null then true else false end as is_delegated,
+
+        case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated
+
+        from leave_request_detail rd
+        left join leave_request lr on lr.id = rd.leave_request_id
+        left join decision_approval da on rd.id = da.leave_request_detail_id
+        left join employee e on e.pis_code=lr.emp_pis_code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position po on e.position_code = po.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        inner join users u on e.pis_code = u.pis_employee_code
+        inner join users_roles ur on u.id = ur.user_id
+        inner join role_group rg on ur.role_id = rg.id
+        left join leave_policy lp on rd.leave_policy_id = lp.id
+        left join leave_setup ls on ls.id = lp.leave_setup_id
+        left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+        left join public_holiday p on ph.public_holiday_id = p.id
+        left join delegation d on da.delegated_id = d.id
+        where rd.is_active = true
+        and (rd.status = da.status or da.status='F')
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="pisCode != null">
+            and
+           <!-- lr.emp_pis_code = #{pisCode} -->
+            case
+            when lr.applied_for_others = true
+            then rd.pis_code = #{pisCode}
+            else
+                lr.emp_pis_code = #{pisCode}
+            end
+        and lr.office_code=#{officeCode}
+            and da.is_active = true
+        </if>
+        <if test="approverPisCode != null">
+            and rd.status != 'C'
+            and ((da.status = 'P' and da.approver_pis_code = #{approverPisCode} and da.is_active = true)
+            or (da.status in('F','R','A' )and da.approver_pis_code = #{approverPisCode}))
+        </if>
+        <if test="forReport !=null">
+            and lr.office_code=#{officeCode}
+            and da.is_active = true
+        </if>
+        <if test="searchField != null">
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and po.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+            <if test="(searchField.appliedDateEn != null and searchField.appliedDateEn != '')">
+                and rd.created_date::date BETWEEN to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD')
+            </if>
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and ((rd.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR rd.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD') ))
+            </if>
+
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and rd.status = #{searchField.approvalStatus}
+            </if>
+            <if test="isApprover != null">
+                <if test="searchField.name!=null and searchField.name!='' and isApprover == true">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and(
+                    case
+                    WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en,
+                    ' ', e.last_name_en))
+                    else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                    OR
+                    case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, '
+                    ', e.last_name_np)
+                    else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en} )
+                </if>
+            </if>
+
+            <if test="forReport != null">
+                <if test="searchField.name!=null and searchField.name!=''">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and(
+                    case
+                    when e.middle_name_np IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+                    e.last_name_en)
+                    else concat(e.first_name_en, ' ', e.last_name_en) end like upper(#{pattern_en})
+                    OR
+                    case when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+                    e.last_name_np)
+                    else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+                </if>
+            </if>
+        </if>
+
+        )b
+        <if test="pisCode != null">
+            order by b.appliedDateEn desc
+        </if>
+        <if test="approverPisCode != null">
+            order by b.appliedDateEn desc
+        </if>
+        <if test="forReport !=null">
+            order by b.e_order,b.order_no,b.current_position_app_date_bs, b.first_name_en
+        </if>
+    </select>
+
+    <select id="filterForLeaveData" resultMap="leaveRequestReportMap">
+        select rd.id,
+        rd.from_date_en,
+        rd.to_date_en,
+        rd.actual_leave_days as totalDays,
+        case when (lp.count_public_holiday) then
+        date_part('day', rd.to_date_en::timestamp - rd.from_date_en::timestamp)+1
+        end as totalDays,
+        rd.document_id,
+        rd.document_name,
+        rd.document_size,
+        rd.from_date_np,
+        rd.to_date_np,
+        rd.travel_days,
+        ls.name_en,
+        ls.name_np,
+        e.first_name_en,
+        lr.emp_pis_code as pis_code,
+        rd.created_date as appliedDateEn,
+        lr.is_holiday,
+        da.approver_pis_code as ra_approver_pis_code,
+        case when(da.status='A') then da.last_modified_date
+        else null end as approvedDate,
+        da.remarks as ra_remarks,
+        da.status as ra_status,
+        p.name_np as holiday_name_np,
+        p.name_en as holiday_name_en,
+        rd.leave_approve_darta_no as leaveApproveDartaNo,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        rd.status
+        from leave_request_detail rd
+        left join leave_request lr on lr.id = rd.leave_request_id
+        left join decision_approval da on rd.id = da.leave_request_detail_id
+        left join employee e on e.pis_code=lr.emp_pis_code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position po on e.position_code = po.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        inner join users u on e.pis_code = u.pis_employee_code
+        inner join users_roles ur on u.id = ur.user_id
+        inner join role_group rg on ur.role_id = rg.id
+        left join leave_policy lp on rd.leave_policy_id = lp.id
+        left join leave_setup ls on ls.id = lp.leave_setup_id
+        left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+        left join public_holiday p on ph.public_holiday_id = p.id
+
+        where rd.is_active = true
+        and (rd.status = da.status or da.status='F')
+
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <!--        <choose>-->
+        <!--            <when test="isApprover != null and isApprover == true">-->
+        <!--                and rd.status != 'C'-->
+        <!--            </when>-->
+        <!--            <otherwise>-->
+        <!--                and da.is_active = true-->
+        <!--            </otherwise>-->
+        <!--        </choose>-->
+
+        <if test="year != null">
+            and lr.year = #{year}
+        </if>
+        and
+          <!--  lr.emp_pis_code = #{pisCode} -->
+        case
+        when lr.applied_for_others = true
+        then rd.pis_code = #{pisCode}
+        else lr.emp_pis_code = #{pisCode}
+        end
+
+        and lr.office_code=#{officeCode}
+
+        <!--        <choose>-->
+        <!--            <when test="forReport != null and forReport == false">-->
+        <!--                <choose>-->
+        <!--                    <when test="isApprover != null and isApprover == true">-->
+        <!--                        and da.approver_pis_code = #{approverPisCode}-->
+        <!--                        <if test="pisCode != null and pisCode != ''">-->
+        <!--                            and lr.emp_pis_code = #{pisCode} and lr.office_code=#{officeCode}-->
+        <!--                        </if>-->
+        <!--                    </when>-->
+        <!--                    <otherwise>-->
+        <!--                        and lr.emp_pis_code = #{pisCode} and lr.office_code=#{officeCode}-->
+        <!--                    </otherwise>-->
+        <!--                </choose>-->
+        <!--            </when>-->
+        <!--            <otherwise>-->
+        <!--                <if test="pisCode != null and pisCode != ''">-->
+        <!--                    and lr.emp_pis_code = #{pisCode} and lr.office_code=#{officeCode}-->
+        <!--                </if>-->
+
+        <!--                <if test="isApprover != null and isApprover == true">-->
+        <!--                    and da.approver_pis_code = #{approverPisCode}-->
+        <!--                </if>-->
+        <!--            </otherwise>-->
+        <!--        </choose>-->
+
+        <if test="searchField != null">
+
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and ((rd.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR rd.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD') ))
+            </if>
+            <if test="(searchField.approvalStatus != null and searchField.approvalStatus != '')">
+                and rd.status = #{searchField.approvalStatus}
+            </if>
+
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and po.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+            <if test="(searchField.appliedDateEn != null and searchField.appliedDateEn != '')">
+                and rd.created_date::date BETWEEN to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.appliedDateEn}, 'YYYY-MM-DD')
+            </if>
+            <if test="isApprover != null">
+                <if test="searchField.name!=null and searchField.name!='' and isApprover == true">
+                    <bind name="pattern_en" value="searchField.name + '%'"/>
+                    and (upper(e.first_name_en) like upper(#{pattern_en}) OR
+                    upper(e.first_name_np) like upper(#{pattern_en})
+                    )
+                </if>
+            </if>
+        </if>
+        order by e_order,po.order_no,e.current_position_app_date_bs, e.first_name_en
+
+
+        <!--        <choose>-->
+        <!--            <when test="forReport != null and forReport == false">-->
+        <!--                <choose>-->
+        <!--                    <when test="isApprover != null and isApprover == true">-->
+        <!--                        order by rd.created_date desc-->
+        <!--                    </when>-->
+        <!--                    <when test="isApprover != null and isApprover == false">-->
+        <!--                        order by rd.created_date desc-->
+        <!--                    </when>-->
+        <!--                    <otherwise>-->
+        <!--                        order by e_order,po.order_no,e.current_position_app_date_bs, e.first_name_en-->
+        <!--                    </otherwise>-->
+        <!--                </choose>-->
+        <!--            </when>-->
+        <!--            <otherwise>-->
+        <!--                order by e_order,po.order_no,e.current_position_app_date_bs, e.first_name_en-->
+        <!--            </otherwise>-->
+        <!--        </choose>-->
+    </select>
+
+    <select id="filterDataForExcel" resultMap="leaveRequestReportMap">
+        select rd.id,
+        rd.from_date_en,
+        rd.to_date_en,
+        rd.from_date_np,
+        rd.to_date_np,
+        rd.travel_days,
+        ls.name_en,
+        ls.name_np,
+        lr.emp_pis_code as pis_code,
+        lr.is_holiday,
+        p.name_np as holiday_name_np,
+        p.name_en as holiday_name_en,
+        rd.status
+        from leave_request_detail rd
+        left join leave_request lr on lr.id = rd.leave_request_id
+        left join decision_approval da on rd.id = da.leave_request_detail_id
+        left join leave_policy lp on rd.leave_policy_id = lp.id
+        left join leave_setup ls on ls.id = lp.leave_setup_id
+        left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+        left join public_holiday p on ph.public_holiday_id = p.id
+
+        where rd.is_active = true and da.is_active = true
+
+        <if test="year != null">
+            and lr.year = #{year}
+        </if>
+
+        <if test="pisCode != null and pisCode != ''">
+            and
+            <!--lr.emp_pis_code = #{pisCode}-->
+            case
+            when lr.applied_for_others = true
+            then rd.pis_code = #{pisCode}
+            else lr.emp_pis_code = #{pisCode}
+            end
+        </if>
+
+        <if test="fromDate != null and toDate != null">
+            and (
+            rd.from_date_en BETWEEN #{fromDate} AND #{toDate}
+            OR rd.to_date_en BETWEEN #{fromDate} AND #{toDate}
+            )
+        </if>
+        <if test="(approvalStatus != null and approvalStatus != '')">
+            and rd.status = #{searchField.approvalStatus}
+        </if>
+        order by rd.created_date desc
+    </select>
+
+    <select id="getLeaveSameMonth" resultMap="sameMonthMap">
+        select coalesce(sum(days + 1), 0) as days,
+               EXTRACT(MONTH FROM DATE (fromDate)) as month
+        from (
+            select rd.from_date_en as fromDate,
+            rd.to_date_en,
+            DATE_PART('day', rd.to_date_en:: timestamp - rd.from_date_en:: timestamp) as days
+            from leave_request_detail rd
+            left join leave_request lr on lr.id = rd.leave_request_id
+            left join decision_approval da on rd.id = da.leave_request_detail_id
+            where da.status = 'A'
+            and
+             <!--   lr.emp_pis_code = #{pisCode}-->
+            case
+            when lr.applied_for_others = true
+            then rd.pis_code = #{pisCode}
+            else lr.emp_pis_code = #{pisCode}
+            end
+
+            and lr.office_code = #{officeCode}
+            and (SELECT EXTRACT (MONTH FROM DATE (rd.from_date_en))) =
+            (SELECT EXTRACT (MONTH FROM DATE (rd.to_date_en)))) d
+        group by (EXTRACT (MONTH FROM DATE (fromDate)));
+    </select>
+
+    <select id="getLeaveDifferentMonth" resultMap="differentMonthMap">
+        select rd.from_date_en as fromDate, rd.to_date_en
+        from leave_request_detail rd
+                 left join leave_request lr on lr.id = rd.leave_request_id
+                 left join decision_approval da on rd.id = da.leave_request_detail_id
+        where da.status = 'A'
+          and
+           <!-- lr.emp_pis_code = #{pisCode}-->
+            case
+            when lr.applied_for_others = true
+            then rd.pis_code = #{pisCode}
+            else lr.emp_pis_code = #{pisCode}
+        end
+          and lr.office_code = #{officeCode}
+        except
+        select rd.from_date_en as fromDate, rd.to_date_en
+        from leave_request_detail rd
+                 left join leave_request lr on lr.id = rd.leave_request_id
+                 left join decision_approval da on rd.id = da.leave_request_detail_id
+        where da.status = 'A'
+          and
+            <!--lr.emp_pis_code = #{pisCode}-->
+        case
+        when lr.applied_for_others = true
+        then rd.pis_code = #{pisCode}
+        else lr.emp_pis_code = #{pisCode}
+        end
+          and lr.office_code = #{officeCode}
+          and (SELECT EXTRACT(MONTH FROM DATE (rd.from_date_en))) = (SELECT EXTRACT(MONTH FROM DATE (rd.to_date_en)));
+    </select>
+
+    <select id="getEmployeeOnLeave" resultMap="dashboardEmployeeOnLeave">
+        select rd.id,
+               ls.name_en,
+               ls.name_np,
+               rd.from_date_en,
+               rd.actual_leave_days as actualDays,
+               rd.to_date_en,
+               case
+                   when lr.applied_for_others = true
+                       then
+                       rd.pis_code
+                                           else
+                       lr.emp_pis_code
+                   end
+                   as pis_code,
+               lr.is_holiday,
+               p.name_np            as holiday_name_np,
+               p.name_en            as holiday_name_en,
+               lr.office_code,
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4
+                   else 0
+                   end              as e_order,
+               rd.leave_for         as duration_type
+        from leave_request_detail rd
+                 left join leave_request lr on lr.id = rd.leave_request_id
+                 left join decision_approval da on rd.id = da.leave_request_detail_id
+                 left join leave_policy lp on rd.leave_policy_id = lp.id
+                 left join leave_setup ls on ls.id = lp.leave_setup_id
+                 left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+                 left join public_holiday p on ph.public_holiday_id = p.id
+                 left join employee e on
+                (
+                case
+                    when lr.applied_for_others =true then
+                        e.pis_code =rd.pis_code
+                    else
+                        e.pis_code =lr.emp_pis_code
+                end
+                )
+                 left join employee_service_status es on es.code = e.employee_service_status_code
+                 left join position po on e.position_code = po.code
+
+        where rd.is_active = true
+          and da.is_active = true
+          and da.status = 'A'
+          and lr.office_code = #{officeCode}
+          and #{currentDate} BETWEEN rd.from_date_en AND rd.to_date_en
+        order by e_order, po.order_no, e.current_position_app_date_bs, e.first_name_en
+    </select>
+
+    <select id="getEmployeeOnAbsent" resultType="com.gerp.attendance.Pojo.EmployeeAbsentPojo">
+        select * from
+        (select e.pis_code,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        po.order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en
+        from employee e
+        left join users u on u.pis_employee_code = e.pis_code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position po on e.position_code = po.code
+        where e.office_code= #{officeCode} and u.is_active=true
+        except
+        select distinct ea.pis_code,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        po.order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en
+        from
+        employee_attendance ea
+        left join users u on u.pis_employee_code = ea.pis_code
+        left join employee e on e.pis_code=ea.pis_code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position po on e.position_code = po.code
+        where ea.date_en= #{currentDate}
+        and ea.office_code= #{officeCode}
+        and u.is_active=true
+        and ea.is_active=true)b union distinct
+        (select ea.pis_code as pisCode,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        po.order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en
+        from employee_attendance ea
+        left join users u on u.pis_employee_code = ea.pis_code
+        left join employee e on e.pis_code=ea.pis_code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position po on e.position_code = po.code
+        where
+        ea.date_en=#{currentDate} and u.is_active=true
+        and ea.office_code=#{officeCode}
+        and fd.designation_type='NORMAL_DESIGNATION'
+        and ea.attendance_status in
+        <foreach item="item" index="index" collection="attendanceStatus"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and ea.is_active=true)
+        order by e_order,order_no,current_position_app_date_bs, first_name_en;
+    </select>
+
+    <select id="getLeaveDatesOnMonth" resultType="String">
+        select i::date as dates
+        from (select distinct generate_series
+                                  (fromDateEn::timestamp, toDateEn::timestamp, '1 day'::interval) i
+              from (select rd.from_date_en as fromDateEn, rd.to_date_en as toDateEn, rd.status
+                    from leave_request_detail rd
+                             left join leave_request lr on lr.id = rd.leave_request_id
+                             left join decision_approval ra on rd.id = ra.leave_request_detail_id
+                    where rd.is_active = true
+                      and ra.is_active = true
+                      and rd.status = 'A'
+                      and
+                       <!-- lr.emp_pis_code = #{pisCode}-->
+                        case
+                        when lr.applied_for_others = true
+                        then rd.pis_code = #{pisCode}
+                        else lr.emp_pis_code = #{pisCode}
+                        end
+                      and lr.office_code = #{officeCode}
+                    union all
+                    select kr.from_date_en as fromDateEn, kr.to_date_en as toDateEn, kr.status
+                    from kaaj_request kr
+                             left join decision_approval ra on kr.id = ra.kaaj_request_id
+                    where kr.is_active = true
+                      and ra.is_active = true
+                      and kr.status = 'A'
+                      and kr.pis_code = #{pisCode}
+                      and kr.office_code = #{officeCode}) as b) as d
+        where (SELECT EXTRACT(MONTH FROM DATE (i))) = #{month}
+        order by i asc;
+    </select>
+
+    <select id="checkLeaveForAccumulated" resultType="java.lang.Long">
+        select COALESCE(SUM(DATE_PART('day', c.toDate::timestamp - c.fromDate::timestamp) + 1), 0) as
+                   studyCount
+        from (select case
+                         when (#{startDate} >= lrd.from_date_en) then #{startDate}
+                         else lrd.from_date_en end                                                    as fromDate,
+                     case when (lrd.to_date_en >= #{endDate}) then #{endDate} else lrd.to_date_en end as toDate
+
+              from leave_request lr
+                       left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                       left join leave_policy lp on lrd.leave_policy_id = lp.id
+              where lrd.status = 'A'
+                and lp.count_accumulated_leave = false
+                and lr.office_code = #{officeCode}
+                and (lower(ls.name_en) in ('Casual Leave', 'Festival Leave') or lr.is_holiday = true)
+                and
+                  <!--lr.emp_pis_code = #{pisCode}-->
+                case
+                when lr.applied_for_others = true
+                then lrd.pis_code = #{pisCode}
+                else lr.emp_pis_code = #{pisCode}
+                end
+
+                and ((lrd.from_date_en between #{startDate} and #{endDate}) or
+                     (lrd.to_date_en between #{startDate} and #{endDate}))) c;
+    </select>
+
+    <select id="fiscalYearDate" resultType="com.gerp.attendance.Pojo.DatesPojo">
+        select fy.start_date, fy.end_date
+        from fiscal_year fy
+        where fy.is_active = true;
+    </select>
+
+    <select id="getNepaliYear" resultType="java.lang.String">
+        select dl.nepali_year from date_list dl
+        where
+        <choose>
+            <when test="currentDate ==null">
+                dl.eng_date=current_date
+            </when>
+            <otherwise>
+                dl.eng_date=#{currentDate}::date
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getAccumulatedLeaveUpdate" resultType="java.lang.Double">
+        select (count(*) + leaveCount) >= #{allowedDays} then #{allowedDays} else (count(*)+leaveCount)
+        end
+        from employee_attendance ea
+    where ((ea.checkin is not null
+    or  ea.checkout is not null) or (ea.is_holiday=true))
+    and ea.date_en between #{startDate} and #{endDate}
+        and ea.pis_code=#{pisCode}
+        and ea.is_active=true
+    </select>
+
+    <select id="checkForPendingLeave" resultType="java.lang.Boolean">
+        select case
+                   when (count(*) > 0) then true
+                   else false end
+        from leave_request lr
+                 left join leave_request_detail lrd on lr.id = lrd.
+            leave_request_id
+        where lrd.status = 'P'
+          and
+            <!--lr.emp_pis_code = #{pisCode}-->
+            case
+                when lr.applied_for_others = true
+                then lrd.pis_code = #{pisCode}
+                else lr.emp_pis_code = #{pisCode}
+            end
+          and lr.is_active = true
+          and lrd.is_active = true;
+    </select>
+
+    <select id="checkForApproveLeave" resultType="java.lang.Boolean">
+        select case
+                   when (count(*) > 0) then true
+                   else false end
+        from leave_request lr
+                 left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                 left join decision_approval da on lrd.id = da.leave_request_detail_id
+        where lrd.status = 'P'
+          and da.approver_pis_code = #{pisCode}
+          and lr.is_active = true
+          and lrd.is_active = true
+          and da.is_active = true;
+    </select>
+
+    <select id="currentYearLeave" resultType="java.lang.Double">
+        select sum(actual_leave_days)
+        from leave_request lr
+                 left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                 left join leave_policy lp on lrd.leave_policy_id = lp.id
+                 left join leave_setup ls on lp.leave_setup_id = ls.id
+        where lr.is_active = true
+          and lrd.is_active = true
+          and
+
+            <!-- lr.emp_pis_code = #{pisCode} -->
+        case
+        when lr.applied_for_others = true
+        then lrd.pis_code = #{pisCode}
+        else lr.emp_pis_code = #{pisCode}
+
+        end
+          and lrd.status = 'A'
+          and lr.year = #{year}
+          and lower(ls.name_en) = 'home leave';
+    </select>
+
+    <select id="getLeaveRequestByIdDetail" resultType="com.gerp.attendance.Pojo.LeaveRequestLatestPojo">
+        select rd.id,
+               rd.is_active                                                            as isActive,
+               rd.record_id,
+               ra.is_approver,
+               lr.is_holiday,
+               rd.leave_policy_id,
+               rd.periodic_holiday_id,
+               rd.description,
+               rd.leave_for,
+               lr.emp_pis_code                                                         as pis_code,
+               p.name_en                                                               as holiday_name,
+               p.name_np                                                               as holiday_name_np,
+               rd.document_id,
+               lr.created_date,
+               rd.from_date_en,
+               rd.to_date_en,
+               rd.actual_leave_days                                                    as totalDays,
+               rd.from_date_np,
+               rd.to_date_np,
+               ls.name_en,
+               ls.name_np,
+               rd.status,
+               ra.approver_pis_code                                                    as ra_approver_pis_code,
+               case
+                   when (ra.status = 'A') then
+                       ra.last_modified_date end                                       as approvedDate,
+               ra.remarks                                                              as ra_remarks,
+               ra.status                                                               as ra_status,
+               lr.office_code,
+               lr.is_active,
+               rd.travel_days,
+               rd.document_id,
+               rd.document_name,
+               lr.fiscal_year,
+               rd.document_size,
+               de.pis_code                                                             as delegated_approver_pis_code,
+               case
+                   when de.middle_name_en IS NOT NULL then concat(de.first_name_en, ' ', de.middle_name_en, ' ',
+                                                                  de.last_name_en)
+                   else concat(de.first_name_en, ' ', de.last_name_en) end             as delegated_approver_name_en,
+               case
+                   when de.middle_name_np IS NOT NULL then concat(de.first_name_np, ' ', de.middle_name_np, ' ',
+                                                                  de.last_name_np)
+                   else concat(de.first_name_np, ' ', de.last_name_np) end             as delegated_approver_name_np,
+               case when d.is_office_head is null then false else d.is_office_head end as is_office_head_delegated,
+               case
+                   when (rd.travel_days is not null and rd.travel_days !=0) then
+                       rd.to_date_en + interval '1' day end                            as fromTravelDays,
+               case
+                   when (rd.travel_days is not null and rd.travel_days !=0) then
+                       rd.to_date_en + interval '1' day * rd.travel_days end           as toTravelDays,
+               rd.remarks                                                              as cancelRemarks,
+               lrcl.id                                                                 as previousLeaveLog,
+               lrcl.from_date_en                                                       as previousFromDateEn,
+               lrcl.to_date_en                                                         as previousToDateEn,
+               lrcl.actual_days                                                        as previousActualDays,
+               lrcl.travel_days                                                        as previousTravelDays,
+               rd.document_size
+        from leave_request_detail rd
+                 left join leave_request lr on lr.id = rd.leave_request_id
+                 left join leave_request_cancel_log lrcl on lrcl.leave_request_detail_id = rd.id
+                 left join decision_approval ra on rd.id = ra.leave_request_detail_id
+                 left join leave_policy lp on rd.leave_policy_id = lp.id
+                 left join leave_setup ls on ls.id = lp.leave_setup_id
+                 left join periodic_holiday ph on rd.periodic_holiday_id = ph.id
+                 left join public_holiday p on ph.public_holiday_id = p.id
+                 left join delegation d on ra.delegated_id = d.id
+                 left join employee de on de.pis_code = d.to_piscode
+        where lr.id = #{id}
+
+    </select>
+
+    <select id="validatePreviousYear" resultType="java.lang.Boolean">
+        select case
+                   when (ls.maximum_allowed_accumulation) then
+                       case
+                           when ((((select coalesce((count(*) +
+                                                     (case
+                                                          when (select rl.home_leave_additional
+                                                                from remaining_leave rl
+                                                                where rl.pis_code = #{pisCode}
+                                                                  and rl.year = #{previousYear}
+                                                                  and rl.leave_policy_id = #{leavePolicyId}) is null
+                                                              then 0
+                                                          else (select rl.home_leave_additional
+                                                                from remaining_leave rl
+                                                                where rl.pis_code = #{pisCode}
+                                                                  and rl.year = #{previousYear}
+                                                                  and rl.leave_policy_id = #{leavePolicyId}) end)::integer) /
+                                                    12, 0)
+                                    from (select ea.date_en
+                                          from employee_attendance ea
+                                          where ea.attendance_status in ('DEVICE', 'KAAJ', 'MA')
+                                            and ea.pis_code = #{pisCode}
+                                            and ea.date_en between #{fromDateEn} and #{toDateEn}
+                                            and ea.office_code = #{officeCode}
+
+                                          union
+                                          distinct
+                                          select ea.date_en
+                                          from employee_attendance ea
+                                          where
+                                              ea.is_holiday= true
+                                            and ea.pis_code=#{pisCode}
+                                            and ea.date_en between #{fromDateEn}
+                                            and #{toDateEn}
+                                            and ea.office_code=#{officeCode}
+                                          union
+                                          distinct
+                                          select distinct generate_series(l.fromDate,
+                                              l.toDate, '1 day':: interval):: date i
+                                          from
+                                              (select
+                                              case when (#{fromDateEn}>=lrd.from_date_en) then #{fromDateEn} else lrd.from_date_en end as fromDate,
+                                              case when (lrd.to_date_en >= #{toDateEn}) then #{toDateEn} else lrd.to_date_en end as toDate
+                                              from leave_request lr
+                                              left join leave_request_detail lrd
+                                              on lr.id=lrd.leave_request_id
+                                              left join leave_policy lp on lrd.leave_policy_id = lp.id
+                                              left join leave_setup ls on lp.leave_setup_id = ls.id
+                                              where lr.is_holiday= false
+                                              and lrd.status in ('A', 'P')
+                                              and lrd.from_date_en between #{fromDateEn} and #{toDateEn}
+                                              and trim (lower (ls.name_en)) in
+                                              ('casual leave', 'sick leave', 'festival leave', 'maternity leave', 'paternity leave', 'mourning leave', 'obsequies leave')
+                                              and
+                                          <!-- lr.emp_pis_code=#{pisCode} -->
+                                        case
+                                        when lr.applied_for_others = true
+                                        then lrd.pis_code = #{pisCode}
+                                         else lr.emp_pis_code = #{pisCode}
+                                        end
+                                        ) l) d) + #{days}) -
+                                  (select coalesce(sum(lrd.actual_leave_days), 0)
+                                   from leave_request
+                                            left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+                                   where lrd.status in ('A', 'P')
+                                     and (lrd.from_date_en between #{fromDateEn} and #{toDateEn})
+                                     and
+                                       <!-- leave_request.emp_pis_code  = #{pisCode} -->
+                                     case
+                                      when leave_request.applied_for_others = true
+                                        then lrd.pis_code = #{pisCode}
+                                     else leave_request.emp_pis_code = #{pisCode}
+                                     end
+                                     and lrd.leave_policy_id = #{leavePolicyId}))<![CDATA[ <]]> 0)
+                               then false
+                           else true end
+                   else
+                       case
+                           when (
+                                   ((select coalesce(sum(lrd.actual_leave_days), 0)
+                                     from leave_request
+                                              left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+                                     where lrd.status in ('A', 'P')
+                                       and (lrd.from_date_en between #{fromDateEn} and #{toDateEn})
+                                       and
+                                         <!--leave_request.emp_pis_code = #{pisCode}-->
+                                        case
+                                            when leave_request.applied_for_others = true
+                                            then lrd.pis_code = #{pisCode}
+                                            else leave_request.emp_pis_code = #{pisCode}
+                                        end
+                                       and lrd.leave_policy_id = #{leavePolicyId}) - #{days}) <![CDATA[<]]> 0) then
+                               false
+                           else true end
+                   end
+        from leave_policy lp
+                 left join leave_setup ls on lp.leave_setup_id = ls.id
+        where lp.id = #{leavePolicyId};
+    </select>
+
+    <select id="previousLeaveCheck" resultType="java.lang.Boolean">
+        select case
+                   when (((select coalesce(sum(lrd.actual_leave_days), 0)
+                           from leave_request
+                                    left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+                           where
+                               <!--leave_request.emp_pis_code = #{pisCode}-->
+                            case
+                                when leave_request.applied_for_others = true
+                                then lrd.pis_code = #{pisCode}
+                                else leave_request.emp_pis_code = #{pisCode}
+                            end
+                             and lrd.from_date_en between #{fromDateEn} and #{toDateEn}
+                             and lrd.status in ('A', 'P')
+                             and lrd.leave_policy_id = #{leavePolicyId}) + #{days}) > lp.total_allowed_days_fy) then
+                       false
+                   else true end
+        from remaining_leave rl
+                 left join leave_policy lp on rl.leave_policy_id = lp.id
+                 left join leave_setup ls on lp.leave_setup_id = ls.id
+        where rl.year = #{previousYear}
+          and rl.pis_code = #{pisCode}
+          and rl.leave_policy_id = #{leavePolicyId};
+    </select>
+
+    <update id="updatePreviousAccumlatedLeave" flushCache="true">
+        with leave_count as (select coalesce(sum(lrd.actual_leave_days), 0)
+                             from leave_request
+                                      left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+                             where case when leave_request.applied_for_others = true
+                                            then lrd.pis_code = #{pisCode}
+                                        else leave_request.emp_pis_code = #{pisCode} end
+                               and lrd.from_date_en between #{fromDateEn} and #{toDateEn}
+                               and lrd.status = 'A'
+                               and lrd.leave_policy_id = #{leavePolicyId})
+        update remaining_leave
+        set leave_taken=case when (ls.total_allowed_days)
+                                 then case when ((select * from leave_count) <![CDATA[<]]> 0)
+                                               then 0
+                                           else (select * from leave_count) end
+                             else remaining_leave.leave_taken end,
+
+            accumulated_leave_fy = case when (ls.allowed_days_fy and ls.unlimited_allowed_accumulation)
+                                            then case when (lp.total_allowed_days_fy >= (select * from leave_count))
+                                                          then remaining_leave.accumulated_leave_fy
+                                                      else (remaining_leave.accumulated_leave_fy + lp.total_allowed_days_fy) - (select * from leave_count) end
+                                        <!--when (ls.total_allowed_days and ls.maximum_allowed_accumulation)-->
+                                        when (ls.maximum_allowed_accumulation)
+                                            <!--then case when (remaining_leave.accumulated_leave_fy > 0 and remaining_leave.accumulated_leave_fy >= #{days})-->
+                                            then case when (remaining_leave.accumulated_leave_fy >= #{days})
+                                                          then remaining_leave.accumulated_leave_fy - #{days} else 0 end
+                                        else remaining_leave.accumulated_leave_fy end,
+
+            accumulated_leave = case when ls.maximum_allowed_accumulation then
+                                         case when (remaining_leave.accumulated_leave_fy >= #{days}) then remaining_leave.accumulated_leave
+                                              else remaining_leave.accumulated_leave - (#{days} - remaining_leave.accumulated_leave_fy) end
+                                     else remaining_leave.accumulated_leave end,
+
+            repetition = remaining_leave.repetition + 1,
+           <!-- pre_accumulated_leave = CASE
+                                    WHEN (remaining_leave.pre_accumulated_leave + remaining_leave.accumulated_leave_fy) <![CDATA[<=]]> lp.max_allowed_accumulation THEN
+                                    CASE WHEN remaining_leave.pre_accumulated_leave IS NULL OR remaining_leave.pre_accumulated_leave = 0
+                                    THEN remaining_leave.accumulated_leave - #{days}
+                                    ELSE remaining_leave.pre_accumulated_leave - #{days}
+                                    END
+                                    ELSE
+                                    CASE WHEN (lp.max_allowed_accumulation - (remaining_leave.pre_accumulated_leave + remaining_leave.accumulated_leave_fy - #{days})) > 0 THEN
+                                    CASE WHEN remaining_leave.pre_accumulated_leave IS NULL OR remaining_leave.pre_accumulated_leave = 0 THEN
+                                         lp.max_allowed_accumulation - (remaining_leave.pre_accumulated_leave + remaining_leave.accumulated_leave_fy - #{days})
+                                    ELSE remaining_leave.pre_accumulated_leave - #{days}
+                                    END
+                                    END
+                                    END,
+-->
+            remaining_leave = case when ((select * from leave_count) <![CDATA[<]]> 0) then 0
+                                   else (select * from leave_count) end,
+
+            leave_taken_fy = case when ls.allowed_days_fy then
+                                      case when ((select * from leave_count) <![CDATA[<]]> 0) then 0
+                                           else (select * from leave_count) end
+                                  else remaining_leave.leave_taken_fy end
+            from remaining_leave rl
+    	    inner join leave_policy lp on lp.id = #{leavePolicyId}
+            inner join leave_setup ls on lp.leave_setup_id = ls.id
+        where remaining_leave.year = #{previousYear}
+          and remaining_leave.pis_code = #{pisCode}
+          and remaining_leave.leave_policy_id = #{leavePolicyId};
+    </update>
+
+    <update id="updateCurrentYearAccumulated" flushCache="true">
+        with leave_count as (select coalesce(sum(lrd.actual_leave_days), 0)
+                             from leave_request
+                                      left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+                             where case when leave_request.applied_for_others = true
+                                            then lrd.pis_code = #{pisCode}
+                                        else leave_request.emp_pis_code = #{pisCode} end
+                               and lrd.from_date_en between #{fromDateEn} and #{toDateEn}
+                               and lrd.status = 'A'
+                               and lrd.leave_policy_id = #{leavePolicyId})
+        update remaining_leave
+        set leave_taken = case when (ls.total_allowed_days) then
+                                   case when ((select * from leave_count) <![CDATA[ <]]> 0) then 0
+                                        else (select * from leave_count) end
+                               else remaining_leave.leave_taken end,
+
+            accumulated_leave_fy = case when (ls.allowed_days_fy and ls.unlimited_allowed_accumulation) then #{days}
+                                        else remaining_leave.accumulated_leave_fy end,
+
+            accumulated_leave = case when (ls.maximum_allowed_accumulation)   then
+                                         case when ((remaining_leave.accumulated_leave_fy - (select * from leave_count)) > 0) then #{days}
+                                                   else #{days} - (select * from leave_count) end
+                                     else remaining_leave.accumulated_leave end,
+
+            remaining_leave = case when ((select * from leave_count) <![CDATA[ <]]> 0) then 0
+                                   else (select * from leave_count) end,
+
+            leave_taken_fy = case when (ls.allowed_days_fy)
+                                      then case when ((select * from leave_count) <![CDATA[ <]]> 0) then 0
+                                                else (select * from leave_count) end
+                                  else remaining_leave.leave_taken_fy end
+            from remaining_leave rl
+        inner join leave_policy lp on lp.id=#{leavePolicyId}
+            inner join leave_setup ls on lp.leave_setup_id = ls.id
+        where remaining_leave.year=#{year}
+          and remaining_leave.pis_code=#{pisCode}
+          and remaining_leave.leave_policy_id=#{leavePolicyId}
+          and remaining_leave.is_active= true;
+    </update>
+
+    <select id="getNewAccumulatedLeave" resultType="java.lang.Double">
+        select case
+                   when ((rl.accumulated_leave_fy + #{totalDays}) - ((select coalesce(sum(lrd.actual_leave_days), 0)
+                                                                      from leave_request
+                                                                               left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+                                                                      where
+                                                                         <!-- leave_request.emp_pis_code = #{pisCode}-->
+                                                                        case
+                                                                        when leave_request.applied_for_others = true
+                                                                        then lrd.pis_code = #{pisCode}
+                                                                        else leave_request.emp_pis_code = #{pisCode}
+                                                                         end
+                                                                        and lrd.from_date_en between #{fromDateEn} and #{toDateEn}
+                                                                        and lrd.status = 'A'
+                                                                        and lrd.leave_policy_id = #{leavePolicyId})))<![CDATA[ <]]>
+                        0
+                       then 0
+                   else
+                       ((rl.accumulated_leave_fy + #{totalDays}) - ((select coalesce(sum(lrd.actual_leave_days), 0)
+                                                                     from leave_request
+                                                                              left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+                                                                     where
+                                                                         <!--leave_request.emp_pis_code = #{pisCode}-->
+                                                                        case
+                                                                        when leave_request.applied_for_others = true
+                                                                        then lrd.pis_code = #{pisCode}
+                                                                        else leave_request.emp_pis_code = #{pisCode}
+                                                                        end
+                                                                       and lrd.from_date_en between #{fromDateEn} and #{toDateEn}
+                                                                       and lrd.status = 'A'
+                                                                       and lrd.leave_policy_id = #{leavePolicyId}))) end
+        from remaining_leave rl
+        where rl.leave_policy_id = #{leavePolicyId}
+          and rl.pis_code = #{pisCode}
+          and rl.year = #{previousYear};
+    </select>
+
+    <select id="getPreviousKararLeave" resultType="java.lang.Double">
+        select COALESCE(sum(lrd.actual_leave_days), 0)
+        from leave_request
+                 left join leave_request_detail lrd on leave_request.id = lrd.leave_request_id
+        where
+          <!--  leave_request.emp_pis_code = #{pisCode}-->
+            case
+                when leave_request.applied_for_others = true
+                    then
+                    lrd.pis_code = #{pisCode}
+            else leave_request.emp_pis_code = #{pisCode}
+            end
+          and (lrd.from_date_en between #{fromDateEn} and #{toDateEn}
+            or (lrd.to_date_en between #{fromDateEn} and #{toDateEn}))
+          and lrd.status = 'A'
+          and lrd.leave_policy_id = #{leavePolicyId}
+    </select>
+
+    <!--get list of pis code-->
+    <select id="selectPisList" resultType="java.lang.String">
+        select distinct pis_code
+        from leave_request_detail lrd
+        where lrd.id = #{detailId}
+          and lrd.group_order = #{groupOrder}
+    </select>
+
+    <select id="dateSelect" resultType="com.gerp.attendance.Pojo.AttendanceDateListPojo">
+        select distinct lrd.pis_code,
+                        lrd.from_date_en,
+                        lrd.to_date_en,
+                        lrd.from_date_np,
+                        lrd.to_date_np
+        from leave_request_detail lrd
+        where lrd.leave_request_id = #{leaveId}
+          and lrd.group_order = #{groupOrder}
+    </select>
+
+    <select id="getEmployeeByPisCode" resultType="com.gerp.shared.pojo.IdNamePojo">
+        select e.pis_code                                                as code,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as name,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as nameN
+        from employee e
+        where e.pis_code = #{code}
+        order by e.pis_code
+    </select>
+
+    <select id="selectPisDetail" resultType="com.gerp.attendance.Pojo.EmployeeDetailPojo">
+        SELECT distinct lrd.group_order,
+                        lrd.pis_code                                              as pisCode,
+                        lrd.is_active                                             as isActive,
+                        case
+                            when e.middle_name_en IS NOT NULL
+                                then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                            else concat(e.first_name_en, ' ', e.last_name_en) end as employeeNameEn,
+                        case
+                            when e.middle_name_np IS NOT NULL
+                                then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                            else concat(e.first_name_np, ' ', e.last_name_np) end as employeeNameNp,
+                        fd.name_en                                                as designationEn,
+                        fd.name_np                                                as designationNp,
+                        ss.name_en                                                as sectionNameEn,
+                        ss.name_np                                                as sectionNameNp
+        FROM leave_request_detail lrd
+                 left join leave_request lr on lr.id = lrd.leave_request_id
+            and lr.is_active = true
+                 left join employee e on e.pis_code = lrd.pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join section_designation sd on (sd.employee_pis_code = e.pis_code and sd.is_active = true)
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+        WHERE lrd.pis_code = #{pisCode}
+        order by lrd.group_order asc limit 1;
+    </select>
+
+    <select id="selectPisDetail2" resultType="com.gerp.attendance.Pojo.EmployeeDetailPojo">
+        SELECT distinct lrd.group_order,
+                        lrd.pis_code                                              as pisCode,
+                        lrd.is_active                                             as isActive,
+                        case
+                            when e.middle_name_en IS NOT NULL
+                                then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                            else concat(e.first_name_en, ' ', e.last_name_en) end as employeeNameEn,
+                        case
+                            when e.middle_name_np IS NOT NULL
+                                then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                            else concat(e.first_name_np, ' ', e.last_name_np) end as employeeNameNp,
+                        fd.name_en                                                as designationEn,
+                        fd.name_np                                                as designationNp,
+                        ss.name_en                                                as sectionNameEn,
+                        ss.name_np                                                as sectionNameNp
+        FROM leave_request_detail lrd
+                 left join leave_request lr on lr.id = lrd.leave_request_id
+            and lr.is_active = true
+                 left join employee e on e.pis_code = lrd.pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join section_designation sd on (sd.employee_pis_code = e.pis_code and sd.is_active = true)
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+        WHERE
+           <!-- lr.emp_pis_code = #{pisCode}-->
+            case
+            when lr.applied_for_others = true
+            then lrd.pis_code = #{pisCode}
+            else lr.emp_pis_code = #{pisCode}
+            end
+        order by lrd.group_order asc limit 1;
+    </select>
+
+    <select id="selectLeaveEmpDetail" resultType="com.gerp.attendance.Pojo.EmployeeDetailPojo">
+        select e.pis_code                                                as pisCode,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employeeNameEn,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employeeNameNp,
+               fd.name_en                                                as designationEn,
+               fd.name_np                                                as designationNp,
+               ss.name_en                                                as sectionNameEn,
+               ss.name_np                                                as sectionNameNp
+        FROM employee e
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join section_designation sd on (sd.employee_pis_code = e.pis_code and sd.is_active = true)
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+        WHERE e.pis_code = #{pisCode};
+    </select>
+
+    <select id="getReviewerDetail" resultType="com.gerp.attendance.Pojo.LeaveResponsePojo">
+        select da.last_modified_date                                     as forwardedDate,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as reviewerFullNameEn,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as reviewerFullNameNp,
+               fd.name_en                                                as reviewerDesignationEn,
+               fd.name_np                                                as reviewerDesignationNp,
+               ss.name_en                                                as reviewerSecNameEn,
+               ss.name_np                                                as reviewerSecNameNp,
+               o.name_en                                                 as reviewerOfficeNameEn,
+               o.name_np                                                 as reviewerOfficeNameNp
+        FROM leave_request_detail lrd
+                 left join decision_approval da on da.leave_request_detail_id = lrd.id
+                 left join employee e on e.pis_code = da.approver_pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join section_designation sd on (sd.employee_pis_code = e.pis_code and sd.is_active = true)
+                 left join section_subsection ss on sd.section_subsection_id = ss.id
+                 left join office o on o.code = e.office_code
+        WHERE lrd.id = #{detailId}
+          and da.approver_pis_code = #{pisCode}
+        order by da.last_modified_date desc limit 1
+    </select>
+
+    <select id="selectDocument" resultType="com.gerp.attendance.Pojo.document.DocumentPojo">
+        select
+            document_id AS id,
+            document_name AS name,
+            document_size AS size
+        FROM
+            leave_document
+        WHERE
+            leave_detail_id = #{id}
+          and document_id is not null
+        UNION ALL
+        select
+            document_id AS id,
+            document_name AS name,
+            document_size AS size
+        FROM
+            leave_request_detail
+        WHERE
+            id = #{id}
+          and document_id is not null
+        ORDER BY id
+    </select>
+
+    <select id="selectRequestDate" resultType="com.gerp.attendance.Pojo.LeaveRequestDatePojo">
+        select lrd.id               as detailId,
+               lrd.leave_request_id as leaveId,
+               ls.id                as leaveSetupId,
+               ls.name_en           as leaveName,
+               ls.name_np           as leaveNameNp,
+               lrd.leave_policy_id  as leavePolicyId,
+               lrd.created_date     as appliedDate,
+               lrd.from_date_en,
+               lrd.to_date_en,
+               lrd.from_date_np,
+               lrd.to_date_np,
+               lrd.year as year,
+               lrd.leave_for as leaveFor,
+               lrd.actual_leave_days as actualDay
+        from leave_request_detail lrd
+            left join leave_policy lp
+        on lrd.leave_policy_id = lp.id
+            left join leave_setup ls on ls.id = lp.leave_setup_id
+        where lrd.id = #{detailsId} limit 1;
+    </select>
+
+    <select id="selectDetailId" resultType="java.lang.Long">
+        select lrd.id
+        from leave_request_detail lrd
+        where lrd.leave_request_id = #{leaveId};
+    </select>
+
+
+    <update id="discardSelectedLeave">
+        update
+            leave_request_detail
+        set is_active= false,
+            remarks  = #{remarks}
+        where id = #{detailId}
+          and is_active = true;
+    </update>
+
+    <select id="selectLeaveDetailId" resultType="java.lang.Long">
+        select lrd.id
+        from leave_request_detail lrd
+        where leave_request_id = #{leaveId}
+          and pis_code = #{pisCode}
+          and is_active = true;
+    </select>
+
+    <select id="leaveRequestByDetailId" resultMap="leaveByIdBaseMap">
+        WITH emp AS (
+            SELECT pis_code,
+                   employee_code,
+                   CONCAT(first_name_en, ' ', COALESCE(middle_name_en, ''), ' ', last_name_en) as nameEn,
+                   CONCAT(first_name_np, ' ', COALESCE(middle_name_np, ''), ' ', last_name_np) as nameNp
+            FROM employee)
+        select *,
+               (select nameEn from emp where pis_code = c.appPisCode) as appFullNameEn,
+               (select nameEn from emp where pis_code = c.appPisCode) as appFullNameNp,
+               (select name_en from office where code = c.appOfficeCode) as appOfficeNameEn,
+               (select name_np from office where code = c.appOfficeCode) as appOfficeNameNp,
+               (select name_en from functional_designation where code = c.appDesigCode) as appDesignationEn,
+               (select name_np from functional_designation where code = c.appDesigCode) as appDesignationNp,
+               (select nameEn from emp where pis_code = c.forwarderPis) as reviewerFullNameEn,
+               (select nameEn from emp where pis_code = c.forwarderPis) as reviewerFullNameNp,
+               (select name_en from office where code = c.forwarderOffCode) as reviewerOfficeNameEn,
+               (select name_np from office where code = c.forwarderOffCode) as reviewerOfficeNameNp,
+               (select name_en from functional_designation where code = c.forwarderDgCode) as reviewerDesignationEn,
+               (select name_np from functional_designation where code = c.forwarderDgCode) as reviewerDesignationNp,
+               (select nameEn from emp where pis_code = c.leaveEmpPisCode) as leaveEmpFullNameEn,
+               (select nameEn from emp where pis_code = c.leaveEmpPisCode) as leaveEmpFullNameNp,
+               (select employee_code from emp where pis_code = c.leaveEmpPisCode) as employeeCode,
+               (select name_en from office where code = c.officeCode) as leaveEmpOfficeNameEn,
+               (select name_np from office where code = c.officeCode) as leaveEmpOfficeNameNp,
+               (select name_en from functional_designation where code = c.leaveEmpDgCode) as leaveEmpDesignationEn,
+               (select name_np from functional_designation where code = c.leaveEmpDgCode) as leaveEmpDesignationNp
+        from (select *,
+                     (select designation_code from employee where pis_code = b.appPisCode) as appDesigCode,
+                     (select office_code from employee where pis_code = b.appPisCode) as appOfficeCode,
+                     (select designation_code from employee where pis_code = b.forwarderPis) as forwarderDgCode,
+                     (select office_code from employee where pis_code = b.forwarderPis) as forwarderOffCode,
+                     (select designation_code from employee where pis_code = b.leaveEmpPisCode) as leaveEmpDgCode,
+                     (select office_code from employee where pis_code = b.leaveEmpPisCode) as officeCode
+              from (select
+                        da.remarks                                                                as remarks,
+                        case when da.status = 'C' then lead(da.approver_pis_code) over(order by da.created_date desc)
+                             when da.delegated_id is not null then d.to_piscode
+                             else da.approver_pis_code end as appPisCode,
+                        CONCAT(requester.first_name_en, ' ', COALESCE(requester.middle_name_en, ''), ' ', requester.last_name_en) as requesterFullNameEn,
+                        CONCAT(requester.first_name_np, ' ', COALESCE(requester.middle_name_np, ''), ' ', requester.last_name_np) as requesterFullNameNp,
+                        requester.pis_code                                                        as requesterPisCode,
+                        ( select e.employee_service_status_code from employee e where e.pis_code = case when (lr.applied_for_others) then lrd.pis_code
+                              else lr.emp_pis_code end ) as requestedEmployeeServiceCode,
+                        requesterOffice.name_en                                                   as requesterOfficeNameEn,
+                        requesterOffice.name_np                                                   as requesterOfficeNameNp,
+                        requesterDesig.name_en                                                    as requesterDesignationEn,
+                        requesterDesig.name_np                                                    as requesterDesignationNp,
+                        case when (lr.applied_for_others) then lrd.pis_code
+                             else lr.emp_pis_code end                                             as leaveEmpPisCode,
+                        case when (lead(da.status) over(order by da.created_date desc))  = 'F'
+                                 then lead(da.approver_pis_code) over(order by da.created_date desc)
+                             else null end as forwarderPis,
+                        case when lr.applied_for_others and lrd.pis_code is not null then true else false end as appliedForOthers,
+                        COALESCE(lrd.leave_policy_id, 0) AS leavePolicyId,
+                        lrd.from_date_en                                                          as fromDateEn,
+                        lrd.to_date_en                                                            as toDateEn,
+                        lrd.from_date_np                                                          as fromDateNp,
+                        lrd.to_date_np                                                            as toDateNp,
+                        lrd.created_date                                                          as appliedDate,
+                        lrd.description                                                           as leaveDescription,
+                        lrd.leave_for                                                             as leaveFor,
+                        lrd.status                                                                as status,
+                        lrd.year                                                                  as year,
+               da.is_approver                                                            as isApprover,
+               lrd.travel_days                                                           as travelDays,
+               lrd.actual_leave_days                                                     as actualDays,
+               lr.is_holiday                                                             as isHoliday,
+               lrd.id                                                                    as id,
+               lr.leave_request_hash_content,
+               lr.leave_request_signature,
+               lr.content                                                                as leaveRequestContent,
+               da.created_date,
+               COALESCE(d.is_office_head, false) AS isOfficeHeadDeligated,
+               case when da.status = 'A' then da.last_modified_date else null end        as approvedDate,
+               ls.name_en as leaveNameEn,
+               ls.name_np as leaveNameNp,
+               ls.id as leaveSetupId,
+               p.name_np as holiday_name_np,
+        	   p.name_en as holiday_name_en,
+               case when (lrd.travel_days is not null and lrd.travel_days !=0) then
+                    lrd.to_date_en + interval '1' day end as fromTravelDays,
+               case when (lrd.travel_days is not null and lrd.travel_days !=0) then
+                    lrd.to_date_en + interval '1' day * lrd.travel_days end as toTravelDays,
+        	  da.delegated_id IS NOT NULL AND NOT d.is_reassignment AS isDeligated,
+    		  da.delegated_id IS NOT NULL AND d.is_reassignment AS isReassignment
+                    from leave_request lr
+                        left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                        left join decision_approval da on da.leave_request_detail_id = lrd.id
+                        left join leave_policy lp on lrd.leave_policy_id = lp.id
+                        left join leave_setup ls on ls.id = lp.leave_setup_id
+                        left join employee requester on requester.pis_code = lr.emp_pis_code
+                        left join office requesterOffice on requesterOffice.code = requester.office_code
+                        left join functional_designation requesterDesig on requesterDesig.code = requester.designation_code
+                        left join periodic_holiday ph on lrd.periodic_holiday_id = ph.id
+                        left join public_holiday p on ph.public_holiday_id = p.id
+                        left join delegation d on da.delegated_id = d.id
+                    where lrd.id = #{detailId})b)c
+        order by c.created_date desc limit 1
+    </select>
+
+    <!--GET LEAVE HISTORY BY PIS CODE-->
+    <select id="getLeaveHistoryByPisCode" resultType="com.gerp.attendance.Pojo.LeaveHistoryPojo">
+        select lr.id,
+               o.name_en                                                                 as officeNameEn,
+               o.name_np                                                                 as officeNameNp,
+               lrd.last_modified_date                                                    as lastUpdatedDate,
+               lrd.created_date                                                          as appliedDate,
+               da.status                                                                 as status,
+               case
+                   when da.status = 'A'
+                       then da.last_modified_date
+                   else null end                                                         as approvedDate,
+               CONCAT(requester.first_name_en, ' ', COALESCE(requester.middle_name_en, ''), ' ', requester.last_name_en) as reqNameEn,
+               CONCAT(requester.first_name_np, ' ', COALESCE(requester.middle_name_np, ''), ' ', requester.last_name_np) as reqNameNp,
+               CONCAT(e.first_name_en, ' ', COALESCE(e.middle_name_en, ''), ' ', e.last_name_en) as approverNameEn,
+               CONCAT(e.first_name_en, ' ', COALESCE(e.middle_name_en, ''), ' ', e.last_name_en) as approverNameNp,
+               lrd.from_date_en                                                          as fromDateEn,
+               lrd.to_date_en                                                            as toDateEn,
+               lrd.from_date_np                                                          as fromDateNp,
+               lrd.to_date_np                                                            as toDateNp,
+               ls.name_en                                                                as leaveNameEn,
+               ls.name_np                                                                as leaveNameNp
+        from leave_request lr
+                 inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                 inner join decision_approval da on lrd.id = da.leave_request_detail_id
+                 inner join office o on lr.office_code = o.code
+                 inner join employee e on e.pis_code = da.approver_pis_code
+                 inner join employee requester on requester.pis_code = lr.emp_pis_code
+                 inner join leave_policy lp on lrd.leave_policy_id = lp.id
+                 inner join leave_setup ls on ls.id = lp.leave_setup_id
+        where   case
+                  when lr.applied_for_others = true
+                      then lrd.pis_code = #{pisCode}
+                  else lr.emp_pis_code = #{pisCode}
+                end
+          and da.approver_pis_code is not null
+          and da.in_active_status != 'INACTIVE'
+        order by da.created_date desc
+    </select>
+
+
+    <delete id="deleteLeaveDocuments" parameterType="java.util.List">
+        delete from leave_document where document_id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateLeaveRequestDocument">
+        UPDATE leave_request_detail
+        SET
+            document_id = null,
+            document_name = null,
+            document_size = null
+        WHERE
+            id = #{id} AND
+        document_id in
+        <foreach item="docId" collection="documentIds" open="(" separator="," close=")">
+            #{docId}
+        </foreach>
+    </update>
+</mapper>

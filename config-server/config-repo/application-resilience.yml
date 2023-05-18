@@ -1,0 +1,60 @@
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 50
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        recordExceptions:
+          - java.lang.Exception
+    instances:
+      communication-service:
+        baseConfig: default
+      document-service:
+        baseConfig: default
+      messaging-service:
+        baseConfig: default
+      tsa-service:
+        baseConfig: default
+      oauthserver:
+        baseConfig: default
+
+  retry:
+    configs:
+      default:
+        maxRetryAttempts: 2
+        waitDuration: 500
+        retryExceptions:
+            - java.lang.Exception
+    instances:
+      communication-service:
+        baseConfig: default
+        document-service:
+          baseConfig: default
+        messaging-service:
+          baseConfig: default
+        tsa-service:
+          baseConfig: default
+        oauthserver:
+          baseConfig: default
+#  timelimiter:
+#    configs:
+#      default:
+#        cancelRunningFuture: false
+#        timeoutDuration: 2s
+#    instances:
+#      communication-service:
+#        baseConfig: default
+#        document-service:
+#          baseConfig: default
+#        messaging-service:
+#          baseConfig: default
+#        tsa-service:
+#          baseConfig: default
+#        oauthserver:
+#          baseConfig: default

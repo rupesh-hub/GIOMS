@@ -1,0 +1,7 @@
+INSERT INTO email_sender_properties
+(id,key,value)
+VALUES
+('4d45d926-8058-47ec-b595-a513ff66276a','mail.transport.protocol','smtp'),
+('a1b07680-ae66-46f3-8b40-bdc0f8449466','mail.smtp.auth','true'),
+('f8dacba9-b83f-4e2b-a272-bfaba6567cba','mail.smtp.starttls.enable','true'),
+('6171ba1d-fbac-473f-bf4c-218ec2c2bb34','mail.debug','true');

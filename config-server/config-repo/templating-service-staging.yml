@@ -1,0 +1,58 @@
+server:
+  port: ${TEMPLATING_PORT:8090}
+spring:
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+      FAIL_ON_EMPTY_BEANS: false
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:tms}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800
+      leak-detection-threshold: 600000
+    #      auto-commit: false
+  jpa:
+    show-sql: true
+    hibernate:
+      #      naming:
+      #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update
+    database: postgresql
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+      format_sql: true
+# discovery server
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${ADDRESS_DISCOVERY_SERVER:http://localhost:8761/eureka/}
+  instance:
+    preferIpAddress: true
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 160000000
+        readTimeout: 160000000
+keycloak:
+  auth-server-url: http://${AUTH_HOST:localhost}:${AUTH_PORT:9090}/auth
+  realm: gerp-services
+  resource: gerp-main
+  enable-basic-auth: true
+  credentials:
+    secret: gerp-main
+  ssl-required: none
+  principal-attribute: preferred_username
+  use-resource-role-mappings: true
+qr:
+  link: http://${QR_HOST:localhost}/#/public/document?key=

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.GayalKattiMapper">
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.GayalKattiResponsePojo">
+
+        <id property="id" column="id"/>
+        <result property="pisCode" column="pis_code"/>
+        <result property="officeCode" column="office_code"/>
+        <result property="fromDateEn" column="from_date_en"/>
+        <result property="toDateEn" column="to_date_en"/>
+        <result property="fromDateNp" column="from_date_np"/>
+        <result property="toDateNp" column="to_date_np"/>
+        <result property="remarks" column="remarks"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="documentMasterId" column="document_master_id"/>
+        <result property="isActive" column="is_active"/>
+
+<!--        <collection property="approvalDetail" ofType="com.gerp.attendance.Pojo.ApprovalDetailPojo">-->
+<!--            <result property="approverPisCode" column="da_approver_pis_code" />-->
+<!--            <result property="approverNameEn" column="approverNameEn" />-->
+<!--            <result property="approverNameNp" column="approverNameNp" />-->
+<!--            <result property="remarks" column="da_remarks" />-->
+<!--            <result property="status" column="da_status" />-->
+<!--        </collection>-->
+
+<!--        <collection property="document" ofType="com.gerp.attendance.Pojo.document.DocumentPojo">-->
+<!--            <result property="id" column="document_id"/>-->
+<!--            <result property="name" column="document_name"/>-->
+<!--            <result property="size" column="document_size"/>-->
+<!--        </collection>-->
+
+    </resultMap>
+
+    <select id="getAllActiveGayalKatti" resultMap="baseResultMap">
+        SELECT gk.id,
+        gk.pis_code,
+        gk.office_code,
+        gk.from_date_en,
+        gk.from_date_np,
+        gk.to_date_en,
+        gk.to_date_np,
+        gk.remarks,
+        gk.is_active,
+        gk.created_date,
+        gk.document_master_id
+        FROM gayal_katti gk
+        LEFT JOIN gayal_katti_document_details gd ON gk.id = gd.gayal_katti_id
+        WHERE gk.is_active = true
+    </select>
+
+    <select id="getGayalKattiById" resultMap="baseResultMap">
+        SELECT gk.id,
+        gk.pis_code,
+        gk.office_code,
+        gk.from_date_en,
+        gk.from_date_np,
+        gk.to_date_en,
+        gk.to_date_np,
+        gk.remarks,
+        gk.is_active,
+        gk.created_date,
+        gk.document_master_id
+        FROM gayal_katti gk
+        LEFT JOIN gayal_katti_document_details gd ON gk.id = gd.gayal_katti_id
+        WHERE gk.is_active = true AND gk.id = #{id};
+    </select>
+
+    <select id="getByPisCode" resultMap="baseResultMap">
+        SELECT gk.id,
+        gk.pis_code,
+        gk.office_code,
+        gk.from_date_en,
+        gk.from_date_np,
+        gk.to_date_en,
+        gk.to_date_np,
+        gk.remarks,
+        gk.is_active,
+        gk.created_date,
+        gk.document_master_id
+        FROM gayal_katti gk
+        LEFT JOIN gayal_katti_document_details gd ON gk.id = gd.gayal_katti_id
+        WHERE gk.is_active = true AND gk.pis_code = #{pisCode}
+        order by gk.created_date desc
+    </select>
+
+    <select id="getByOfficeCode" resultMap="baseResultMap">
+        SELECT gk.id,
+        gk.pis_code,
+        gk.office_code,
+        gk.from_date_en,
+        gk.from_date_np,
+        gk.to_date_en,
+        gk.to_date_np,
+        gk.remarks,
+        gk.is_active,
+        gk.created_date,
+        gk.document_master_id
+        FROM gayal_katti gk
+        LEFT JOIN gayal_katti_document_details gd ON gk.id = gd.gayal_katti_id
+        WHERE gk.is_active = true AND gk.office_code = #{officeCode}
+        order by gk.created_date desc
+    </select>
+
+<!--    <select id="getGayalKattiByApprover" resultMap="baseResultMap">-->
+<!--        SELECT gk.id,-->
+<!--        gk.pis_code,-->
+<!--        gk.office_code,-->
+<!--        gk.from_date_en,-->
+<!--        gk.from_date_np,-->
+<!--        gk.to_date_en,-->
+<!--        gk.to_date_np,-->
+<!--        gk.remarks,-->
+<!--        gk.is_active,-->
+<!--        gk.created_date,-->
+<!--        gk.document_master_id-->
+<!--        FROM gayal_katti gk-->
+<!--        LEFT JOIN gayal_katti_document_details gd ON gk.id = gd.gayal_katti_id-->
+<!--        WHERE gk.is_active = true;-->
+<!--    </select>-->
+
+    <select id="getDocuments" resultType="com.gerp.attendance.Pojo.document.DocumentMasterPojo">
+        SELECT gk.id,
+        gk.document_master_id,
+        gd.document_id,
+        gd.document_name,
+        gd.document_size
+        FROM gayal_katti gk
+         LEFT JOIN gayal_katti_document_details gd ON gk.id = gd.gayal_katti_id
+        WHERE gk.id = #{id}
+    </select>
+
+    <select id="filterData" resultMap="baseResultMap">
+        SELECT gk.id,
+        gk.pis_code,
+        gk.office_code,
+        gk.from_date_en,
+        gk.from_date_np,
+        gk.to_date_en,
+        gk.to_date_np,
+        gk.remarks,
+        gk.is_active,
+        gk.created_date
+        FROM gayal_katti gk
+        WHERE gk.is_active = true
+
+        <if test="pisCode != null">
+            and gk.pis_code = #{pisCode}
+        </if>
+
+        <if test="searchField != null">
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and ((gk.from_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+                OR gk.to_date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD') ))
+            </if>
+        </if>
+
+        order by gk.created_date desc
+    </select>
+
+
+</mapper>

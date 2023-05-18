@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.OrganizationLevelMapper">
+
+    <select id="getAllOfficeLevel"
+            resultType="com.gerp.usermgmt.pojo.organization.office.OrganizationLevelPojo">
+        select * from organization_level ol where
+                                                ol.is_active is true
+                                                <if test="organizationTypeId != null">
+                                                  and  ol.organisation_type_id  = #{organizationTypeId}
+                                                </if>
+order by ol.order_no
+    </select>
+</mapper>

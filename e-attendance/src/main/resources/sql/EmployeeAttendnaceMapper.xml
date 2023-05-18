@@ -1,0 +1,2964 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.attendance.mapper.EmployeeAttendanceMapper">
+
+    <resultMap id="baseResultMap" type="com.gerp.attendance.Pojo.report.EmployeeAttendanceReportDataPojo">
+
+        <id property="id" column="id"/>
+        <result property="dates" column="dates"/>
+    </resultMap>
+
+
+    <resultMap id="baseResultEmployeeMap" type="com.gerp.attendance.Pojo.EmployeeMinimalDetailsPojo">
+
+        <id property="pisCode" column="pis_code"/>
+        <result column="employeeNameEn" property="employeeNameEn"/>
+        <result column="employeeNameNp" property="employeeNameNp"/>
+        <collection property="functionalDesignation" column="fd_id"
+                    ofType="com.gerp.shared.pojo.IdNamePojo">
+            <id property="code" column="fd_id"/>
+            <result column="fd_name_en" property="name"/>
+            <result column="fd_name_np" property="nameN"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="baseResult" type="com.gerp.attendance.Pojo.EmployeeAttendanceResponsePojo">
+        <id property="totalPresent" column="totalPresent"/>
+        <result property="totalLeave" column="totalLeave"/>
+
+        <collection property="employeeAttendancePojoList" ofType="com.gerp.attendance.Pojo.EmployeeAttendancePojo">
+            <result property="id" column="id"/>
+            <result property="pisCode" column="pis_code"/>
+
+            <result property="lateRemarks" column="late_remarks"/>
+            <result property="dateEn" column="date_en"/>
+            <result property="days" column="days"/>
+            <result property="dateNp" column="date_np"/>
+            <result property="officeCode" column="office_code"/>
+            <result property="shiftCheckin" column="shift_checkin"/>
+            <result property="shiftCheckout" column="shift_checkout"/>
+            <result property="attendanceType" column="attendance_type"/>
+            <result property="checkIn" column="check_in"/>
+            <result property="checkOut" column="check_out"/>
+
+        </collection>
+
+    </resultMap>
+
+    <select id="getDailyInformation" resultType="com.gerp.attendance.Pojo.DailyInformationPojo">
+        select * from
+        (select distinct ea.pis_code,e.employee_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        ea.date_en,
+        ea.date_np,
+        ea.shift_checkin as open_time,
+        ea.shift_checkout as close_time,
+        ea.attendance_status as status,
+        ea.checkin as in_time,
+        ea.half_time as halfTime,
+        ea.duration_type as durationType,
+        case
+        when ((select count(*) from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code) = 0)
+        then fd.name_en
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id asc offset 0 limit 1) > #{date}) /*end date first*/
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.old_designation_code =fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id asc offset 0 limit 1)
+
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id desc offset 0 limit 1) <![CDATA[<]]> #{date}) /*start date last*/
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id desc offset 0 limit 1)
+
+        when((select count(*) from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{date} and #{date}) =0)
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date <![CDATA[<=]]> #{date}
+        order by ejdl.id desc offset 0 limit 1)
+        else
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{date} and #{date} order by ejdl.id desc offset 0 limit 1)
+        end as fd_name_en,
+        -- fd.name_en as fd_name_en,
+        -- fd.name_np as fd_name_np,
+        case
+        when ((select count(*) from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code) = 0)
+        then fd.name_np
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id asc offset 0 limit 1) > #{date}) /*end date first*/
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.old_designation_code =fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id asc offset 0 limit 1)
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id desc offset 0 limit 1) <![CDATA[<]]> #{date}) /*start date last*/
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id desc offset 0 limit 1)
+        when((select count(*) from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{date} and #{date}) =0)
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date <![CDATA[<=]]> #{date}
+        order by ejdl.id desc offset 0 limit 1)
+        else
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{date} and #{date} order by ejdl.id desc offset 0 limit 1)
+        end as fd_name_np,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        p.order_no as position_order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en,
+        ea.checkout as out_time,
+        case
+        when (ea.duration_type ='FIRST_HALF' AND ea.checkin > ea.half_time) then
+        to_timestamp(EXTRACT(epoch FROM ea.checkin - ea.half_time))::time
+        else to_timestamp(EXTRACT(epoch FROM ea.checkin - ea.shift_checkin))::time
+        end AS late_checkin,
+        case
+        when (ea.half_time > ea.checkout and ea.duration_type ='SECOND_HALF') then
+        to_timestamp(EXTRACT(epoch FROM ea.half_time - ea.checkout))::time
+        else
+        to_timestamp(EXTRACT(epoch FROM ea.shift_checkout - ea.checkout))::time end AS early_checkout
+        from employee_attendance ea
+        left join employee e on e.pis_code=ea.pis_code
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        left join users_roles ur on u.id = ur.user_id
+        left join role_group rg on ur.role_id = rg.id
+        where
+        ea.office_code=#{officeCode} and ea.date_en=#{date}
+        and ((ss.is_active=true and sd.is_active=true) or sd.id is null)
+        and fd.designation_type ='NORMAL_DESIGNATION'
+
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="(searchField != null and searchField != '')">
+            <if test="(searchField.attendanceStatus != null and searchField.attendanceStatus != '')">and
+                ea.attendance_status = #{searchField.attendanceStatus}
+            </if>
+
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                and ea.pis_code = #{searchField.pisCode}
+            </if>
+            <if test="searchField.name!=null and searchField.name!=''">
+                <bind name="pattern_en" value="searchField.name +'%'"/>
+                and (upper(e.first_name_en) like upper(#{pattern_en}) OR
+                upper(e.first_name_np) like upper(#{pattern_en}))
+            </if>
+
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and p.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+        </if>
+        )b
+        order by b.position_order_no, b.e_order,b.current_position_app_date_bs,b.emp_name_en
+    </select>
+
+    <select id="getAbsentData" resultType="com.gerp.attendance.Pojo.DailyInformationPojo">
+        select * from
+        (select distinct ea.pis_code,
+        e.employee_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        ea.date_en,
+        ea.date_np,
+        ss.name_en as sectionNameEn,
+        ss.name_np as sectionNameNp,
+        ea.shift_checkin as open_time,
+        ea.shift_checkout as close_time,
+        ea.attendance_status as status,
+        ea.checkin as in_time,
+        -- fd.name_en as fd_name_en,
+        -- fd.name_np as fd_name_np,
+
+        case
+        when ((select count(*) from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code) = 0)
+        then fd.name_en
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id asc offset 0 limit 1) > #{dateEn}) /*end date first*/
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.old_designation_code =fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id asc offset 0 limit 1)
+
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id desc offset 0 limit 1) <![CDATA[<]]> #{dateEn}) /*start date last*/
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id desc offset 0 limit 1)
+
+        when((select count(*) from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{dateEn} and #{dateEn}) =0)
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date <![CDATA[<=]]>
+        #{dateEn}
+        order by ejdl.id desc offset 0 limit 1)
+        else
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{dateEn} and #{dateEn} order by ejdl.id desc offset 0 limit 1)
+        end as fd_name_en,
+
+        case
+        when ((select count(*) from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code) = 0)
+        then fd.name_np
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id asc offset 0 limit 1) > #{dateEn}) /*end date first*/
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.old_designation_code =fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id asc offset 0 limit 1)
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id desc offset 0 limit 1) <![CDATA[<]]> #{dateEn}) /*start date last*/
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id desc offset 0 limit 1)
+        when((select count(*) from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{dateEn} and #{dateEn}) =0)
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date <![CDATA[<=]]>
+        #{dateEn}
+        order by ejdl.id desc offset 0 limit 1)
+        else
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{dateEn} and #{dateEn} order by ejdl.id desc offset 0 limit 1)
+        end as fd_name_np,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        p.order_no as position_order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en,
+        ea.checkout as out_time
+        from employee_attendance ea
+        left join employee e on e.pis_code=ea.pis_code
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        left join users_roles ur on u.id = ur.user_id
+        left join role_group rg on ur.role_id = rg.id
+        where
+        ea.office_code=#{officeCode} and ea.date_en=#{dateEn}
+        and ((ss.is_active=true and sd.is_active=true) or sd.id is null)
+        and upper(ea.attendance_status) in ('UNINOFRMED_LEAVE_ABSENT','LEAVE','BAATO_MYAAD')
+        and fd.designation_type='NORMAL_DESIGNATION'
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="(searchField != null and searchField != '')">
+            <if test="(searchField.attendanceStatus != null and searchField.attendanceStatus != '')">
+                and ea.attendance_status = #{searchField.attendanceStatus}
+            </if>
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                and ea.pis_code = #{searchField.pisCode}
+            </if>
+            <if test="searchField.name!=null and searchField.name!=''">
+                <bind name="pattern_en" value="searchField.name + '%'"/>
+                and(
+                case
+                WHEN COALESCE(e.middle_name_en, '') != '' then upper(concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+                e.last_name_en))
+                else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                OR
+                case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+                e.last_name_np)
+                else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+            </if>
+
+            <if test="(searchField.section!= null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and p.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+        </if>
+        )b
+        order by b.position_order_no, b.e_order,b.current_position_app_date_bs,b.emp_name_en
+    </select>
+
+    <select id="getPresentData" resultType="com.gerp.attendance.Pojo.DailyInformationPojo">
+        select * from
+        (select distinct ea.pis_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        ea.date_en,
+        ea.date_np,
+        ss.name_en as sectionNameEn,
+        ss.name_np as sectionNameNp,
+        ea.shift_checkin as open_time,
+        ea.shift_checkout as close_time,
+        ea.attendance_status as status,
+        ea.checkin as in_time,
+        -- fd.name_en as fd_name_en,
+        -- fd.name_np as fd_name_np,
+        case
+        when ((select count(*) from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code) = 0)
+        then fd.name_en
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id asc offset 0 limit 1) > #{dateEn}) /*end date first*/
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.old_designation_code =fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id asc offset 0 limit 1)
+
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id desc offset 0 limit 1) <![CDATA[<]]> #{dateEn}) /*start date last*/
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id desc offset 0 limit 1)
+
+        when((select count(*) from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{dateEn} and #{dateEn}) =0)
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date <![CDATA[<=]]>
+        #{dateEn}
+        order by ejdl.id desc offset 0 limit 1)
+        else
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{dateEn} and #{dateEn} order by ejdl.id desc offset 0 limit 1)
+        end as fd_name_en,
+
+        case
+        when ((select count(*) from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code) = 0)
+        then fd.name_np
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id asc offset 0 limit 1) > #{dateEn}) /*end date first*/
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.old_designation_code =fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id asc offset 0 limit 1)
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id desc offset 0 limit 1) <![CDATA[<]]> #{dateEn}) /*start date last*/
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id desc offset 0 limit 1)
+        when((select count(*) from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{dateEn} and #{dateEn}) =0)
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date <![CDATA[<=]]>
+        #{dateEn}
+        order by ejdl.id desc offset 0 limit 1)
+        else
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{dateEn} and #{dateEn} order by ejdl.id desc offset 0 limit 1)
+        end as fd_name_np,
+
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        p.order_no as position_order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en,
+        ea.checkout as out_time
+        from employee_attendance ea
+        left join employee e on e.pis_code=ea.pis_code
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        left join users_roles ur on u.id = ur.user_id
+        left join role_group rg on ur.role_id = rg.id
+        where
+        ea.office_code=#{officeCode} and ea.date_en=#{dateEn}
+        and ((ss.is_active=true and sd.is_active=true) or sd.id is null)
+        and upper(ea.attendance_status) not in ('UNINOFRMED_LEAVE_ABSENT','LEAVE','BAATO_MYAAD')
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="(searchField != null and searchField != '')">
+            <if test="(searchField.attendanceStatus != null and searchField.attendanceStatus != '')">
+                and ea.attendance_status = #{searchField.attendanceStatus}
+            </if>
+
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                and ea.pis_code = #{searchField.pisCode}
+            </if>
+            <if test="searchField.name!=null and searchField.name!=''">
+                <bind name="pattern_en" value="searchField.name + '%'"/>
+                and(
+                case
+                WHEN COALESCE(e.middle_name_en, '') != '' then concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+                e.last_name_en)
+                else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                OR
+                case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+                e.last_name_np)
+                else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+            </if>
+
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and p.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+        </if>
+        )b
+        order by b.position_order_no, b.e_order,b.current_position_app_date_bs,b.emp_name_en
+    </select>
+
+    <select id="getDailyInformationForReport" resultType="com.gerp.attendance.Pojo.DailyInformationPojo">
+        select *
+        from
+        (select distinct e.employee_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        ea.date_en,
+        ea.date_np,
+        ea.shift_checkin as open_time,
+        ea.attendance_status as status,
+        ea.shift_checkout as close_time,
+        ea.checkin as in_time,
+        fd.name_en as fd_name_en,
+        fd.name_np as fd_name_np,
+        ea.checkout as out_time,
+        ea.is_holiday,
+        po.order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en,
+        case
+        when ea.checkin > ea.shift_checkin then
+        to_timestamp(EXTRACT(epoch FROM ea.checkin - ea.shift_checkin))::time end AS late_checkin,
+        case
+        when ea.shift_checkout > ea.checkout then
+        to_timestamp(EXTRACT(epoch FROM ea.shift_checkout - ea.checkout))::time end AS early_checkout
+        from employee_attendance ea
+        left join employee e on e.pis_code=ea.pis_code
+        left join position po on e.position_code = po.code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on (sd.employee_pis_code=e.pis_code and sd.is_active=true)
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        left join users_roles ur on u.id = ur.user_id
+        left join role_group rg on ur.role_id = rg.id
+        where
+        ea.office_code=#{officeCode} and ea.date_en=#{date}
+        and ((ss.is_active=true and sd.is_active=true) or sd.id is null)
+        and fd.designation_type ='NORMAL_DESIGNATION'
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="(searchField != '' and searchField !=null)">
+            <if test="(searchField.attendanceStatus != null and searchField.attendanceStatus != '')">
+                and ea.attendance_status = #{searchField.attendanceStatus}
+            </if>
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                <bind name="pisCode" value="searchField.pisCode"/>
+                and ea.pis_code = #{pisCode}
+            </if>
+
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+            <if test="(searchField.position != null and searchField.position != '')">
+                and po.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+        </if>
+        ) b
+        order by b.e_order,b.order_no,b.current_position_app_date_bs, b.first_name_en
+    </select>
+
+    <!--    <select id="getDailyInformationForReport" resultType="com.gerp.attendance.Pojo.DailyInformationPojo">-->
+    <!--        select distinct * from-->
+    <!--        (select ea.pis_code,-->
+    <!--        case-->
+    <!--        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)-->
+    <!--        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,-->
+    <!--        case-->
+    <!--        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)-->
+    <!--        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,-->
+    <!--        case-->
+    <!--        when (e.employee_service_status_code = '01') then 0-->
+    <!--        when (e.employee_service_status_code = '04') then 2-->
+    <!--        when (e.employee_service_status_code = '08') then 3-->
+    <!--        when (e.employee_service_status_code = '09') then 4 else 0-->
+    <!--        end as e_order,-->
+    <!--        ea.date_en,-->
+    <!--        ea.date_np,-->
+    <!--        ea.shift_checkin as open_time,-->
+    <!--        ea.attendance_status as status,-->
+    <!--        ea.shift_checkout as close_time,-->
+    <!--        ea.checkin as in_time,-->
+    <!--        fd.name_en as fd_name_en,-->
+    <!--        fd.name_np as fd_name_np,-->
+    <!--        ea.checkout as out_time,-->
+    <!--        ea.is_holiday,-->
+    <!--        po.order_no,-->
+    <!--        e.current_position_app_date_bs,-->
+    <!--        e.first_name_en,-->
+    <!--        case-->
+    <!--        when ea.checkin > ea.shift_checkin then-->
+    <!--        to_timestamp(EXTRACT(epoch FROM ea.checkin - ea.shift_checkin))::time end AS late_checkin,-->
+    <!--        case-->
+    <!--        when ea.shift_checkout > ea.checkout then-->
+    <!--        to_timestamp(EXTRACT(epoch FROM ea.shift_checkout - ea.checkout))::time end AS early_checkout-->
+    <!--        from employee_attendance ea-->
+    <!--        left join employee e on e.pis_code=ea.pis_code-->
+    <!--        left join position po on e.position_code = po.code-->
+    <!--        left join employee_service_status es on es.code=e.employee_service_status_code-->
+    <!--        left join functional_designation fd on e.designation_code = fd.code-->
+    <!--        left join section_designation sd on sd.employee_pis_code=e.pis_code-->
+    <!--        left join section_subsection ss on sd.section_subsection_id = ss.id-->
+    <!--        inner join users u on e.pis_code = u.pis_employee_code-->
+    <!--        inner join users_roles ur on u.id = ur.user_id-->
+    <!--        inner join role_group rg on ur.role_id = rg.id-->
+    <!--        where-->
+    <!--        ea.office_code=#{officeCode} and ea.date_en=#{date}-->
+    <!--        <if test="(searchField != '' and searchField !=null)">-->
+    <!--            <if test="(searchField.attendanceStatus != null and searchField.attendanceStatus != '')">-->
+    <!--                and ea.attendance_status = #{searchField.attendanceStatus}-->
+    <!--            </if>-->
+    <!--            <if test="(searchField.pisCode != null and searchField.pisCode != '')">-->
+    <!--                <bind name="pisCode" value="searchField.pisCode"/>-->
+    <!--                and ea.pis_code = #{pisCode}-->
+    <!--            </if>-->
+
+    <!--            <if test="(searchField.section != null and searchField.section != '')">-->
+    <!--                <bind name="section_en" value="searchField.section"/>-->
+    <!--                and cast(ss.id as text) = #{section_en}-->
+    <!--            </if>-->
+
+    <!--            <if test="(searchField.userType != null and searchField.uerType != '')">-->
+    <!--                <choose>-->
+    <!--                    <when test="(searchField.userType == '01')">-->
+    <!--                        and es.code is null or es.code='01'-->
+    <!--                    </when>-->
+    <!--                    <otherwise>-->
+    <!--                        and es.code=#{searchField.userType}-->
+    <!--                    </otherwise>-->
+    <!--                </choose>-->
+
+    <!--            </if>-->
+    <!--            <if test="(searchField.position != null and searchField.position != '')">-->
+    <!--                and po.id = #{searchField.position}-->
+    <!--            </if>-->
+
+    <!--            <if test="(searchField.designation != null and searchField.designation != '')">-->
+    <!--                and fd.id = #{searchField.designation}-->
+    <!--            </if>-->
+    <!--        </if>-->
+    <!--      ) as b-->
+    <!--        order by b.e_order,b.order_no,b.current_position_app_date_bs, b.first_name_en;-->
+    <!--    </select>-->
+
+    <select id="getFilterDailyInformation" resultType="com.gerp.attendance.Pojo.DailyInformationPojo">
+        select ea.pis_code,
+        case
+        when e.middle_name_en IS NOT NULL then INITCAP(concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+        e.last_name_en))
+        else INITCAP(concat(e.first_name_en, ' ', e.last_name_en)) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then INITCAP(concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+        e.last_name_np))
+        else INITCAP(concat(e.first_name_np, ' ', e.last_name_np)) end as emp_name_np,
+        ea.date_en,
+        ea.date_np,
+        ea.shift_checkin as open_time,
+        ea.shift_checkout as close_time,
+        ea.attendance_status as status,
+        ea.checkin as in_time,
+        fd.name_en as fd_name_en,
+        fd.name_np as fd_name_np,
+        ea.checkout as out_time
+        from employee_attendance ea
+        left join employee e on e.pis_code=ea.pis_code
+        left join functional_designation fd on e.designation_code = fd.code
+        where
+        ea.office_code=#{officeCode} and ea.date_en=#{date}
+        <if test="(searchField != '' and searchField !=null)">
+            <if test="(searchField.attendanceStatus != null and searchField.attendanceStatus != '')">
+                and ea.attendance_status = #{searchField.attendanceStatus}
+            </if>
+        </if>
+    </select>
+
+    <select id="getEmployeeShift" resultType="com.gerp.attendance.Pojo.shift.AttendanceShiftPojo">
+        select ea.shift_checkin, ea.checkin, ea.checkout, ea.shift_checkout, ea.attendance_status
+        from employee_attendance ea
+        where ea.date_en = #{currentDate}
+          and ea.office_code = #{officeCode}
+          and ea.pis_code = #{pisCode}
+          and ea.is_active = true;
+    </select>
+
+    <!--    <select id="getEmployeeShift" resultType="com.gerp.attendance.Pojo.shift.AttendanceShiftPojo">-->
+    <!--        (select null as shift_checkin,-->
+    <!--        min(to_char(punchdate,'HH24:MI:SS'))::time as check_in,-->
+    <!--        max(to_char(punchdate,'HH24:MI:SS'))::time as check_out,-->
+    <!--        null as shift_checkout,-->
+    <!--        'DEVICE' as attendance_status-->
+
+    <!--        from devicelogs_foreign df-->
+    <!--        inner join date_list dl on to_char(df.punchdate,'yyyy-mm-dd')::date=dl.eng_date-->
+    <!--        where-->
+    <!--        to_char(df.punchdate,'yyyy-mm-dd')::date=current_date-->
+    <!--        <if test="deviceId !=null">-->
+    <!--            and df.idenroll=#{deviceId}-->
+    <!--        </if>-->
+
+    <!--        group by to_char(punchdate,'yyyy-mm-dd'),df.idenroll,dl.nep_date,dl.eng_date order by-->
+    <!--        to_char(punchdate,'yyyy-mm-dd') desc)-->
+    <!--        union distinct-->
+    <!--        (select ea.shift_checkin,-->
+    <!--        ea.checkin,-->
+    <!--        ea.checkout,-->
+    <!--        ea.shift_checkout,-->
+    <!--        ea.attendance_status-->
+    <!--        from-->
+    <!--        employee_attendance ea-->
+    <!--        where ea.date_en not in (select to_char(df.punchdate,'yyyy-mm-dd')::date-->
+
+    <!--        from devicelogs_foreign df-->
+    <!--        inner join date_list dl on to_char(df.punchdate,'yyyy-mm-dd')::date=dl.eng_date-->
+    <!--        where-->
+    <!--        to_char(df.punchdate,'yyyy-mm-dd')::date=current_date-->
+    <!--        <if test="deviceId !=null">-->
+    <!--            and df.idenroll=#{deviceId}-->
+    <!--        </if>-->
+
+    <!--        group by to_char(punchdate,'yyyy-mm-dd'),df.idenroll,dl.nep_date,dl.eng_date order by-->
+    <!--        to_char(punchdate,'yyyy-mm-dd') desc)-->
+    <!--        and ea.pis_code=#{pisCode}-->
+    <!--        and ea.office_code=#{officeCode}-->
+    <!--        and ea.date_en=current_date-->
+    <!--        and ea.is_active=true);-->
+    <!--    </select>-->
+
+    <select id="getStartEndDate" resultType="com.gerp.attendance.Pojo.DateListingPojo">
+        select min(eng_date) as startDateEn,
+               max(eng_date) as endDateEn,
+               min(nep_date) as startDateNp,
+               max(nep_date) as endDateNp
+        from date_list
+        where nepali_year = #{year}
+    </select>
+
+    <select id="getEmpAttByPisCode" resultMap="baseResult">
+        select ea.id,
+        ea.pis_code,
+        ea.late_remarks,
+        ea.date_en,
+        extract(dow from date_en) as days,
+        ea.date_np,
+        ea.office_code,
+        ea.shift_checkin as shift_checkin,
+        ea.shift_checkout as shift_checkout,
+        ea.attendance_status as attendance_type,
+        ea.checkin as check_in,
+        ea.checkout as check_out,
+        c.totalPresent,
+        d.totalLeave
+        from
+        (select count(*) as totalPresent from employee_attendance ea where
+        ea.office_code =#{officeCode} and ea.pis_code=#{pisCode} and ea.attendance_status in
+        <foreach item='item' index='index' collection='attendanceStatus' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        )c,
+        (select count(*) as totalLeave from employee_attendance ea where
+        ea.office_code =#{officeCode} and ea.pis_code=#{pisCode} and ea.attendance_status not in
+        <foreach item='item' index='index' collection='attendanceStatus' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        )d,
+        employee_attendance ea where ea.office_code=#{officeCode} and ea.pis_code=#{pisCode} order by ea.date_en asc;
+    </select>
+
+    <select id="getAllLateAttendance" resultType="com.gerp.attendance.Pojo.LateEmployeePojo">
+        select * from
+        (select distinct ea.id,e.employee_code,
+        ea.pis_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        ea.late_remarks,
+        ea.date_en,
+        ea.date_np,
+        ea.shift_checkin as shift_checkin,
+        ea.shift_checkout as shift_checkout,
+        case
+        when ea.checkin > ea.shift_checkin then
+        to_timestamp(EXTRACT(epoch FROM ea.checkin - ea.shift_checkin))::time end AS lateCheckin,
+        ea.attendance_status as attendance_type,
+
+        case
+        when ((select count(*) from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code) = 0)
+        then fd.name_en
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id asc offset 0 limit 1) > to_date(#{searchField.dateEn}, 'YYYY-MM-DD')) /*end date first*/
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.old_designation_code =fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id asc offset 0 limit 1)
+
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id desc offset 0 limit 1) <![CDATA[<]]> to_date(#{searchField.dateEn}, 'YYYY-MM-DD')) /*start
+        date last*/
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id desc offset 0 limit 1)
+
+        when((select count(*) from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between to_date(#{searchField.dateEn}, 'YYYY-MM-DD') and to_date(#{searchField.dateEn}, 'YYYY-MM-DD')) =0)
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and
+        ejdl.start_date <![CDATA[<=]]> to_date(#{searchField.dateEn}, 'YYYY-MM-DD')
+        order by ejdl.id desc offset 0 limit 1)
+        else
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between to_date(#{searchField.dateEn}, 'YYYY-MM-DD') and
+        to_date(#{searchField.dateEn}, 'YYYY-MM-DD') order by ejdl.id desc offset 0 limit 1)
+        end as fd_name_en,
+        -- fd.name_en as fd_name_en,
+        -- fd.name_np as fd_name_np,
+        case
+        when ((select count(*) from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code) = 0)
+        then fd.name_np
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id asc offset 0 limit 1) >to_date(#{searchField.dateEn}, 'YYYY-MM-DD')) /*end date first*/
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.old_designation_code =fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id asc offset 0 limit 1)
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id desc offset 0 limit 1) <![CDATA[<]]> to_date(#{searchField.dateEn}, 'YYYY-MM-DD')) /*start
+        date last*/
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id desc offset 0 limit 1)
+        when((select count(*) from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between to_date(#{searchField.dateEn}, 'YYYY-MM-DD') and to_date(#{searchField.dateEn}, 'YYYY-MM-DD')) =0)
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and
+        ejdl.start_date <![CDATA[<=]]> to_date(#{searchField.dateEn}, 'YYYY-MM-DD')
+        order by ejdl.id desc offset 0 limit 1)
+        else
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between to_date(#{searchField.dateEn}, 'YYYY-MM-DD') and to_date(#{searchField.dateEn}, 'YYYY-MM-DD')
+        order by ejdl.id desc offset 0 limit 1)
+        end as fd_name_np,
+        ea.checkin as checkIn,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        p.order_no as position_order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en,
+        ea.checkout as check_out
+        from employee_attendance ea
+        left join employee e on e.pis_code=ea.pis_code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join section_designation sd on (sd.employee_pis_code=e.pis_code and sd.is_active=true)
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        left join users_roles ur on u.id = ur.user_id
+        left join role_group rg on ur.role_id = rg.id
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        where
+        ea.office_code=#{officeCode}
+        -- and ea.attendance_remarks='IR'
+        and ea.checkin > ea.shift_checkin
+        and ((ss.is_active=true and sd.is_active=true) or sd.id is null)
+        and fd.designation_type='NORMAL_DESIGNATION'
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="searchField != null">
+            <if test="(searchField.checkIn != null and searchField.checkIn != '')">
+                and to_char(ea.checkin, 'HH24:MI:SS') >= #{searchField.checkIn}
+            </if>
+            <if test="(searchField.checkOut != null and searchField.checkOut != '')">and to_char(ea.checkout,
+                'HH24:MI:SS') >= #{searchField.checkOut}
+            </if>
+            <if test="(searchField.dateEn != null and searchField.dateEn != '')">
+                and ea.date_en=to_date(#{searchField.dateEn}, 'YYYY-MM-DD')
+            </if>
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                and ea.pis_code=#{searchField.pisCode}
+            </if>
+
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and p.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+
+            <if test="searchField.nameEn!=null and searchField.nameEn!=''">
+                <bind name="pattern_en" value="searchField.nameEn + '%'"/>
+                and (upper(e.first_name_en) like upper(#{pattern_en}) OR
+                upper(e.first_name_np) like upper(#{pattern_en}))
+            </if>
+            <if test="searchField.nameEn!=null and searchField.nameEn!=''">
+                <bind name="pattern_en" value="searchField.nameEn + '%'"/>
+                and(
+                case
+                WHEN COALESCE(e.middle_name_en, '') != '' then concat(e.first_name_en, ' ', e.middle_name_en, ' ',
+                e.last_name_en)
+                else upper(concat(e.first_name_en, ' ', e.last_name_en)) end like upper(#{pattern_en})
+                OR
+                case WHEN COALESCE(e.middle_name_np, '') != '' then concat(e.first_name_np, ' ', e.middle_name_np, ' ',
+                e.last_name_np)
+                else concat(e.first_name_np, ' ', e.last_name_np) end like #{pattern_en})
+            </if>
+            <if test="searchField.designationEn!=null and searchField.designationEn!=''">
+                <bind name="pattern_den" value="searchField.designationEn + '%'"/>
+                and (upper(fd.name_en)) like upper(#{pattern_den})
+            </if>
+            <if test="searchField.designationNp!=null and searchField.designationNp!=''">
+                <bind name="pattern_dnp" value="searchField.designationNp + '%'"/>
+                and (fd.name_np) like #{pattern_dnp}
+            </if>
+            <if test="searchField.nameNp!=null and searchField.nameNp!=''">
+                <bind name="pattern_np" value="searchField.nameNp + '%'"/>
+                and e.first_name_np like #{pattern_np}
+            </if>
+        </if>
+        )b
+        <choose>
+            <when test="searchField != null">
+                <choose>
+                    <when test="(searchField.dateEn != null and searchField.dateEn != '')">
+                        order by b.position_order_no, b.e_order,b.current_position_app_date_bs, b.first_name_en
+                    </when>
+                    <otherwise>
+                        order by b.date_en desc
+                    </otherwise>
+                </choose>
+            </when>
+
+            <otherwise>
+                order by b.date_en desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getAllExcelLateAttendance" resultType="com.gerp.attendance.Pojo.LateEmployeePojo">
+        select ea.id,
+        ea.pis_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        ea.late_remarks,
+        ea.date_en,
+        ea.date_np,
+        ea.shift_checkin as shift_checkin,
+        ea.shift_checkout as shift_checkout,
+        ea.attendance_status as attendance_type,
+        fd.name_en as fd_name_en,
+        fd.name_np as fd_name_np,
+        ea.checkin as check_in,
+        ea.checkout as check_out
+        from employee_attendance ea
+        left join employee e on e.pis_code=ea.pis_code
+        left join section_designation sd on (sd.employee_pis_code=e.pis_code and sd.is_active=true)
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join functional_designation fd on e.designation_code = fd.code
+        where
+        ea.office_code=#{officeCode} and ea.attendance_remarks='IR'
+        and ss.is_active=true and sd.is_active=true
+        <if test="searchField != null">
+            <if test="(searchField.checkIn != null and searchField.checkIn != '')">
+                and to_char(ea.checkin, 'HH24:MI:SS') >= #{searchField.checkIn}
+            </if>
+            <if test="(searchField.checkOut != null and searchField.checkOut != '')">
+                and to_char(ea.checkout, 'HH24:MI:SS') >= #{searchField.checkOut}
+            </if>
+            <if test="searchField.section!=null and searchField.section!=''">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+            <if test="(searchField.dateEn != null and searchField.dateEn != '')">
+                and ea.date_en=to_date(#{searchField.dateEn}, 'YYYY-MM-DD')
+            </if>
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                <bind name="pisCode" value="searchField.pisCode"/>
+                and ea.pis_code=#{pisCode}
+            </if>
+        </if>
+
+        <choose>
+            <when test="searchField != null">
+                <choose>
+                    <when test="(searchField.dateEn != null and searchField.dateEn != '')">
+                        order by e_order,p.order_no,e.current_position_app_date_bs,emp_name_en
+                    </when>
+                    <otherwise>
+                        order by ea.date_en desc
+                    </otherwise>
+                </choose>
+            </when>
+
+            <otherwise>
+                order by ea.date_en desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="filterMyAttendance" resultType="com.gerp.attendance.Pojo.EmployeeAttendancePojo">
+        select ea.id         as id,
+        ea.late_remarks      as lateRemarks,
+        ea.date_en           as dateEn,
+        ea.date_np           as dateNp,
+        ea.shift_checkin     as shiftCheckin,
+        ea.shift_checkout    as shiftCheckout,
+        ea.attendance_status as attendanceType,
+        case
+        when (ea.attendance_remarks = 'R' or
+        ea.attendance_status in ('KAAJ', 'WEEKEND', 'PUBLIC_HOLIDAY', 'LEAVE', 'UNINOFRMED_LEAVE_ABSENT')) then
+        false
+        else true end    as remarks,
+        ea.checkin           as checkIn,
+        ea.checkout          as checkOut
+        from employee_attendance ea where
+        ea.pis_code=#{pisCode} and ea.office_code=#{officeCode} and ea.date_en <![CDATA[<=]]> now()
+        <if test="searchField != null">
+            <if test="(searchField.attendanceType != null and searchField.attendanceType != '')">
+                <choose>
+                    <when test="searchField.attendanceType == 'DEVICE'">
+                        and is_device = true
+                    </when>
+                    <otherwise>
+                        and attendance_status = #{searchField.attendanceType}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+            </if>
+        </if>
+        order by date_en desc
+    </select>
+
+    <!--    <select id="getfilterMyAttendance" resultType="com.gerp.attendance.Pojo.EmployeeAttendancePojo">-->
+    <!--        select * from-->
+    <!--        ((select 0::bigint as id,-->
+    <!--        #{pisCode} as pis_code,-->
+    <!--        null as late_remarks,-->
+    <!--        dl.eng_date::date as date_en ,-->
+    <!--        dl.nep_date as date_np,-->
+    <!--        null as shift_checkin,-->
+    <!--        null as shift_checkout,-->
+    <!--        'DEVICE' as attendance_type,-->
+    <!--        min(to_char(punchdate,'HH24:MI:SS'))::time as check_in,-->
+    <!--        true as remarks,-->
+    <!--        max(to_char(punchdate,'HH24:MI:SS'))::time as check_out-->
+
+    <!--        from devicelogs_foreign df-->
+    <!--        inner join date_list dl on to_char(df.punchdate,'yyyy-mm-dd')::date=dl.eng_date-->
+    <!--        where df.idenroll=#{deviceId}-->
+    <!--        and to_char(df.punchdate,'yyyy-mm-dd')::date=current_date-->
+    <!--        <if test="searchField != null">-->
+    <!--            <if test="(searchField.attendanceType != null and searchField.attendanceType != '')">-->
+    <!--                <choose>-->
+    <!--                    <when test="searchField.attendanceType == 'DEVICE'">-->
+    <!--                        and 1=1-->
+    <!--                    </when>-->
+    <!--                </choose>-->
+    <!--            </if>-->
+    <!--            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">-->
+    <!--                and date_en BETWEEN dl.eng_date AND-->
+    <!--                dl.nep_date-->
+    <!--            </if>-->
+    <!--        </if>-->
+    <!--        group by to_char(punchdate,'yyyy-mm-dd'),df.idenroll,dl.nep_date,dl.eng_date order by-->
+    <!--        to_char(punchdate,'yyyy-mm-dd') desc )-->
+    <!--        union distinct-->
+    <!--        (select ea.id,-->
+    <!--        ea.pis_code,-->
+    <!--        ea.late_remarks,-->
+    <!--        ea.date_en as date_en,-->
+    <!--        dl.nep_date as date_np,-->
+    <!--        ea.shift_checkin as shift_checkin,-->
+    <!--        ea.shift_checkout as shift_checkout,-->
+    <!--        ea.attendance_status as attendance_type,-->
+    <!--        ea.checkin as check_in,-->
+    <!--        case when(ea.attendance_remarks='R' or ea.attendance_status in-->
+    <!--        ('KAAJ','WEEKEND','PUBLIC_HOLIDAY','LEAVE','UNINOFRMED_LEAVE_ABSENT'))then-->
+    <!--        false else true end as remarks,-->
+    <!--        ea.checkout as check_out-->
+    <!--        from employee_attendance ea-->
+    <!--        inner join date_list dl on ea.date_en=dl.eng_date-->
+    <!--        where ea.pis_code=#{pisCode}-->
+    <!--        and ea.office_code=#{officeCode}-->
+    <!--        and ea.date_en::text not in (-->
+    <!--        select distinct to_char(punchdate,'yyyy-mm-dd') from devicelogs_foreign df-->
+    <!--        where df.idenroll=#{deviceId}-->
+    <!--        and to_char(df.punchdate,'yyyy-mm-dd')::date=current_date-->
+    <!--        <if test="searchField != null">-->
+    <!--            <if test="(searchField.attendanceType != null and searchField.attendanceType != '')">-->
+    <!--                <choose>-->
+    <!--                    <when test="searchField.attendanceType == 'DEVICE'">-->
+    <!--                        and is_device = true-->
+    <!--                    </when>-->
+    <!--                    <otherwise>-->
+    <!--                        and attendance_status = #{searchField.attendanceType}-->
+    <!--                    </otherwise>-->
+    <!--                </choose>-->
+    <!--            </if>-->
+    <!--            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">-->
+    <!--                and date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND-->
+    <!--                to_date(#{searchField.toDate}, 'YYYY-MM-DD')-->
+    <!--            </if>-->
+    <!--        </if>-->
+    <!--        order by to_char(punchdate,'yyyy-mm-dd') desc-->
+    <!--        ))) as d order by d.date_en desc-->
+    <!--    </select>-->
+
+
+    <select id="filterDataEmployee" resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceReportDataPojo">
+        select id,
+        late_remarks,
+        attendance_status as attendance_type,
+        date_en as dates,
+        extract(dow from date_en) as days,
+        date_np,
+        checkin,
+        checkout,
+        shift_checkin,
+        shift_checkout,
+        case
+        when checkin > shift_checkin then
+        to_timestamp(EXTRACT(epoch FROM checkin - shift_checkin))::time end AS late_checkin,
+        case
+        when shift_checkout > checkout then
+        to_timestamp(EXTRACT(epoch FROM shift_checkout - checkout))::time end AS early_checkout,
+        case when EXTRACT(epoch from shift_checkin - checkin + checkout - shift_checkout) > 0 then to_timestamp(
+        EXTRACT(epoch from shift_checkin - checkin + checkout - shift_checkout) )::time end as extra_time
+        from employee_attendance
+        where pis_code = #{pisCode}
+        <if test="searchField != null">
+            <if test="(searchField.attendanceType != null and searchField.attendanceType != '')">
+                <choose>
+                    <when test="searchField.attendanceType == 'DEVICE'">
+                        and is_device = true
+                    </when>
+                    <otherwise>
+                        and attendance_status = #{searchField.attendanceType}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="(searchField.fromDate != null and searchField.fromDate != '') and (searchField.toDate != null and searchField.toDate != '')">
+                and date_en BETWEEN to_date(#{searchField.fromDate}, 'YYYY-MM-DD') AND
+                to_date(#{searchField.toDate}, 'YYYY-MM-DD')
+            </if>
+        </if>
+        order by date_en desc
+    </select>
+
+    <select id="filterDataPaginatedMonthlyCheck"
+            resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceMonthlyReportPojo">
+        select * from
+        (select distinct e.pis_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        fd.name_en as fd_name_en,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        p.order_no,
+        e.current_position_app_date_bs,
+        fd.name_np as fd_name_np
+        from employee e
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on (sd.employee_pis_code=e.pis_code and sd.is_active=true)
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        left join users_roles ur on u.id = ur.user_id
+        left join role_group rg on ur.role_id = rg.id
+        where e.office_code = #{officeCode} and e.is_active = true
+        and ((ss.is_active=true and sd.is_active=true) or sd.id is null)
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="searchField != null">
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                and e.pis_code = #{searchField.pisCode}
+            </if>
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+        </if>
+        )b
+        order by b.e_order,b.order_no,b.current_position_app_date_bs,b.emp_name_en
+    </select>
+
+
+    <select id="filterDataPaginatedMonthly"
+            resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceMonthlyReportPojo">
+        select * from
+        (select distinct e.pis_code,e.employee_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        -- fd.name_en as fd_name_en,
+        -- for designation
+        case
+        when ((select count(*) from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code) = 0)
+        then fd.name_en
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id asc offset 0 limit 1) > #{toDate}) /*end date first*/ then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.old_designation_code =fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id asc offset 0 limit 1)
+
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id desc offset 0 limit 1) <![CDATA[<]]> #{fromDate}) /*start date last*/
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id desc offset 0 limit 1)
+
+        when((select count(*) from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{fromDate} and #{toDate}) =0)
+        then
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date <![CDATA[<=]]>
+        #{fromDate}
+        order by ejdl.id desc offset 0 limit 1)
+        else
+        (select fd2.name_en from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{fromDate} and #{toDate} order by ejdl.id desc offset 0 limit 1)
+        end as fd_name_en,
+
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        p.order_no,
+        e.current_position_app_date_bs,
+        case when(
+        (select count(*)
+        from org_transfer_history oth
+        where oth.pis_code=e.pis_code and oth.transfer_status='A'
+        and oth.from_office_code=#{officeCode}
+        and oth.expected_join_date_en between #{fromDate} and #{toDate})>0) then true else false end as isLeft,
+        case when(
+        (select count(*)
+        from org_transfer_history oth
+        where oth.pis_code=e.pis_code and oth.transfer_status='A'
+        and oth.target_office_code=#{officeCode}
+        and oth.expected_join_date_en between #{fromDate} and #{toDate})>0) then true else false end as isJoin,
+        -- fd.name_np as fd_name_np,
+        case
+        when ((select count(*) from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code) = 0)
+        then fd.name_np
+
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id asc offset 0 limit 1) > #{toDate}) /*end date first*/
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.old_designation_code =fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id asc offset 0 limit 1)
+
+        when ((select ejdl2.start_date from employee_job_detail_log ejdl2 where ejdl2.pis_code=e.pis_code
+        order by ejdl2.id desc offset 0 limit 1) <![CDATA[<]]> #{fromDate}) /*start date last*/
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code order by ejdl.id desc offset 0 limit 1)
+
+        when((select count(*) from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{fromDate} and #{toDate}) =0)
+        then
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date <![CDATA[<=]]>
+        #{fromDate}
+        order by ejdl.id desc offset 0 limit 1)
+
+        else
+        (select fd2.name_np from functional_designation fd2 right join employee_job_detail_log ejdl
+        on ejdl.new_designation_code=fd2.code where ejdl.pis_code=e.pis_code and ejdl.start_date
+        between #{fromDate} and #{toDate} order by ejdl.id desc offset 0 limit 1)
+        end as fd_name_np
+
+        from employee e
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        left join users_roles ur on u.id = ur.user_id
+        left join role_group rg on ur.role_id = rg.id
+        WHERE
+        fd.designation_type='NORMAL_DESIGNATION'
+        and
+        (e.pis_code in (select distinct ea.pis_code from employee_attendance ea
+        where ea.office_code =#{officeCode} and ea.date_en between #{fromDate} and #{toDate} ))
+
+        and e.is_active = true
+        and ((ss.is_active=true and sd.is_active=true) or sd.id is null)
+        and
+        case when (e.pis_code like 'KR_%')
+        then
+        (e.pis_code like 'KR_%'
+        and (select count(*) from employee ea
+        inner join employee_joining_date ejd on ea.pis_code = ejd.employee_pis_code
+        and ea.is_active=true and ea.pis_code=e.pis_code
+        and (#{fromDate} between ejd.join_date_en and ejd.end_date_en
+        or #{toDate} between ejd.join_date_en and ejd.end_date_en))>0)
+        else
+        1=1
+        end
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="searchField != null">
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                and e.pis_code = #{searchField.pisCode}
+            </if>
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+            </if>
+        </if>
+        )b
+        order by b.e_order,b.order_no,b.current_position_app_date_bs,b.emp_name_en
+    </select>
+    <!--
+    change office 1==1 monthly report
+     ((e.cur_office_join_dt_en is null or #{fromDate} >= e.cur_office_join_dt_en or #{toDate} >=
+        e.cur_office_join_dt_en)and e.pis_code not like 'KR_%')
+    -->
+    <!--    case-->
+    <!--    when-->
+    <!--    (select oth.pis_code as pis_code-->
+    <!--    from org_transfer_history oth WHERE oth.transfer_status='A'-->
+    <!--    and oth.from_office_code=#{officeCode}-->
+    <!--    and oth.expected_join_date_en between #{fromDate} and #{toDate}-->
+    <!--    order by oth.last_modified_date desc limit 1) is not null-->
+    <!--    then-->
+    <!--    ( e.office_code = #{officeCode} or-->
+    <!--    (e.office_code in (select oth.target_office_code as office_code-->
+    <!--    from org_transfer_history oth WHERE oth.transfer_status='A' and oth.from_office_code=#{officeCode}-->
+    <!--    and oth.expected_join_date_en between #{fromDate} and #{toDate}-->
+    <!--    order by oth.last_modified_date-->
+    <!--    )-->
+    <!--    and-->
+    <!--    (e.pis_code in(select oth.pis_code as pis_code-->
+    <!--    from org_transfer_history oth WHERE oth.transfer_status='A'-->
+    <!--    and oth.from_office_code=#{officeCode}-->
+    <!--    and oth.expected_join_date_en between #{fromDate} and #{toDate}-->
+    <!--    order by oth.last_modified_date ))-->
+
+    <!--    )-->
+    <!--    )-->
+    <!--    else (-->
+    <!--    e.office_code = #{officeCode} or-->
+    <!--    e.pis_code in (select distinct ea.pis_code from employee_attendance ea-->
+    <!--    where ea.office_code = #{officeCode} and ea.date_en between #{fromDate} and #{toDate}-->
+    <!--    )-->
+    <!--    )-->
+
+    <!--    end-->
+
+    <!--    <select id="filterDataPaginatedMonthly"-->
+    <!--            resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceMonthlyReportPojo">-->
+    <!--        select * from-->
+    <!--        (select distinct e.pis_code,-->
+    <!--        case-->
+    <!--        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)-->
+    <!--        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,-->
+    <!--        case-->
+    <!--        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)-->
+    <!--        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,-->
+    <!--        case-->
+    <!--        when e.employee_service_status_code = '01' then 0-->
+    <!--        when (e.employee_service_status_code = '04') then 2-->
+    <!--        when (e.employee_service_status_code = '08') then 3-->
+    <!--        when (e.employee_service_status_code = '09') then 4 else 0-->
+    <!--        end as e_order,-->
+    <!--        p.order_no,-->
+    <!--        u.is_active,-->
+    <!--        e.current_position_app_date_bs,-->
+    <!--        case when(-->
+    <!--        (select count(*)-->
+    <!--        from org_transfer_history oth-->
+    <!--        where oth.pis_code=e.pis_code and oth.transfer_status='A'-->
+    <!--        and oth.from_office_code=#{officeCode}-->
+    <!--        and oth.expected_join_date_en between #{fromDate} and #{toDate})>0) then true else false end as isLeft,-->
+    <!--        case when(-->
+    <!--        (select count(*)-->
+    <!--        from org_transfer_history oth-->
+    <!--        where oth.pis_code=e.pis_code and oth.transfer_status='A'-->
+    <!--        and oth.target_office_code=#{officeCode}-->
+    <!--        and oth.expected_join_date_en between #{fromDate} and #{toDate})>0) then true else false end as isJoin,-->
+    <!--        fd.name_en as fdNameEn,-->
+    <!--        fd.name_np as fdNameNp,-->
+    <!--        e.cur_office_join_dt_en-->
+    <!--        from employee e-->
+    <!--        left join employee_service_status es on es.code=e.employee_service_status_code-->
+    <!--        left join position p on e.position_code = p.code-->
+    <!--        left join employee_job_detail_log ejdl on ejdl.pis_code=e.pis_code-->
+    <!--        left join functional_designation fd on e.designation_code=fd.code-->
+    <!--        left join section_designation sd on (sd.employee_pis_code=e.pis_code and sd.is_active=true)-->
+    <!--        left join section_subsection ss on sd.section_subsection_id = ss.id-->
+    <!--        left join users u on ((e.pis_code = u.pis_employee_code and u.is_active=true)-->
+    <!--        or (e.pis_code = u.pis_employee_code and u.is_active=false-->
+    <!--        and ((u.last_modified_date::date between #{fromDate} and #{toDate})-->
+    <!--        or (u.last_modified_date::date > #{fromDate} or u.last_modified_date::date > #{toDate})-->
+    <!--        )))-->
+    <!--        left join users_roles ur on u.id = ur.user_id-->
+    <!--        left join role_group rg on ur.role_id = rg.id-->
+    <!--        where-->
+    <!--        (e.office_code = #{officeCode}-->
+    <!--        or (case when ((select count(*)-->
+    <!--        from org_transfer_history oth-->
+    <!--        where oth.pis_code=e.pis_code and oth.transfer_status='A')>0) then-->
+    <!--        case when ((select count(*)-->
+    <!--        from org_transfer_history oth-->
+    <!--        where oth.pis_code=e.pis_code-->
+    <!--        and oth.from_office_code=#{officeCode}-->
+    <!--        and (oth.expected_join_date_en > #{fromDate} or oth.expected_join_date_en > #{toDate})-->
+    <!--        and oth.transfer_status='A')>0) then 1=1-->
+    <!--        else 1=0 end-->
+
+    <!--        else 1=0-->
+    <!--        end))-->
+    <!--        and e.is_active = true-->
+    <!--        and ((ss.is_active=true and sd.is_active=true) or sd.id is null)-->
+    <!--        and case when (e.pis_code like 'KR_%')then-->
+    <!--        (e.pis_code like 'KR_%'-->
+    <!--        and (select count(*) from employee ea-->
+    <!--        inner join employee_joining_date ejd on ea.pis_code = ejd.employee_pis_code-->
+    <!--        and ea.is_active=true and ea.pis_code=e.pis_code-->
+    <!--        and (#{fromDate} between ejd.join_date_en and ejd.end_date_en-->
+    <!--        or #{toDate} between ejd.join_date_en and ejd.end_date_en))>0)-->
+    <!--        else-->
+    <!--        ((e.cur_office_join_dt_en is null or #{fromDate} >= e.cur_office_join_dt_en or #{toDate} >=-->
+    <!--        e.cur_office_join_dt_en)and e.pis_code not like 'KR_%')-->
+    <!--        end-->
+    <!--        <if test="userStatus!=null">-->
+    <!--            <if test="userStatus ==false">-->
+    <!--                and u.is_active=false-->
+    <!--            </if>-->
+    <!--            <if test="userStatus ==true">-->
+    <!--                and u.is_active=true-->
+    <!--            </if>-->
+    <!--        </if>-->
+    <!--        <if test="searchField != null">-->
+    <!--            <if test="(searchField.pisCode != null and searchField.pisCode != '')">-->
+    <!--                and e.pis_code = #{searchField.pisCode}-->
+    <!--            </if>-->
+    <!--            <if test="(searchField.section != null and searchField.section != '')">-->
+    <!--                <bind name="section_en" value="searchField.section"/>-->
+    <!--                and cast(ss.id as text) = #{section_en}-->
+    <!--            </if>-->
+
+    <!--            <if test="(searchField.userType != null and searchField.uerType != '')">-->
+    <!--                <choose>-->
+    <!--                    <when test="(searchField.userType == '01')">-->
+    <!--                        and (es.code is null or es.code='01')-->
+    <!--                    </when>-->
+    <!--                    <otherwise>-->
+    <!--                        and es.code=#{searchField.userType}-->
+    <!--                    </otherwise>-->
+    <!--                </choose>-->
+
+    <!--            </if>-->
+    <!--        </if>-->
+
+    <!--        )b-->
+    <!--        where 1=1-->
+    <!--        and b.is_active is not null-->
+    <!--        and case when(b.isJoin is false and b.isLeft is false ) then-->
+    <!--        case when((select count(*)-->
+    <!--        from org_transfer_history oth-->
+    <!--        where oth.pis_code=b.pis_code and oth.transfer_status='A')>0) then-->
+    <!--        case when((select count(*)-->
+    <!--        from org_transfer_history oth-->
+    <!--        where oth.pis_code=b.pis_code-->
+    <!--        and oth.target_office_code=#{officeCode}-->
+    <!--        and (oth.expected_join_date_en between #{fromDate} and #{toDate})-->
+    <!--        and oth.transfer_status='A')>0) then 1=1-->
+    <!--        when ((select count(*)-->
+    <!--        from org_transfer_history oth-->
+    <!--        where oth.pis_code=b.pis_code-->
+    <!--        and oth.from_office_code=#{officeCode}-->
+    <!--        and (oth.expected_join_date_en > #{fromDate} or oth.expected_join_date_en > #{toDate})-->
+    <!--        and oth.transfer_status='A')>0)then-->
+    <!--        1=1 end-->
+    <!--        else 1=1-->
+    <!--        end-->
+    <!--        else 1=1-->
+    <!--        end-->
+    <!--        order by b.e_order,b.order_no,b.current_position_app_date_bs,b.emp_name_en-->
+    <!--    </select>-->
+
+
+    <select id="monthlyAttendanceData" resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceMonthlyReportPojo">
+        select e.pis_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        fd.name_en as fd_name_en,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        fd.name_np as fd_name_np
+        from employee e
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        where e.office_code = #{officeCode} and e.is_active = true
+        and (fd.designation_type='NORMAL_DESIGNATION')
+        <if test="pisCode != null and pisCode !=''">
+            and e.pis_code = #{pisCode}
+        </if>
+        order by e_order,p.order_no,e.current_position_app_date_bs,emp_name_en
+    </select>
+
+
+    <select id="filterExcelDataPaginatedMonthly"
+            resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceMonthlyReportPojo">
+        select e.pis_code,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as emp_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as emp_name_np,
+        fd.name_en as fd_name_en,
+        fd.name_np as fd_name_np
+        from employee e
+        left join functional_designation fd on e.designation_code = fd.code
+        where e.office_code = #{officeCode} and e.is_active = true
+        <if test="searchField != null">
+            <if test="(searchField.pisCode != null and searchField.pisCode != '')">
+                and e.pis_code = #{searchField.pisCode}
+            </if>
+        </if>
+        order by emp_name_en desc
+    </select>
+
+
+    <select id="getMonthAttendanceData" resultType="com.gerp.attendance.Pojo.report.MonthDataPojo">
+        select case
+        when (is_device and attendance_status like 'KAAJ') then 'ATTENDANCE_AND_KAAJ'
+        when(is_holiday=true and (is_device =true or attendance_status like 'MA') ) then 'ATTENDANCE_ON_HOLIDAY'
+        else
+        attendance_status
+        end as attendanceStatus,
+        date_en,
+        is_holiday as isHoliday,
+        date_np
+        from employee_attendance
+        where pis_code = #{pisCode}
+        and ((date_en BETWEEN #{fromDate} AND #{toDate})
+        <if test="isJoin ==true">
+            and date_en>=(select oth.expected_join_date_en
+            from org_transfer_history oth
+            where oth.pis_code=#{pisCode} and oth.transfer_status='A'
+            and oth.target_office_code=#{officeCode}
+            and oth.expected_join_date_en between #{fromDate} and #{toDate}
+            order by oth.last_modified_date desc limit 1)
+        </if>
+        <if test="isLeft ==true">
+            and (select oth.expected_join_date_en
+            from org_transfer_history oth
+            where oth.pis_code=#{pisCode} and oth.transfer_status='A'
+            and oth.from_office_code=#{officeCode}
+            and oth.expected_join_date_en between #{fromDate} and #{toDate}
+            order by oth.last_modified_date desc limit 1)>date_en
+        </if>
+        )
+        order by date_en
+    </select>
+    <select id="getDesignationData" resultType="com.gerp.attendance.Pojo.report.DesignationDataPojo">
+        select (select fd.name_en from functional_designation fd where fd.code = ejdl.old_designation_code) as fdEnOld,
+               (select fd.name_np from functional_designation fd where fd.code = ejdl.old_designation_code) as fdNpOld,
+               (select fd.name_en from functional_designation fd where fd.code = ejdl.new_designation_code) as fdEnNew,
+               fd2.name_np                                                                                  as fdNpNew,
+               ejdl.pis_code                                                                                as pisCode,
+               ejdl.start_date                                                                              as dateEn,
+               ejdl.start_date_np                                                                           as dateNp
+        from functional_designation fd2
+                 right join employee_job_detail_log ejdl on ejdl.new_designation_code = fd2.code
+        where ejdl.pis_code = #{pisCode}
+          and ejdl.start_date BETWEEN #{fromDate} and #{toDate}
+        order by ejdl.id desc
+        offset 0 limit 1
+    </select>
+
+
+    <select id="getDetailMonthAttendanceData" resultType="com.gerp.attendance.Pojo.report.MonthDataPojo">
+        select case
+        when (is_device and attendance_status like 'KAAJ') then 'ATTENDANCE_AND_KAAJ'
+        when(is_holiday=true and (is_device =true or attendance_status like 'MA') ) then 'ATTENDANCE_ON_HOLIDAY'
+        else
+        attendance_status
+        end as attendanceStatus,
+        date_en,
+        date_np,
+        checkin,
+        checkout,
+        shift_checkin,
+        shift_id,
+        is_holiday,
+        late_remarks
+        from employee_attendance
+        where pis_code = #{pisCode}
+        and ((date_en BETWEEN #{fromDate} AND #{toDate})
+        <if test="isJoin ==true">
+            and date_en>=(select oth.expected_join_date_en
+            from org_transfer_history oth
+            where oth.pis_code=#{pisCode} and oth.transfer_status='A'
+            and oth.target_office_code=#{officeCode}
+            and oth.expected_join_date_en between #{fromDate} and #{toDate}
+            order by oth.last_modified_date desc limit 1)
+        </if>
+        <if test="isLeft ==true">
+            and (select oth.expected_join_date_en
+            from org_transfer_history oth
+            where oth.pis_code=#{pisCode} and oth.transfer_status='A'
+            and oth.from_office_code=#{officeCode}
+            and oth.expected_join_date_en between #{fromDate} and #{toDate}
+            order by oth.last_modified_date desc limit 1)>date_en
+        </if>
+        )
+        order by date_en
+    </select>
+
+    <select id="getMonthLeaveData" resultType="com.gerp.attendance.Pojo.report.MonthDataLeavePojo">
+        select lrd.id,
+               lr.is_holiday,
+               lp.id                        as leave_policy_id,
+               ls.name_en                   as leave_name_en,
+               ls.name_np                   as leave_name_np,
+               case
+                   when (lr.is_holiday) then
+                       p.short_name_en
+                   else
+                       ls.short_name_en end as shortNameEn,
+               case
+                   when (lr.is_holiday) then
+                       p.short_name_np
+                   else
+                       ls.short_name_np end as shortNameNp,
+               p.name_en                    as holiday_name_en,
+               p.name_np                    as holiday_name_np,
+               lrd.leave_for                as duration_type,
+               lrd.from_date_en,
+               lrd.to_date_en,
+               lrd.from_date_np,
+               case when (lrd.travel_days is null) then 0 else lrd.travel_days end,
+               lrd.to_date_np
+        from leave_request lr
+                 inner join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                 left join leave_policy lp on lrd.leave_policy_id = lp.id
+                 left join leave_setup ls on ls.id = lp.leave_setup_id
+                 left join periodic_holiday ph on lrd.periodic_holiday_id = ph.id
+                 left join public_holiday p on ph.public_holiday_id = p.id
+        where lrd.status = 'A'
+          and lr.emp_pis_code = #{pisCode} or lrd.pis_code = #{pisCode}
+          and (((lrd.from_date_en BETWEEN #{fromDate} AND #{toDate})
+            OR (lrd.to_date_en BETWEEN #{fromDate} AND #{toDate}))
+            or ((#{fromDate} BETWEEN lrd.from_date_en AND lrd.to_date_en)
+                OR (#{toDate} BETWEEN lrd.from_date_en AND lrd.to_date_en)))
+        order by lrd.created_date;
+    </select>
+
+    <select id="getDailyLogData" resultType="com.gerp.attendance.Pojo.report.MonthlyDailyLog">
+        select dl.id,
+        dl.date_en,
+        dl.date_np
+        from daily_log dl
+        where dl.status='A' and dl.pis_code=#{pisCode} and
+        (dl.date_en BETWEEN #{fromDate} AND #{toDate})
+        <if test="isJoin ==true">
+            and dl.date_en>=(select oth.expected_join_date_en
+            from org_transfer_history oth
+            where oth.pis_code=#{pisCode} and oth.transfer_status='A'
+            and oth.target_office_code=dl.office_code
+            and oth.expected_join_date_en between #{fromDate} and #{toDate}
+            order by oth.last_modified_date desc limit 1)
+        </if>
+        <if test="isLeft ==true">
+            and (select oth.expected_join_date_en
+            from org_transfer_history oth
+            where oth.pis_code=#{pisCode} and oth.transfer_status='A'
+            and oth.from_office_code=dl.office_code
+            and oth.expected_join_date_en between #{fromDate} and #{toDate}
+            order by oth.last_modified_date desc limit 1)>dl.date_en
+        </if>
+        and dl.is_active=true
+        order by dl.created_date;
+    </select>
+
+    <select id="getMonthKaajData" resultType="com.gerp.attendance.Pojo.report.MonthDataKaajPojo">
+        select kr.id,
+               kt.name_en as kaaj_type_name_en,
+               kt.name_np as kaaj_type_name_np,
+               kr.duration_type,
+               kr.from_date_en,
+               kr.to_date_en,
+               kr.from_date_np,
+               kr.to_date_np
+        from kaaj_request kr
+                 left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active = true
+                 left join kaaj_type kt on kr.kaaj_type_id = kt.id
+        where kr.status = 'A'
+          and (krob.pis_code = #{pisCode} or kr.pis_code = #{pisCode})
+          and ((kr.from_date_en BETWEEN #{fromDate} AND #{toDate}
+            OR kr.to_date_en BETWEEN #{fromDate} AND #{toDate})
+            or (#{fromDate} BETWEEN kr.from_date_en AND kr.to_date_en
+                OR #{toDate} BETWEEN kr.from_date_en AND kr.to_date_en))
+        order by kr.created_date
+    </select>
+
+    <select id="filterData" resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceReportDataPojo">
+        select distinct ea.id,
+        ea.late_remarks,
+        ea.attendance_remarks,
+        ea.attendance_status as attendance_type,
+        ea.date_en as dates,
+        extract(dow from ea.date_en) as days,
+        ea.date_np,
+        ea.checkin,
+        ea.checkout,
+        ea.shift_checkin,
+        ea.shift_checkout,
+        case
+        when ea.checkin > ea.shift_checkin then
+        concat( case when(length(text(((EXTRACT(epoch FROM ea.checkin - ea.shift_checkin))::int/3600)))<![CDATA[<=]]> 1)
+        then
+        concat ('0',text(((EXTRACT(epoch FROM ea.checkin - ea.shift_checkin))::int/3600)))
+        else
+        text(((EXTRACT(epoch FROM ea.checkin - ea.shift_checkin))::int/3600))end
+        ,':',
+
+        case when(length(text(((EXTRACT(epoch FROM ea.checkin - ea.shift_checkin))::int%3600)/60::int))<![CDATA[<=]]> 1)
+        then
+        concat('0',text(((EXTRACT(epoch FROM ea.checkin - ea.shift_checkin))::int%3600)/60::int))
+        else
+        text(((EXTRACT(epoch FROM ea.checkin - ea.shift_checkin))::int%3600)/60::int)end)
+        end AS late_checkin,
+        case
+        when ea.shift_checkout > ea.checkout then
+
+        concat( case when(length(text(((EXTRACT(epoch FROM ea.shift_checkout - ea.checkout))::int/3600)))<![CDATA[<=]]>
+        1) then
+        concat ('0',text(((EXTRACT(epoch FROM ea.shift_checkout - ea.checkout))::int/3600)))
+        else
+        text(((EXTRACT(epoch FROM ea.shift_checkout - ea.checkout))::int/3600))end
+        ,':',
+
+        case when(length(text(((EXTRACT(epoch FROM ea.shift_checkout - ea.checkout))::int%3600)/60::int))<![CDATA[<=]]>
+        1) then
+        concat ('0',text(((EXTRACT(epoch FROM ea.shift_checkout - ea.checkout))::int%3600)/60::int))
+        else
+        text(((EXTRACT(epoch FROM ea.shift_checkout - ea.checkout))::int%3600)/60::int)end)
+        end AS early_checkout,
+        case when EXTRACT(epoch from ea.shift_checkin - ea.checkin + ea.checkout - ea.shift_checkout) > 0 then
+
+        concat( case when(length(text(((EXTRACT(epoch from ea.shift_checkin - ea.checkin + ea.checkout -
+        ea.shift_checkout))::int/3600)))<![CDATA[<=]]> 1) then
+        concat ('0',text(((EXTRACT(epoch from ea.shift_checkin - ea.checkin + ea.checkout -
+        ea.shift_checkout))::int/3600)))
+        else
+        text(((EXTRACT(epoch from ea.shift_checkin - ea.checkin + ea.checkout - ea.shift_checkout))::int/3600))end
+        ,':',
+
+        case when(length(text(((EXTRACT(epoch from ea.shift_checkin - ea.checkin + ea.checkout -
+        ea.shift_checkout))::int%3600)/60::int))<![CDATA[<=]]> 1) then
+        concat ('0',text(((EXTRACT(epoch from ea.shift_checkin - ea.checkin + ea.checkout -
+        ea.shift_checkout))::int%3600)/60::int))
+        else
+        text(((EXTRACT(epoch from ea.shift_checkin - ea.checkin + ea.checkout -
+        ea.shift_checkout))::int%3600)/60::int)end)
+        end as extra_time
+        from employee_attendance ea
+        left join employee e on e.pis_code=ea.pis_code
+        left join position po on e.position_code = po.code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        left join users_roles ur on u.id = ur.user_id
+        left join role_group rg on ur.role_id = rg.id
+        where ea.pis_code = #{pisCode}
+        and ss.is_active=true and sd.is_active=true
+        <if test="userStatus!=null">
+            <if test="userStatus ==false">
+                and u.is_active=false
+            </if>
+            <if test="userStatus ==true">
+                and u.is_active=true
+            </if>
+        </if>
+        <if test="searchField != null">
+            <if test="(searchField.attendanceType != null and searchField.attendanceType != '')">
+                <choose>
+                    <when test="searchField.attendanceType == 'DEVICE'">
+                        and ea.is_device = true
+                    </when>
+                    <otherwise>
+                        and ea.attendance_status = #{searchField.attendanceType}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="(searchField.attendanceRemarks != null and searchField.attendanceRemarks != '')">
+                and ea.attendance_remarks = #{searchField.attendanceRemarks}
+            </if>
+
+            <if test="(searchField.overTimeLimit != null and searchField.overTimeLimit != '')">
+                and EXTRACT(epoch from ea.shift_checkin - ea.checkin + ea.checkout - ea.shift_checkout)>=0
+                and to_timestamp(EXTRACT(epoch from ea.shift_checkin - ea.checkin + ea.checkout -
+                ea.shift_checkout))::time >=#{searchField.overTimeLimit}::time
+            </if>
+
+            <if test="(searchField.section != null and searchField.section != '')">
+                <bind name="section_en" value="searchField.section"/>
+                and cast(ss.id as text) = #{section_en}
+            </if>
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and (es.code is null or es.code='01')
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and po.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+        </if>
+        <if test="fromDate != null and toDate != null">
+            and ea.date_en BETWEEN #{fromDate} AND #{toDate}
+        </if>
+        order by ea.date_en desc
+    </select>
+
+    <select id="getSumForFilter" resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceTotalSum">
+        select sum(late_checkin)::time as total_late_checkin,
+        sum(early_checkout)::time as total_early_checkout,
+        sum(early_checkin)::time as total_early_checkin,
+        sum(extra_time)::time as total_extra_time,
+        sum(present_holiday)::time as present_in_holiday
+        from (select id,
+        attendance_status as attendance_type,
+        date_en as dates,
+        extract(dow from date_en) as days,
+        date_np,
+        checkin,
+        checkout,
+        shift_checkin,
+        shift_checkout,
+        case
+        when is_holiday =true then
+        to_timestamp(EXTRACT(epoch FROM checkout - checkin))::time end AS present_holiday,
+        case
+        when checkin > shift_checkin then
+        to_timestamp(EXTRACT(epoch FROM checkin - shift_checkin))::time end AS late_checkin,
+        case
+        when shift_checkout > checkout then
+        to_timestamp(EXTRACT(epoch FROM shift_checkout - checkout))::time end AS early_checkout,
+        case
+        when shift_checkin > checkin then
+        to_timestamp(EXTRACT(epoch FROM shift_checkin - checkin))::time end AS early_checkin,
+        case when EXTRACT(epoch from shift_checkin - checkin + checkout - shift_checkout) > 0 then to_timestamp(
+        EXTRACT(epoch from shift_checkin - checkin + checkout - shift_checkout) )::time end as extra_time
+        from employee_attendance
+        where pis_code = #{pisCode}
+        <if test="searchField != null">
+            <if test="(searchField.attendanceType != null and searchField.attendanceType != '')">
+                <choose>
+                    <when test="searchField.attendanceType == 'DEVICE'">
+                        and is_device = true
+                    </when>
+                    <otherwise>
+                        and attendance_status = #{searchField.attendanceType}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="(searchField.attendanceRemarks != null and searchField.attendanceRemarks != '')">
+                and attendance_remarks = #{searchField.attendanceRemarks}
+            </if>
+            <if test="(searchField.overTimeLimit != null and searchField.overTimeLimit != '')">
+                and EXTRACT(epoch from shift_checkin - checkin + checkout - shift_checkout)>=0
+                and to_timestamp(EXTRACT(epoch from shift_checkin - checkin + checkout - shift_checkout))::time
+                >=#{searchField.overTimeLimit}::time
+            </if>
+        </if>
+        <if test="fromDate != null and toDate != null">
+            and date_en BETWEEN #{fromDate} AND #{toDate}
+        </if>
+        order by date_en desc) result
+    </select>
+
+    <select id="getShiftDetail" resultType="com.gerp.attendance.Pojo.shift.ShiftResponsePojo">
+        select s.id,stc.checkout_time,
+        stc.checkin_time from shift s
+        left join shift_day_config sdc on s.id = sdc.shift_id
+        left join shift_time_config stc on sdc.id = stc.shift_day_config_id
+        where #{checkin}>=stc.checkin_time and stc.checkout_time>= #{checkin} and sdc.day_order= #{day}
+        and s.id in
+        <foreach item='item' index='index' collection='shiftId' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getSummaryLeave" resultType="Long">
+        select COALESCE(SUM(DATE_PART('day', c.toDate::timestamp - c.fromDate::timestamp)+1),0) as
+        leaveTaken from
+        (select
+        case when (#{fromDateEn}>=lrd.from_date_en) then #{fromDateEn} else lrd.from_date_en end as fromDate,
+        case when(lrd.to_date_en >=#{toDateEn}) then #{toDateEn} else lrd.to_date_en end as toDate
+        from leave_request lr
+        left join leave_request_detail lrd
+        on lr.id=lrd.leave_request_id where
+        lrd.status='A'
+        and lr.office_code in
+        <foreach item='item' index='index' collection='officeCode' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and lr.emp_pis_code=#{pisCode} and
+        (( lrd.from_date_en between #{fromDateEn} and #{toDateEn}) or
+        (lrd.to_date_en between #{fromDateEn} and #{toDateEn})))
+        <if test="year!=null">
+            and lr.year=#{year}
+        </if>
+        <if test="fiscalYear!=null">
+            and lr.fiscal_year=#{fiscalYear}
+        </if>
+    </select>
+
+    <select id="getSummaryData" resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceSummaryDataPojo">
+        select COALESCE(SUM(td.totalDays),0)-COALESCE(SUM(sw.shiftweekend),ph.holiday) as workingDays,
+        eaw.totalWorkingHour as totalWorkingHour,
+        eaw.workedHours as workedHours,
+        shc.weekendDays as weekendDays,
+        phc.holidaysCount as holidayCount,
+        lt.leaveTaken,
+        kr.kaaj,
+        td.totalDays
+        from
+        (select COALESCE(SUM(DATE_PART('day', #{toDateEn}::timestamp - #{fromDateEn}::timestamp)+1),0)totalDays) as td,
+
+        (select count(*) as weekendDays from
+        (select i::date as dates, extract(dow from i::date) as dayOrder
+        from (select distinct generate_series(#{fromDateEn},
+        #{toDateEn}, '1 day'::interval) i) as da
+        ) as e
+        where e.dayOrder in (
+        select distinct sdc.day_order as dayorder
+        from
+        shift s left join
+        shift_day_config sdc on s.id = sdc.shift_id where sdc.is_weekend=true and
+        sdc.shift_id in
+        <foreach item='item' index='index' collection='shiftId' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        )) as shc,
+
+        (select count(*) as holidaysCount from
+        (select i::date as dates,extract(dow from i::date) as dayOrder from
+        (select distinct b.fiscalYear, generate_series(b.fromDate,
+        b.toDate, '1 day'::interval) i from
+        (select case when (#{fromDateEn}>=ph.from_date_en) then #{fromDateEn} else ph.from_date_en end as fromDate,
+        case when(ph.to_date_en >= #{toDateEn}) then #{toDateEn} else ph.to_date_en end as toDate,
+        ph.fiscal_year_code as fiscalYear from
+        public_holiday puh left join
+        periodic_holiday ph on puh.id = ph.public_holiday_id
+        where puh.is_active=true and ph.fiscal_year_code=#{fiscalYear} and ph.is_active=true and
+        puh.office_code in
+        <foreach item='item' index='index' collection='officeCode' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and ((ph.from_date_en between #{fromDateEn} and #{toDateEn})
+        or(ph.to_date_en between #{fromDateEn} and #{toDateEn})))as b group by b.fiscalYear,b.fromDate,b.toDate) as f
+        where f.i between #{fromDateEn} and #{toDateEn}
+        )as p where p.dayOrder not in (
+        select distinct sdc.day_order as dayorder
+        from
+        shift s left join
+        shift_day_config sdc on s.id = sdc.shift_id where sdc.is_weekend=true and
+        sdc.shift_id in
+        <foreach item='item' index='index' collection='shiftId' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        )) as phc,
+
+        (select extract(hours from sum(to_timestamp(EXTRACT(epoch FROM (ea.checkout - ea.checkin)))::time)) as
+        workedHours,extract(hours from sum(to_timestamp(EXTRACT(epoch FROM (ea.shift_checkout -
+        ea.shift_checkin)))::time)) as totalWorkingHour, ea.fiscal_year_code as
+        fiscalYear
+        from employee_attendance ea where ea.pis_code=#{pisCode}
+        and ea.fiscal_year_code=#{fiscalYear}
+        and ea.date_en between #{fromDateEn} and #{toDateEn}
+        and ea.office_code in
+        <foreach item='item' index='index' collection='officeCode' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and ea.shift_id in
+        <foreach item='item' index='index' collection='shiftId' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        group by fiscal_year_code)eaw
+        left join
+        (select count(*) as shiftweekend,e.fiscalYear from
+        ((select i::date as dates, extract(dow from i) as days
+        from generate_series(#{fromDateEn},
+        #{toDateEn}, '1 day'::interval) i) as dr
+        inner join
+        (select distinct sdc.day_order as dayorder,cast(s.fiscal_year as text) as fiscalYear
+        from
+        shift s left join
+        shift_day_config sdc on s.id = sdc.shift_id where sdc.is_weekend=true and
+        sdc.shift_id in
+        <foreach item='item' index='index' collection='shiftId' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        )e on dr.days = e.dayorder) group by e.fiscalYear)sw on sw.fiscalYear=eaw.fiscalYear
+
+        left join
+
+        (select distinct count(*) as holiday,c.fiscalYear from
+        (select i::date as dates, extract(dow from i) as days,f.fiscalYear from
+        (select distinct b.fiscalYear, generate_series(b.fromDate,
+        b.toDate, '1 day'::interval) i from
+        (select case when (#{fromDateEn}>=ph.from_date_en) then #{fromDateEn} else ph.from_date_en end as fromDate,
+        case when(ph.to_date_en >= #{toDateEn}) then #{toDateEn} else ph.to_date_en end as toDate,
+        ph.fiscal_year_code as fiscalYear from
+        public_holiday puh left join
+        periodic_holiday ph on puh.id = ph.public_holiday_id
+        where puh.is_active=true and ph.fiscal_year_code=#{fiscalYear} and ph.is_active=true and
+        puh.office_code in
+        <foreach item='item' index='index' collection='officeCode' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and ((ph.from_date_en between #{fromDateEn} and #{toDateEn})
+        or(ph.to_date_en between #{fromDateEn} and #{toDateEn})))as b group by b.fiscalYear,b.fromdate,b.toDate) as f )
+        as c where c.days in
+        (select distinct sdc.day_order as dayorder from shift_day_config sdc where sdc.is_weekend=true and sdc.shift_id
+        in
+        <foreach item='item' index='index' collection='shiftId' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        )
+        group by c.fiscalYear)ph on ph.fiscalYear=eaw.fiscalYear
+
+        left join
+
+        (select COALESCE(SUM(DATE_PART('day', c.toDate::timestamp - c.fromDate::timestamp)+1),0) as
+        leaveTaken,c.fiscalYear from
+        (select
+        case when (#{fromDateEn}>=lrd.from_date_en) then #{fromDateEn} else lrd.from_date_en end as fromDate,
+        case when(lrd.to_date_en >=#{toDateEn}) then #{toDateEn} else lrd.to_date_en end as toDate,
+        cast(lr.fiscal_year as text) as fiscalYear
+        from leave_request lr
+        left join leave_request_detail lrd
+        on lr.id=lrd.leave_request_id where
+        lrd.status='A' and cast(lr.fiscal_year as text)=#{fiscalYear}
+        and lr.office_code in
+        <foreach item='item' index='index' collection='officeCode' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and lr.emp_pis_code=#{pisCode} and
+        (( lrd.from_date_en between #{fromDateEn} and #{toDateEn}) or
+        (lrd.to_date_en between #{fromDateEn} and #{toDateEn}))) as c group by c.fiscalYear) lt on
+        lt.fiscalYear=eaw.fiscalYear
+
+        left join
+
+        (select COALESCE(SUM(DATE_PART('day', k.toDate::timestamp - k.fromDate::timestamp)+1),0) as kaaj,k.fiscalYear
+        from
+        (select
+        case when (#{fromDateEn}>=kr.from_date_en) then #{fromDateEn} else kr.from_date_en end as fromDate,
+        case when(kr.to_date_en >=#{toDateEn}) then #{toDateEn} else kr.to_date_en end as toDate,
+        cast(kr.fiscal_year as text) as fiscalYear
+        from kaaj_request kr
+        left join kaaj_request_on_behalf krob on kr.id = krob.kaaj_request_id and krob.is_active=true
+        where kr.status='A'
+        and cast(kr.fiscal_year as text)=#{fiscalYear} and
+        kr.office_code in
+        <foreach item='item' index='index' collection='officeCode' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        and(krob.pis_code =#{pisCode}
+        or kr.pis_code = #{pisCode})
+
+        and ((kr.from_date_en between #{fromDateEn} and #{toDateEn}) or
+        (kr.to_date_en between #{fromDateEn} and #{toDateEn}))) as k group by k.fiscalYear) as kr on
+        kr.fiscalYear=eaw.fiscalYear
+
+        group by
+        eaw.totalworkinghour,eaw.workedhours,shc.weekendDays,phc.holidaysCount,ph.holiday,sw.shiftweekend,lt.leaveTaken,kr.kaaj,td.totalDays
+
+    </select>
+
+    <update id="updateLateStatus">
+        update employee_attendance
+        set attendance_remarks=case
+                                   when (b.checkin > b.shiftCheckin and b.shiftCheckout > b.checkout) then
+                                       case
+                                           when (#{officeLateLimit} >=
+                                                 to_timestamp(EXTRACT(epoch FROM b.checkin - b.shiftCheckin))::time  and
+                                                 #{officeEarlyLimit} >=to_timestamp(EXTRACT (epoch FROM b.shiftCheckout - b.checkout)):: time)
+                                               then
+                                               case
+                                                   when (b.irregularDays > #{officeAllowedLimit}) then
+                                                       'IR'
+                                                   else 'R' end
+                                           else 'IR'
+                                           end
+
+                                   when (b.checkin > b.shiftCheckin) then
+                                       case
+                                           when (#{officeLateLimit} >=
+                                                 to_timestamp(EXTRACT(epoch FROM b.checkin - b.shiftCheckin))::time)
+                                               then
+                                               case
+                                                   when (b.irregularDays > #{officeAllowedLimit}) then
+                                                       'IR'
+                                                   else 'R' end
+                                           else 'IR'
+                                           end
+
+                                   when (b.shiftCheckout > b.checkout) then
+                                       case
+                                           when (#{officeEarlyLimit} >=
+                                                 to_timestamp(EXTRACT(epoch FROM b.shiftCheckout - b.checkout))::time)
+                                               then
+                                               case
+                                                   when (b.irregularDays > #{officeAllowedLimit}) then
+                                                       'IR'
+                                                   else 'R' end
+                                           else 'IR'
+                                           end
+                                   else 'R' end from (select ea.shift_checkin as shiftCheckin,
+             ea.shift_id as shiftId,
+             ea.shift_checkout as shiftCheckout,
+             ea.checkout as checkout,
+             ea.checkin as checkin,
+             ea.fiscal_year_code as fiscalYearCode,
+             eia.irregular_days_count as irregularDays
+      from employee_attendance ea
+               full join employee_irregular_attendance eia on
+          (eia.pis_code=ea.pis_code
+              and eia.shift_id=ea.shift_id
+              and eia.month=#{month}
+            and eia.office_code=ea.office_code
+            and eia.fiscal_year_code=ea.fiscal_year_code)
+            where ea.id= #{empId}) as b
+        where id=#{empId};
+    </update>
+
+
+    <!--    <update id="updatepublicHoliday">-->
+    <!--update employee_attendance-->
+    <!--set is_holiday=false,-->
+    <!--    attendance_status=case-->
+    <!--                          when(is_device) then-->
+    <!--                              'DEVICE'-->
+
+    <!--                          when((select count (*)-->
+    <!--                                from leave_request lr-->
+    <!--                                         left join leave_request_detail lrd on lr.id = lrd.leave_request_id-->
+    <!--                                where date_en between lrd.from_date_en and lrd.to_date_en and lrd.is_active=true and lrd.status='A' and lr.emp_pis_code=b.pisCode) >0) then-->
+    <!--                              'LEAVE'-->
+
+    <!--                          when((select count (*)-->
+    <!--                                from kaaj_request kr-->
+    <!--                                where date_en between kr.from_date_en and kr.to_date_en and kr.is_active=true and kr.status='A' and kr.pis_code=b.pisCode)>0) then-->
+    <!--                              'KAAJ'-->
+
+    <!--                          when(checkin is null and checkout is null) then-->
+    <!--                              'UNINOFRMED_LEAVE_ABSENT'-->
+
+    <!--                          else-->
+    <!--                              'MA'-->
+    <!--        end-->
+
+    <!--from (select ea.pis_code as pisCode from employee_attendance ea-->
+    <!--    where ea.date_en between #{fromDate} and #{toDate}-->
+    <!--     and attendance_status='PUBLIC_HOLIDAY')as b-->
+    <!--where date_en between #{fromDate} and #{toDate}-->
+    <!--  and attendance_status='PUBLIC_HOLIDAY';-->
+    <!--    </update>-->
+
+    <update id="updateStatus">
+        update employee_attendance
+        set is_holiday= false,
+            attendance_status=#{attendanceStatus}
+        where id = #{id}
+    </update>
+
+
+    <select id="checkForKaaj" resultType="java.lang.String">
+        select case
+                   when
+                       ((select count(*)
+                         from leave_request lr
+                                  left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                         where #{dateEn} between lrd.from_date_en and lrd.to_date_en
+                           and lrd.is_active = true
+                           and lrd.status = 'A'
+                           and lr.emp_pis_code = #{pisCode} or lrd.pis_code = #{pisCode}
+                           and lr.office_code = #{officeCode}) > 0) then
+                       'LEAVE'
+
+                   when ((select count(*)
+                          from kaaj_request kr
+                                   left join kaaj_request_on_behalf krob
+                                             on kr.id = krob.kaaj_request_id and krob.is_active = true
+                          where #{dateEn} between kr.from_date_en and kr.to_date_en
+                            and kr.is_active = true
+                            and kr.status = 'A'
+                            and (krob.pis_code = #{pisCode}
+                              or kr.pis_code = #{pisCode})
+
+                            and kr.office_code = #{officeCode}) > 0) then
+                       'KAAJ'
+
+                   when ((select count(*)
+                          from employee_attendance ea
+                          where (ea.checkin is null or ea.checkout is null)
+                            and ea.date_en = #{dateEn}
+                            and ea.pis_code = #{pisCode}) > 0) then
+                       'UNINOFRMED_LEAVE_ABSENT'
+
+                   else
+                       'MA'
+                   end;
+    </select>
+
+    <select id="getAllEmployee" resultType="com.gerp.attendance.Pojo.EmployeePojo">
+        select ea.pis_code    as pisCode,
+               ea.office_code as officeCode,
+               ea.id          as id,
+               ea.date_en     as dateEn
+        from employee_attendance ea
+        where ea.is_active = true
+          and ea.date_en between #{fromDate} and #{toDate}
+          and ea.attendance_status = 'PUBLIC_HOLIDAY'
+    </select>
+
+    <update id="updateHoliday">
+        update employee_attendance
+        set is_holiday= true,
+            attendance_status='PUBLIC_HOLIDAY'
+        where date_en between #{fromDate} and #{toDate};
+    </update>
+
+    <select id="getEmployeeAttendance" resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceReportDataPojo">
+        select *
+        from employee_attendance ea
+        where ea.date_en between #{fromDate} and #{toDate}
+          and ea.is_active = true
+          and ea.is_holiday = true
+          and ea.attendance_status = #{attendanceStatus}
+    </select>
+
+    <select id="getAbsenceWithoutLeave" resultType="com.gerp.attendance.Pojo.AbsenceEmployeeWithoutLeavePojo">
+        select ea.date_en,
+               ea.date_np,
+               ea.attendance_status,
+               ea.pis_code,
+               ea.day
+        from employee_attendance ea
+        where ea.pis_code = '142037'
+          and ea.office_code = '20782'
+          and ea.fiscal_year_code = '5'
+          and ea.attendance_status = 'UNINOFRMED_LEAVE_ABSENT'
+          and is_holiday = false;
+    </select>
+
+
+    <select id="sortEmployee" resultMap="baseResultEmployeeMap">
+        select
+        e.pis_code,
+        fd.code as fd_id,
+        fd.name_en as fd_name_en,
+        fd.name_np as fd_name_np,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as employeeNameEn,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as employeeNameNp,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order
+        from employee e
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position p on e.position_code = p.code
+        left join functional_designation fd on e.designation_code = fd.code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        inner join users u on e.pis_code = u.pis_employee_code
+        inner join users_roles ur on u.id = ur.user_id
+        inner join role_group rg on ur.role_id = rg.id
+        where e.pis_code in
+        <foreach item='item' index='index' collection='pisCode' open='(' separator=',' close=')'>
+            #{item}
+        </foreach>
+        <if test="searchField != null">
+
+            <if test="(searchField.userType != null and searchField.uerType != '')">
+                <choose>
+                    <when test="(searchField.userType == '01')">
+                        and es.code is null or es.code='01'
+                    </when>
+                    <otherwise>
+                        and es.code=#{searchField.userType}
+                    </otherwise>
+                </choose>
+
+            </if>
+
+            <if test="(searchField.position != null and searchField.position != '')">
+                and p.code = #{searchField.position}
+            </if>
+
+            <if test="(searchField.designation != null and searchField.designation != '')">
+                and fd.code = #{searchField.designation}
+            </if>
+        </if>
+        order by e_order,p.order_no,e.current_position_app_date_bs,employeeNameEn;
+    </select>
+
+
+    <select id="getMonthlyAttendance" resultType="com.gerp.attendance.Pojo.report.EmployeeAttendanceNewMonthlyPojo">
+        select ea.date_en,
+               ea.date_np,
+               case
+                   when (ea.is_device and ea.attendance_status like 'KAAJ') then 'ATTENDANCE_AND_KAAJ'
+
+                   when (ea.is_holiday and ea.attendance_status like 'WEEKEND') then 'WEEKEND'
+
+                   when (ea.is_holiday and ea.attendance_status like 'PUBLIC_HOLIDAY') then 'PUBLIC_HOLIDAY'
+
+                   when (ea.is_device and ea.attendance_status like 'LEAVE') then
+                       (case
+                            when (select count(distinct lrd.leave_for)
+                                  from leave_request lr
+                                           left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                                  where lrd.status = 'A'
+                                    and
+                                      <!--lr.emp_pis_code = ea.pis_code-->
+                                   case
+                                       when lr.applied_for_others = true
+                                       then lrd.pis_code = #{pisCode}
+                                       else lr.emp_pis_code = #{pisCode}
+                                   end
+                                    and (lrd.from_date_en BETWEEN #{fromDate} AND #{toDate}
+                                      OR lrd.to_date_en BETWEEN #{fromDate} AND #{toDate})) = 1 then 'HALF_LEAVE'
+                            else 'LEAVE' end)
+
+                   when (ea.is_device or ea.attendance_status like 'MA' or ea.attendance_status like 'DEVICE')
+                       then 'ATTENDANCES'
+
+                   else ea.attendance_status
+                   end                                                     as monthlyAttendanceStatus,
+
+               case
+                   when (ea.is_holiday and ea.attendance_status like 'PUBLIC_HOLIDAY') then
+                       (select puh.short_name_en
+                        from public_holiday puh
+                                 left join
+                             periodic_holiday ph on puh.id = ph.public_holiday_id
+                        where ea.date_en between ph.from_date_en and ph.to_date_en
+                          and puh.is_active = true
+                          and ph.is_active = true
+                          and ph.fiscal_year_code = #{fiscalYearCode}) end as holidayNameEn,
+
+               case
+                   when (ea.is_holiday and ea.attendance_status like 'PUBLIC_HOLIDAY') then
+                       (select puh.short_name_np
+                        from public_holiday puh
+                                 left join
+                             periodic_holiday ph on puh.id = ph.public_holiday_id
+                        where ea.date_en between ph.from_date_en and ph.to_date_en
+                          and puh.is_active = true
+                          and ph.is_active = true
+                          and ph.fiscal_year_code = #{fiscalYearCode}) end as holidayNameNp
+
+        from employee_attendance ea
+        where ea.is_active = true
+          and ea.pis_code = #{pisCode}
+          and ea.date_en BETWEEN #{fromDate} AND #{toDate};
+    </select>
+
+    <select id="getStartAndEndDate" resultType="com.gerp.attendance.Pojo.DatesPojo">
+        select min(eng_date)::date as fromDate,
+        max(eng_date)::date as toDate
+        from date_list
+        where 1=1
+        <if test="month !=null">
+            and nepali_month=#{month}
+        </if>
+
+        <if test="year !=null">
+            and nepali_year=#{year}
+        </if>
+
+    </select>
+
+    <select id="getMonthStartAndEndDate" resultType="com.gerp.attendance.Pojo.DatesPojo">
+        select min(eng_date)::date as fromDate,max(eng_date) ::date as toDate
+        from date_list
+        where nepali_month = #{month}
+          and nepali_year = #{year}
+    </select>
+
+    <select id="getTotalPendingCount" resultType="com.gerp.attendance.Pojo.DashboardPendingCount">
+        select *, (b.kaajApproval + c.leaveApproval + d.dailyLogApproval + e.manualAttendanceApproval) as totalApproval
+        from (select count(*) as kaajApproval
+              from kaaj_request kr
+                       left join decision_approval da on kr.id = da.kaaj_request_id
+              where kr.is_active = true
+                and da.is_active = true
+                and kr.status = 'P'
+                and da.approver_pis_code = #{pisCode}) as b,
+
+             (select count(*) as leaveApproval
+              from leave_request lr
+                       left join leave_request_detail lrd on lr.id = lrd.leave_request_id
+                       left join decision_approval da on lrd.id = da.leave_request_detail_id
+              where lrd.is_active = true
+                and da.is_active = true
+                and lrd.status = 'P'
+                and da.status = 'P'
+                and da.approver_pis_code = #{pisCode}) as c,
+
+             (select count(*) as dailyLogApproval
+              from daily_log dl
+                       left join decision_approval da on dl.id = da.daily_log_id
+              where dl.is_active = true
+                and da.is_active = true
+                and da.status = 'P'
+                and dl.status = 'P'
+                and da.approver_pis_code = #{pisCode}) as d,
+
+             (select count(*) as manualAttendanceApproval
+              from manual_attendance ma
+                       left join decision_approval da on ma.id = da.manual_attendance_id
+              where ma.is_active = true
+                and da.is_active = true
+                and ma.status = 'P'
+                and da.status = 'P'
+                and da.approver_pis_code = #{pisCode}) as e;
+    </select>
+    <select id="filterEmployeeAttendance" resultMap="baseResultMap">
+        select * from
+        (select distinct e.pis_code as employee_pis_code,
+        ea.attendance_status as attendance_type,
+        fd.name_en as employeeDesignationEn,
+        fd.name_np as employeeDesignationNp,
+        <!--case
+            when ea.checkin is null then
+                ea.shift_checkin
+            else ea.checkin
+             end as checkin,-->
+        ea.checkin,
+        p.order_no,
+        e.current_position_app_date_bs,
+        e.first_name_en,
+        <!--case
+            when ea.checkout is null then
+                ea.shift_checkout
+            else ea.checkout
+        end as checkout,-->
+        ea.checkout,
+        case
+        when e.employee_service_status_code = '01' then 0
+        when (e.employee_service_status_code = '04') then 2
+        when (e.employee_service_status_code = '08') then 3
+        when (e.employee_service_status_code = '09') then 4 else 0
+        end as e_order,
+        case
+        when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+        case
+        when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np
+        from employee_attendance ea
+        inner join employee e on (ea.pis_code = e.pis_code or ea.pis_code = e.employee_code) and e.is_active = true
+        left join functional_designation fd on e.designation_code = fd.code
+        left join employee_service_status es on es.code=e.employee_service_status_code
+        left join position p on e.position_code = p.code
+        left join section_designation sd on sd.employee_pis_code=e.pis_code
+        left join section_subsection ss on sd.section_subsection_id = ss.id
+        left join users u on e.pis_code = u.pis_employee_code
+        where ea.date_en = current_date
+        and e.office_code = #{officeCode}
+        and u.is_active=true and fd.designation_type='NORMAL_DESIGNATION'
+        <if test="attendanceSearchPojo.isCheckedIn!=null and attendanceSearchPojo.isCheckedIn!=''">
+            <!-- and ea.checkin is not null or  ea.attendance_status ='KAAJ' -->
+           <!--and (ea.is_device =true or ea.attendance_status in ('MA','DEVICE','KAAJ'))-->
+           and (ea.is_device =true or ea.attendance_status in ('DEVICE','MA'))
+        </if>
+        ) b
+        order by e_order,b.order_no,b.current_position_app_date_bs,b.first_name_en;
+    </select>
+
+    <select id="filterEmployeeList" resultMap="baseResultMap">
+        select fd.name_en                                                as employeeDesignationEn,
+               fd.name_np                                                as employeeDesignationNp,
+               p.order_no,
+               e.current_position_app_date_bs,
+               e.first_name_en,
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4
+                   else 0
+                   end                                                   as e_order,
+               case
+                   when e.middle_name_en IS NOT NULL
+                       then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np
+        from employee e
+                 left join users u on u.pis_employee_code = e.pis_code
+                 left join functional_designation fd on e.designation_code = fd.code
+                 left join position p on e.position_code = p.code
+        where e.office_code = #{officeCode}
+          and fd.designation_type ='NORMAL_DESIGNATION'
+          and u.is_active = true
+        order by e_order;
+    </select>
+
+
+    <select id="CountEmployeeLateArrivedByMonth" resultType="com.gerp.attendance.Pojo.DashboardCountPojo">
+        select sum(case
+                       when checkin > (shift_checkin::interval + #{maximum_late_checkin} :: interval) then 1
+                       else 0 end) as lateArrived,
+               sum(case
+                       when checkout <![CDATA[<]]> (shift_checkout::interval- #{maximum_early_checkout} :: interval) then 1
+                       else 0 end) as earlyLeft
+        from employee_attendance
+        where pis_code = #{pisCode}
+          and date_en >= #{startDate}
+          and date_en <![CDATA[<=]]> #{endDate}
+    </select>
+
+    <select id="TotalLateCheckInTime" resultType="com.gerp.attendance.Pojo.DashboardCountPojo">
+        select sum(case
+                       when checkin > shift_checkin and
+                            checkin <![CDATA[<]]> (shift_checkin::interval + #{maximum_late_checkin}:: interval) then 1
+                       else 0 end) as lateArrived,
+               sum(case
+                       when checkout > (shift_checkout::interval - #{maximum_early_checkout}:: interval) and
+                            checkout <![CDATA[<]]> shift_checkout then 1
+                       else 0 end) as earlyLeft
+        from employee_attendance
+        where pis_code = #{pisCode}
+          and date_en >= #{startDate}
+          and date_en <![CDATA[<=]]> #{endDate}
+    </select>
+
+    <select id="getAbsentCount" resultType="java.lang.Double">
+        select count(distinct ea.date_en)
+        from employee_attendance ea
+        where ea.attendance_status = 'UNINOFRMED_LEAVE_ABSENT'
+          and ea.pis_code = #{pisCode}
+          and ea.date_en between #{startDate} and #{endDate};
+    </select>
+    <select id="getAllLateAttendanceCheckInByMonth" resultType="com.gerp.attendance.Pojo.LateEmployeePojo">
+        select case
+        when e.middle_name_en IS NOT NULL
+        then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as empNameEn,
+        case
+        when e.middle_name_np IS NOT NULL
+        then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as empNameNp,
+        ec.date_np,
+        ec.shift_checkin,
+        ec.checkin,
+        concat(case
+        when (length(text(((EXTRACT(epoch FROM ec.checkin - ec.shift_checkin)):: int /3600))) <![CDATA[<=]]> 1)
+        then
+        concat('0', text(((EXTRACT(epoch FROM ec.checkin - ec.shift_checkin)):: int /3600)))
+        else
+        text(((EXTRACT(epoch FROM ec.checkin - ec.shift_checkin)):: int /3600))end
+        , ':',
+        case
+        when (length(text(((EXTRACT(epoch FROM ec.checkin - ec.shift_checkin)):: int%3600)/60::int)) <![CDATA[<=]]>
+        1)
+        then
+        concat('0',
+        text(((EXTRACT(epoch FROM ec.checkin - ec.shift_checkin)):: int%3600)/60::int))
+        else
+        text(((EXTRACT(epoch FROM ec.checkin - ec.shift_checkin)):: int%3600)/60::int)
+        end) as late_checkin,
+        (EXTRACT(epoch FROM ec.checkin - ec.shift_checkin))/60::int as late_in,
+        (EXTRACT(epoch FROM maximum_late_checkin))/60::int as late_in_max
+        from employee_attendance ec
+        left join office_time_config otc on ec.office_code = otc.office_code
+        inner join employee e on e.pis_code = ec.pis_code
+        where ec.office_code = #{officeCode}
+        <if test="pisCode!=null">
+            and ec.pis_code =#{pisCode}
+        </if>
+        <if test="month!=null">
+            and ec.date_np like #{month}
+        </if>
+        <if test="day!=null">
+            and ec.date_en = #{day}
+
+        </if>
+        and ec.checkin is not null
+       and (EXTRACT(epoch FROM ec.checkin - ec.shift_checkin) / 60 >=1)
+        order by ec.date_np asc
+
+    </select>
+    <!--above sql used office_code instead of employee_code offset and remove #{configDay};-->
+    <!--    <select id="getAllLateAttendanceCheckOutByMonth" resultType="com.gerp.attendance.Pojo.LateEmployeePojo">-->
+    <!--        select ea.date_en,-->
+    <!--               ea.date_np,-->
+    <!--               to_timestamp(EXTRACT(epoch FROM ea.shift_checkout - ea.checkout))::time AS early_check_out, ea.shift_checkout,-->
+    <!--               ea.checkout-->
+
+    <!--        from employee_attendance ea-->
+    <!--                 left join employee e on e.pis_code = ea.pis_code-->
+    <!--                 left join section_designation sd on sd.employee_pis_code = e.pis_code-->
+    <!--                 left join section_subsection ss on sd.section_subsection_id = ss.id-->
+    <!--        where ea.shift_checkout > ea.checkout-->
+    <!--          and ((ss.is_active = true and sd.is_active = true) or sd.id is null)-->
+    <!--          and ea.pis_code = #{pisCode}-->
+    <!--          and nullif(REGEXP_REPLACE(ea.date_np, '(\d{4})-(\d{2})-(\d{2})', '\2'), ''):: int = #{month}-->
+    <!--          and ea.id not in (select ec.id from employee_attendance ec-->
+    <!--            left join office_time_config otc on ec.office_code = otc.office_code-->
+    <!--            inner join employee e on e.pis_code = ec.pis_code-->
+    <!--            where ec.pis_code = #{pisCode}-->
+    <!--          and nullif (REGEXP_REPLACE(ec.date_np-->
+    <!--            , '(\d{4})-(\d{2})-(\d{2})'-->
+    <!--            , '\2')-->
+    <!--            , ''):: int = #{month}-->
+    <!--          and EXTRACT (epoch FROM ec.shift_checkout - ec.checkout)/60 <![CDATA[<]]> extract (epoch from otc.maximum_early_checkout)/60-->
+
+    <!--          and ec.shift_checkout-->
+    <!--            > ec.checkout-->
+    <!--            order by date_np-->
+    <!--            limit #{configDay})-->
+    <!--        order by date_np-->
+    <!--    </select>-->
+    <select id="getAllLateAttendanceCheckOutByMonth" resultType="com.gerp.attendance.Pojo.LateEmployeePojo">
+        select case
+        when e.middle_name_en IS NOT NULL
+        then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+        else concat(e.first_name_en, ' ', e.last_name_en) end as empNameEn,
+        case
+        when e.middle_name_np IS NOT NULL
+        then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+        else concat(e.first_name_np, ' ', e.last_name_np) end as empNameNp,
+        ec.date_en,
+        ec.date_np,
+        ec.checkout,
+        ec.shift_checkout,
+        concat(case
+        when (length(text(((EXTRACT(epoch FROM ec.shift_checkout - ec.checkout)):: int /3600))) <![CDATA[<=]]>
+        1)
+        then
+        concat('0', text(((EXTRACT(epoch FROM ec.shift_checkout - ec.checkout)):: int /3600)))
+        else
+        text(((EXTRACT(epoch FROM ec.checkin - ec.shift_checkin)):: int /3600))end
+        , ':',
+        case
+        when (length(text(((EXTRACT(epoch FROM ec.shift_checkout - ec.checkout)):: int%3600)/60::int)) <![CDATA[<=]]>
+        1)
+        then
+        concat('0',
+        text(((EXTRACT(epoch FROM ec.shift_checkout - ec.checkout)):: int%3600)/60::int))
+        else
+        text(((EXTRACT(epoch FROM ec.shift_checkout - ec.checkout)):: int%3600)/60::int)
+        end) as early_check_out,
+        (EXTRACT(epoch FROM ec.shift_checkout - ec.checkout))/60::int as early_out,
+        (EXTRACT(epoch FROM maximum_early_checkout))/60::int as early_out_max
+        from employee_attendance ec
+        left join office_time_config otc on ec.office_code = otc.office_code
+        inner join employee e on e.pis_code = ec.pis_code
+        where ec.office_code = #{officeCode}
+        <if test="pisCode!=null">
+            and ec.pis_code = #{pisCode}
+        </if>
+        <if test="month!=null">
+            and ec.date_np like #{month}
+        </if>
+        <if test="day!=null">
+            and ec.date_en = #{day}
+        </if>
+        and ec.checkout is not null
+        and (EXTRACT(epoch FROM ec.shift_checkout - ec.checkout) / 60 >=1)
+        order by ec.date_np asc
+
+
+    </select>
+<!--    and (EXTRACT(epoch FROM ec.shift_checkout - ec.checkout) / 60 >=-->
+<!--    extract(epoch from otc.maximum_early_checkout) / 60)-->
+<!--    offset #{configDay}-->
+    <!-- above sql used office_code instead of employee_code and remove offset #{configDay};-->
+    <select id="getAllLateAttendanceCheckInByMonthOfOffice"
+            resultType="com.gerp.attendance.Pojo.LateEmployeePojo">
+        select eat.date_en,
+               eat.date_np,
+               eat.shift_checkin,
+               eat.checkin,
+               to_timestamp(EXTRACT(epoch FROM eat.checkin - eat.shift_checkin))::time AS late_checkin, case
+                                                                                                            when e.middle_name_en IS NOT NULL
+                                                                                                                then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                                                                                                            else concat(e.first_name_en, ' ', e.last_name_en) end as empNameEn,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as empNameNp,
+               e.pis_code
+        from employee_attendance eat
+                 inner join employee e on e.pis_code = eat.pis_code
+        where eat.checkin > eat.shift_checkin
+          and eat.pis_code in (select ec.pis_code
+                               from employee_attendance ec
+                                        left join office_time_config otc on ec.office_code = otc.office_code
+                                        inner join employee e on e.pis_code = ec.pis_code
+                               where EXTRACT(epoch FROM ec.checkin - ec.shift_checkin) / 60 <![CDATA[<]]>
+                                     extract(epoch from otc.maximum_late_checkin) / 60
+                                 and ec.checkin > ec.shift_checkin
+                                 and ec.office_code = #{officeCode}
+                                 and extract(month from ec.date_en) = #{month}
+                               group by ec.pis_code
+                               having ec.count >= #{allowedLimit})
+          and date_en = #{date}
+          and eat.office_code = #{officeCode}
+    </select>
+    <select id="getAllLateAttendanceCheckOutByMonthOfOffice"
+            resultType="com.gerp.attendance.Pojo.LateEmployeePojo">
+        select eat.date_en,
+               eat.date_np,
+               e.office_code,
+               eat.checkout,
+               eat.shift_checkout,
+               to_timestamp(EXTRACT(epoch FROM eat.shift_checkout - eat.checkout))::time AS early_check_out, case
+                                                                                                                 when e.middle_name_en IS NOT NULL
+                                                                                                                     then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                                                                                                                 else concat(e.first_name_en, ' ', e.last_name_en) end as empNameEn,
+               case
+                   when e.middle_name_np IS NOT NULL
+                       then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as empNameNp,
+               e.pis_code
+        from employee_attendance eat
+                 inner join employee e on e.pis_code = eat.pis_code
+        where eat.shift_checkout > eat.checkout
+          and eat.pis_code in (select ec.pis_code
+                               from employee_attendance ec
+                                        left join office_time_config otc on ec.office_code = otc.office_code
+                                        inner join employee e on e.pis_code = ec.pis_code
+                               where EXTRACT(epoch FROM ec.shift_checkout - ec.checkout) / 60 <![CDATA[<]]>
+                                     extract(epoch from otc.maximum_early_checkout) / 60
+                                 and ec.shift_checkout > ec.checkout
+                                 and ec.office_code = #{officeCode}
+                                 and extract(month from ec.date_en) = #{month}
+                               group by ec.pis_code
+                               having ec.count >= #{allowedLimit})
+          and date_en = #{date}
+          and eat.office_code = #{officeCode}
+    </select>
+    <!--    <select id="getEmployeeAbsentDataInMonth" resultType="java.lang.String">-->
+    <!--        select ea.date_np-->
+    <!--        from employee_attendance ea-->
+    <!--        where ea.attendance_status = 'UNINOFRMED_LEAVE_ABSENT'-->
+    <!--          and ea.pis_code = #{pisCode}-->
+    <!--          and ea.date_np like #{month}-->
+    <!--          and nullif(REGEXP_REPLACE(ea.date_np, '(\d{4})-(\d{2})-(\d{2})', '\2'), ''):: int = #{month}-->
+    <!--    </select>-->
+    <select id="getEmployeeAbsentDataInMonth" resultType="java.lang.String">
+        select ea.date_np
+        from employee_attendance ea
+        where ea.attendance_status = 'UNINOFRMED_LEAVE_ABSENT'
+          and ea.pis_code = #{pisCode}
+          and ea.date_np like #{month}
+        order by ea.date_np
+    </select>
+    <update id="updateEmployeeCancel">
+        update employee_attendance
+        set attendance_status=case
+                                  when (attendance_status = 'LEAVE' and is_device is true) then
+                                      'DEVICE'
+                                  when (attendance_status = 'PUBLIC_HOLIDAY' or attendance_status = 'WEEKEND') then
+                                      attendance_status
+                                  when (attendance_status = 'MA') then
+                                      'MA'
+                                  else 'DEVICE' end
+        where date_en between #{fromDate} and #{toDate}
+          and pis_code = #{pisCode};
+    </update>
+    <update id="updateEmployeeCancelFuture">
+        update employee_attendance
+        set attendance_status=case
+        when (attendance_status = 'DEVICE') then
+        'UNINOFRMED_LEAVE_ABSENT'
+        when (attendance_status = 'PUBLIC_HOLIDAY' or attendance_status = 'WEEKEND') then
+        attendance_status
+        when (attendance_status = 'MA') then
+        'MA'
+        else 'DEVICE' end
+        where date_en between #{fromDate} and #{toDate}
+        and pis_code = #{pisCode};
+    </update>
+
+</mapper>

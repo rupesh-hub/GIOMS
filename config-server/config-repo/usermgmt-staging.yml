@@ -1,0 +1,130 @@
+server:
+  port: ${USERMGMT_PORT:9001}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+    health:
+      show-details: always
+spring:
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+  resources:
+    add-mappings: false
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+      FAIL_ON_EMPTY_BEANS: false
+  datasource:
+    jdbcUrl: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:gerp_db}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 15
+      maximum-pool-size: 200
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800
+      leak-detection-threshold: 600000
+    #      auto-commit: false
+  second-datasource:
+    #    jdbcUrl: jdbc:oracle:thin:@${DB_HOST2:localhost}:${DB_PORT2:5432}:${DB_NAME2:ops}
+    #    username: ${DB_USERNAME2:postgres}
+    #    password: ${DB_PASSWORD2:postgres}
+    #    driver-class-name:  oracle.jdbc.driver.OracleDriver
+    jdbcUrl: jdbc:postgresql://${DB_HOST2:localhost}:${DB_PORT2:5432}/${DB_NAME2:ops}
+    username: ${DB_USERNAME2:postgres}
+    password: ${DB_PASSWORD2:postgres}
+    driver-class-name:  org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800
+      leak-detection-threshold: 600000
+  jpa:
+    show-sql: true
+    hibernate:
+      #      naming:
+      #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update
+    database: postgresql
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        jdbc:
+          lob:
+            non_contextual_creation: true
+      format_sql: true
+# discovery server
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${ADDRESS_DISCOVERY_SERVER:http://localhost:8761/eureka/}
+  instance:
+    preferIpAddress: true
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 160000000
+        readTimeout: 160000000
+gerp:
+  key: qazwsxedcrfvtgby
+  initVector: plmnkoijbvghuytr
+  transformation: AES/CBC/PKCS5PADDING
+  somelist:
+    - value1
+    - value2
+    - value3
+link:
+  front-reset-url : http://103.69.124.84/#/forget-password?link=
+authorization-mode: ${AUTH_MODE}
+keycloak:
+  auth-server-url: http://${AUTH_HOST:localhost}:${AUTH_PORT:9000}/auth
+  realm: gerp-services
+  resource: gerp-main
+  enable-basic-auth: true
+  credentials:
+    secret: gerp-main
+  ssl-required: none
+  principal-attribute: preferred_username
+  use-resource-role-mappings: true
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/*Mapper.xml
+
+storage:
+  location: /tmp
+
+dms:
+  ribbon:
+    listOfServers: ${DMS_HOST:gerp-dms_nginx_1}
+
+url:
+  ribbon:
+    listOfServers: http://103.69.124.84:9090
+sentry:
+  dsn: http://5aea50138ca14519b98e9bbb1c54a9c2@103.69.127.56:9000/16
+  exception-resolver-order: -2147483648
+  max-breadcrumbs: 150
+  logging:
+    minimum-event-level: info
+    minimum-breadcrumb-level: debug
+  enable-tracing: true
+  traces-sample-rate: 1.0
+  attach-stacktrace: true
+logging:
+  level:
+    com.gerp.usermgmt.mapper: DEBUG
+    com.zaxxer.hikari.HikariConfig: DEBUG

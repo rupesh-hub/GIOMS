@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+<head>
+    <title>Ramana Detail Template</title>
+    <style type="text/css">
+
+        .header{
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .container{
+            /*height:3508px;*/
+            margin-left: 250px;
+            width: 2480px;
+            height: 1750px;
+            margin-right: 1500px;
+
+        }
+
+        .row{
+            padding-left: 15px;
+            word-spacing: 10px;
+        }
+
+        .letter-row{
+            padding-left: 30px;
+            word-spacing: 10px;
+        }
+
+        .dottedUnderline{
+            border-bottom: 1px dotted;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-align: center;
+        }
+
+        .letter-ending{
+            word-spacing: 10px;
+        }
+
+        .letter-lastline{
+            border-top: 2px solid  black;
+            margin-top: 22.7cm;
+            padding-top: 5px;
+            color:black;
+            width:500px;
+        }
+        footer{
+            border-top: 4px solid  black;
+            color:black;
+            padding-top: 10px;
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h3><u>निजामती सेवा नियमावली , २०५० (बाह्रौ संशोधन,२०७२ सहित)</u></h3>
+        <br />
+        <br />
+    </div>
+
+    <div class="letter-employee-info">
+        <span>१३.</span><span class="letter-row">दैनिक भ्रमण भत्ता वापत लिएको पेश्की रकम:– </span>
+        <span th:text="${ramanaDetail.advanceAmount}"></span>
+        <br />
+    </div>
+
+    <div class="letter-employee-info">
+        <span>१४.</span><span class="letter-row">तलब वृद्धि हुन शुरु भएको शुरु मिति:- </span>
+        <span th:text="${ramanaDetail.date}"></span>
+        <br />
+    </div>
+
+    <div class="letter-employee-info">
+        <span>१५.</span><span class="letter-row">नागरिक लगानी कोष कट्टि रकमः– </span>
+        <span th:text="${ramanaDetail.citizenDeductionAmount}"></span>
+        <br />
+    </div>
+
+    <div class="letter-employee-info">
+        <span>१६.</span><span class="letter-row">आयकर कट्टि रकमः– </span>
+        <span th:text="${ramanaDetail.incomeTaxDeductionAmount}"></span>
+        <br>
+    </div>
+
+    <div class="row">
+        <span>१७.</span>
+
+        <div class="col-xs-8 col-sm-0.8">
+            <span> (क) </span><br />
+            <span> (ख) </span>
+        </div>
+        <div class="col-xs-8 col-sm-10">
+            <span>सावधिक जीवन बीमा कोषमा जम्मा भएको साल</span>
+            <span class="dottedUnderline" th:text="${ramanaDetail.sabikLifeInsurance.year}"></span>
+            <span>महिना </span> <span class="dottedUnderline" th:text="${ramanaDetail.sabikLifeInsurance.month}"></span>
+            <span>गते </span> <span class="dottedUnderline" th:text="${ramanaDetail.sabikLifeInsurance.day}"></span>
+            <br>
+            <span>सावधिक जीवन बीमा वापत वार्षिक प्रिमियम तिरेको साल</span>
+            <span class="dottedUnderline" th:text="${ramanaDetail.sabikLifeInsuranceYearly.year}"></span>
+            <span>महिना </span><span class="dottedUnderline" th:text="${ramanaDetail.sabikLifeInsuranceYearly.month}"></span>
+            <span>गते </span><span class="dottedUnderline" th:text="${ramanaDetail.sabikLifeInsuranceYearly.day}"></span>
+        </div>
+
+
+    </div>
+
+    <div class="row">
+        <span>१८.</span>
+        <div class="col-xs-8 col-sm-0.8">
+            <span> (क) </span><br>
+            <span> (ख) </span>
+        </div>
+        <div class="col-xs-8 col-sm-10">
+            <span>पुरानो निवृत्तभरण योजना</span>
+            <span class="dottedUnderline" th:text="${ramanaDetail.previousRetirementPlan}"></span>
+            <br />
+            <span>नयाँ  निवृत्तभरण योजनाको शुरु मिति साल</span>
+            <span class="dottedUnderline" th:text="${ramanaDetail.newRetirementPlan.year}"></span>
+            <span>महिना </span><span class="dottedUnderline" th:text="${ramanaDetail.newRetirementPlan.month}"></span>
+            <span>र कोषमा रकम जम्मा भइसकेको मिति साल</span>
+            <span class="dottedUnderline" th:text="${ramanaDetail.newRetirementPlan.depositDate}"></span>
+            <span>सम्मको</span>
+        </div>
+    </div>
+
+    <div class="letter-employee-info">
+        <span>१९.</span><span class="letter-row">चाडपर्व खर्च लिने चाडको नाम र सो चाड पर्ने तिथि र सम्भावित महिना </span>
+        <span class="dottedUnderline" th:text="${ramanaDetail.festiveMonth}"></span>
+        <br>
+    </div>
+
+    <div class="letter-employee-info">
+        <span>२०.</span><span class="letter-row">शिशु स्याहार भत्ता लिएको विवरण</span>
+        <span class="dottedUnderline" th:text="${ramanaDetail.babyCareAmount}"></span>
+        <br>
+    </div>
+
+    <br>
+    <br>
+
+
+    <div class="letter-ending">
+        <span><u>बोधार्थ :-</u></span><br />
+        <span>श्री निजामती किताबखाना, हरिहर भवन ।</span><br />
+        <span>श्री कर्मचारी संचय कोष, त्रिदेवी मार्ग, ठमेल ।</span><br />
+        <span>श्री </span><span class="dottedUnderline" th:text="${ramanaDetail.employeeName}"></span>
+        <span> (सम्बन्धित कर्मचारी) :– </span><span> सरुवा भएको कार्यालयमा हाजिर हुन जानु हुन ।</span><br>
+        <span>श्री </span><span class="dottedUnderline" th:text="${ramanaDetail.newRetirementPlan.organizationName}+', '+${ramanaDetail.newRetirementPlan.organizationAddress}"></span>
+        <span> (नयाँ निवृत्तभरण योजना अनुसारको रकम जम्मा भएको संस्थाको नाम र ठेगाना)</span>
+
+    </div>
+
+
+    <div class="letter-lastline">
+        <span>सातौं संशोधनद्वारा थप ।</span><br />
+        <br />
+
+    </div>
+    <footer class="d-flex justify-content-left">
+        <span>८३  </span>
+    </footer>
+
+
+</div>
+</body>
+</html>

@@ -1,0 +1,124 @@
+server:
+  port: 8084
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: always
+spring:
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+  resources:
+    add-mappings: false
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+      FAIL_ON_EMPTY_BEANS: false
+  datasource:
+#    url: jdbc:postgresql://103.69.124.84:5432/organization_test
+    url: jdbc:postgresql://103.69.127.118:5432/gerp_db
+#    url: jdbc:postgresql://103.69.127.56:5432/gerp_db
+#    url: jdbc:postgresql://103.69.124.84:5432/gerp_db
+#    url: jdbc:postgresql://localhost:5432/gerp_db_latest
+
+
+    #    url: jdbc:postgresql://localhost:5432/grep_db_nov24
+
+    username: postgres
+#    username: postgres
+    password: D0!T@.db
+#    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800
+      leak-detection-threshold: 600000
+    #      auto-commit: false
+#    if there is sql file
+    initialization-mode: always
+  jpa:
+    show-sql: true
+    hibernate:
+      #      naming:
+      #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update
+    database: postgresql
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+      format_sql: true
+# discovery server
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 160000000
+        readTimeout: 160000000
+keycloak:
+  # turn off Spring-Boots Keycloak AutoConfiguration:
+  # We only want to use Spring-Security without servlet container specific infrastructure.
+  # This allows us to pull the Keycloak configuration from here instead of keycloak.json
+#  enabled: false
+#  auth-server-url: http://103.69.124.84:9091/auth
+  auth-server-url: http://103.69.127.118:9091/auth
+#  auth-server-url: http://localhost:9000/auth
+  realm: gerp-services
+  #client id
+  resource: gerp-main
+  enable-basic-auth: true
+  credentials:
+    secret: gerp-main
+  ssl-required: none
+  principal-attribute: preferred_username
+  use-resource-role-mappings: true
+#  admin-user: admin
+#  admin-password: admin
+
+mybatis-plus:
+  configuration:
+    #  specification If the database field is order_id, then the entity field should be written as orderId
+    map-underscore-to-camel-case: true
+  #Mybatis mapper.xml file location
+  mapper-locations: classpath*:**/sql/*.xml
+
+storage:
+  location: /home/info
+#  location: /Users/diwakar/Downloads
+
+dms:
+  ribbon:
+    listOfServers: http://103.69.124.84:9094
+
+attendance:
+  dotnet:
+    api: ${DOTNET_HOST:http://103.69.127.53/AttLog/GetAttData}
+
+logging:
+  level:
+#    org.springframework: DEBUG
+    com.gerp.attendance.mapper: DEBUG
+    com.zaxxer.hikari.HikariConfig: DEBUG
+sentry:
+  dsn: http://70dc9ee3e7c14aabbc1a6db12161bc5b@127.0.0.1:9000/2
+  exception-resolver-order: -2147483648
+  max-breadcrumbs: 150
+  logging:
+    minimum-event-level: info
+    minimum-breadcrumb-level: debug
+  enable-tracing: true
+  traces-sample-rate: 1.0
+  attach-stacktrace: true

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gerp.kasamu.mapper.ReviewTopicMapper">
+
+
+    <resultMap id="reviewTopic" type="com.gerp.kasamu.pojo.response.KasamuReviewTopicsResponsePojo">
+        <id property="id" column="id"/>
+        <result property="description" column="description"/>
+        <result property="kasamuClass" column="kasamu_class"/>
+        <result property="reviewType" column="review_type"/>
+    </resultMap>
+
+    <select id="getReviewTopic" resultMap="reviewTopic">
+        select *
+        from kasamu_review_topics k
+        where
+           k.review_type = #{reviewType} and
+            k.kasamu_class = #{kasamuClass}
+    </select>
+
+    <select id="getReviewTopicById" resultMap="reviewTopic">
+        select *
+        from kasamu_review_topics
+        where id = #{id}::INTEGER
+    </select>
+</mapper>

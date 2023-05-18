@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gerp.usermgmt.mapper.organization.SectionMapper">
+    <resultMap id="employeePojo"
+               type="com.gerp.usermgmt.pojo.organization.office.SectionPojo">
+        <result column="code" property="code"/>
+        <result column="name_np" property="nameNp"/>
+        <result column="name_en" property="nameEn"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="office_code" property="officeCode"/>
+    </resultMap>
+    <resultMap id="sectionPojo"
+               type="com.gerp.usermgmt.pojo.organization.office.SectionDesignationPojo">
+        <result column="id" property="id"/>
+        <result column="name_np" property="name"/>
+        <result column="name_en" property="nameN"/>
+    </resultMap>
+
+    <resultMap id="sectionPojoWithDarbandi"
+               type="com.gerp.usermgmt.pojo.organization.office.SectionPojo">
+        <result column="code" property="code"/>
+        <result column="name_np" property="nameNp"/>
+        <result column="name_en" property="nameEn"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="office_code" property="officeCode"/>
+        <collection property="employeeDesignation"
+                    ofType="com.gerp.usermgmt.pojo.organization.employee.EmployeePojo">
+                <result column="employee_code" property="pisCode"/>
+                <result column="employee_name_np" property="nameNp"/>
+                <result column="employee_name_en" property="nameEn"/>
+                <result column="employee_office_code" property="officeCode"/>
+                <collection property="functionalDesignation" ofType="com.gerp.shared.pojo.IdNamePojo">
+                    <result column="functional_designation_name_np" property="nameN"/>
+                    <result column="functional_designation_name_en" property="name"/>
+                    <result column="functional_designation_code" property="code"/>
+                </collection>
+        </collection>
+    </resultMap>
+    <resultMap id="sectionEmployeeList"
+               type="com.gerp.shared.pojo.employee.EmployeeSectionPojo">
+        <result column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name_np" property="nameNp"/>
+        <result column="name_en" property="nameEn"/>
+        <result column="parent_code" property="parentCode"/>
+        <result column="office_code" property="officeCode"/>
+        <collection property="employees"
+                    ofType="com.gerp.shared.pojo.employee.EmployeeMinimalPojo">
+            <result column="employee_code" property="pisCode"/>
+            <result column="employee_name_np" property="employeeNameNp"/>
+            <result column="employee_name_en" property="employeeNameEn"/>
+            <result column="employee_office_code" property="officeCode"/>
+            <collection property="functionalDesignation" ofType="com.gerp.shared.pojo.IdNamePojo">
+                <result column="functional_designation_name_np" property="nameN"/>
+                <result column="functional_designation_name_en" property="name"/>
+                <result column="functional_designation_code" property="code"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <resultMap id="sectionPojoWithDarbandiHierarchy"
+               type="com.gerp.usermgmt.pojo.organization.office.SectionPojo">
+        <result column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name_np" property="nameNp"/>
+        <result column="name_en" property="nameEn"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="office_code" property="officeCode"/>
+        <result column="section_order_no" property="orderNo"/>
+        <collection property="employeeDesignation"
+                    ofType="com.gerp.usermgmt.pojo.organization.office.SectionDesignationPojo">
+            <result column="section_designation_id" property="id"/>
+            <result column="functional_designation_code" property="functionalDesignationCode"/>
+            <result column="position_id" property="positionCode"/>
+            <result column="is_on_transfer_process" property="isOnTransferProcess"/>
+            <result column="service_id" property="serviceCode"/>
+            <collection property="functionalDesignation" ofType="com.gerp.shared.pojo.IdNamePojo">
+                <result column="functional_designation_name_np" property="nameN"/>
+                <result column="functional_designation_name_en" property="name"/>
+                <result column="functional_designation_code" property="code"/>
+            </collection>
+            <collection property="employee" ofType="com.gerp.usermgmt.pojo.organization.employee.EmployeePojo">
+                <result column="employee_code" property="pisCode"/>
+                <result column="employee_name_np" property="nameNp"/>
+                <result column="employee_name_en" property="nameEn"/>
+                <result column="employee_office_code" property="officeCode"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="getParentSectionSubsection"
+            parameterType="string"
+            resultType="com.gerp.usermgmt.pojo.organization.office.SectionPojo">
+        select ss.name_en,
+               ss.name_np,
+               ss.id,
+               parent_id,
+               office_code,
+               ss.order_no
+        from section_subsection ss
+        where office_code = #{officeCode}
+          and parent_id is null and ss.is_active = true order by order_no,ss.created_date;
+    </select>
+
+    <select id="getSectionSubsectionByParent"
+            resultType="com.gerp.usermgmt.pojo.organization.office.SectionPojo"
+            parameterType="Map">
+        select ss.name_en,
+               ss.name_np,
+               ss.id,
+               ss.parent_id,
+               o.code,
+               ss.order_no
+        from section_subsection ss inner join office o on ss.office_code = o.code
+        where ss.parent_id = #{parentId} and ss.is_active = true order by ss.order_no,ss.created_date
+    </select>
+<!--    todo-->
+        <select id="getParentSectionSubSectionWithDesignation"
+            resultMap="sectionPojoWithDarbandiHierarchy"
+            >
+        select ss.name_en,
+               ss.name_np,
+               ss.id,
+               ss.code,
+               ss.parent_id,
+               ss.office_code,
+                p.order_no,
+
+
+               fd.name_en      as functional_designation_name_en,
+               fd.name_np      as functional_designation_name_np,
+               fd.code         as functional_designation_code,
+               case  when fd.designation_type = 'SPECIAL_DESIGNATION' then 0
+                     else 1
+                   end                                                             as designation_order,
+
+               case when fd.designation_type ='SPECIAL_DESIGNATION' then 0
+                   else 1 end as designation_order,
+
+               e.pis_code      as employee_code,
+               case
+                   when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+             case
+                when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                when e.pis_code is null then null
+                else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+
+               sd.id as section_designation_id,
+               sd.functional_designation_code as functional_designation_code,
+               sd.position_id as position_id,
+               sd.service_id as service_id,
+               sd.is_on_transfer_process as is_on_transfer_process,
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4 else 0
+                   end as e_order,
+               ss.order_no as section_order_no,
+               case when e.pis_code is null then 1
+                    else 0 end as vacant_order
+        from section_subsection ss
+                 left join section_designation sd on ss.id = sd.section_subsection_id and sd.disabled is not true
+                 left join functional_designation fd on sd.functional_designation_code = fd.code
+                 left join employee e on sd.employee_pis_code = e.pis_code
+                 left join position p on p.code=sd.position_id
+        where ss.office_code = #{officeCode} and ss.parent_id is null
+          and ss.is_active = true
+        order by ss.order_no,ss.created_date,designation_order,fd.order_no,p.order_no,e_order, vacant_order,e.current_position_app_date_ad,employee_name_en
+
+    </select>
+<!--    todo-->
+    <select id="getSectionSubsectionByParentWithDarbandi"
+            resultMap="sectionPojoWithDarbandiHierarchy"
+            >
+        select ss.name_en,
+               ss.name_np,
+               ss.id,
+               ss.parent_id,
+               ss.office_code,
+
+
+               fd.name_en      as functional_designation_name_en,
+               fd.name_np      as functional_designation_name_np,
+               fd.code         as functional_designation_code,
+
+               e.pis_code      as employee_code,
+               case
+                   when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+               e.office_code   as employee_office_code,
+
+               sd.id as section_designation_id,
+               sd.functional_designation_code as functional_designation_code,
+               sd.position_id as position_id,
+               sd.service_id as service_id,
+               sd.is_on_transfer_process as is_on_transfer_process,
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4 else 0
+                   end as e_order
+
+        from section_subsection ss
+                 left join section_designation sd on ss.id = sd.section_subsection_id  and sd.disabled is not true
+                 left join functional_designation fd on sd.functional_designation_code = fd.code
+                 left join employee e on sd.employee_pis_code = e.pis_code
+                 left join position p on e.position_code = p.code
+        inner join office o on o.code = ss.office_code
+        where
+           ss.parent_id = #{parentId}
+          and ss.is_active = true
+        order by e_order, desigation_order,p.order_no,e.current_position_app_date_bs,employee_name_en
+    </select>
+
+    <select id="getOfficeSectionEmployeeList"
+            resultMap="sectionEmployeeList"
+            resultType="com.gerp.shared.pojo.employee.EmployeeSectionPojo">
+        select ss.name_en,
+               ss.name_np,
+               ss.id,
+               ss.parent_id,
+               ss.office_code,
+
+
+               fd.name_en      as functional_designation_name_en,
+               fd.name_np      as functional_designation_name_np,
+               fd.code         as functional_designation_code,
+
+               e.pis_code      as employee_code,
+               case
+                   when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+               e.office_code   as employee_office_code
+
+
+        from section_subsection ss
+                 left join section_designation sd on ss.id = sd.section_subsection_id
+            and sd.is_active = true
+                 left join employee e on sd.employee_pis_code = e.pis_code
+                 left join functional_designation fd on sd.functional_designation_code = fd.code
+        where ss.office_code = #{officeCode}
+          and ss.parent_id is null and ss.is_active = true
+    </select>
+
+    <select id="getOfficeSubSectionEmployeeList"
+            resultMap="sectionEmployeeList"
+            resultType="com.gerp.shared.pojo.employee.EmployeeSectionPojo">
+        select ss.name_en,
+               ss.name_np,
+               ss.id,
+               ss.parent_id,
+               ss.office_code,
+
+
+               fd.name_en      as functional_designation_name_en,
+               fd.name_np      as functional_designation_name_np,
+               fd.code         as functional_designation_code,
+
+               e.pis_code      as employee_code,
+               case
+                   when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+               e.office_code   as employee_office_code
+
+        from section_subsection ss
+                 left join
+             section_designation sd on ss.id = sd.section_subsection_id
+                 and sd.is_active = true
+                 left join employee e on sd.employee_pis_code = e.pis_code
+                 left join functional_designation fd on sd.functional_designation_code = fd.code
+        where ss.office_code = #{officeCode}
+          and ss.parent_id = #{parentId} and ss.is_active = true
+    </select>
+    <select id="getSubsection" resultType="com.gerp.usermgmt.pojo.organization.office.SectionPojo">
+
+    </select>
+    <select id="getSubsectionByOfficeCode" resultType="com.gerp.usermgmt.pojo.organization.office.SectionPojo">
+        select ss.code,
+               ss.name_en,
+               ss.name_np,
+               ss.id,
+               ss.parent_id,
+               ss.office_code
+
+        from section_subsection ss
+        where ss.office_code = #{officeCode}
+          and ss.parent_id is null and ss.is_active = true
+    </select>
+    <select id="getSectionMinimalByOfficeCode"
+            resultType="com.gerp.usermgmt.pojo.organization.office.SectionPojo">
+        select
+               ss.name_en,
+               ss.name_np,
+               ss.id
+
+        from section_subsection ss
+        where ss.office_code = #{officeCode} and ss.is_active = true
+    </select>
+    <select id="getParentSectionOfOffice" resultType="com.gerp.usermgmt.pojo.organization.office.SectionPojo">
+        select ss.id,
+               ss.parent_id,
+               ss.name_en,
+               ss.name_np,
+               ss.office_code,
+               ss.order_no
+
+        from section_subsection ss
+        where ss.office_code = #{officeCode} and ss.parent_id is null and ss.is_active = true order by order_no,ss.created_date
+    </select>
+    <select id="getSectionSubsectionByEmployee"
+            resultMap="sectionPojo">
+        select ss.id as id,
+               ss.parent_id,
+               ss.name_en as name,
+               ss.name_np as name_n
+
+        from section_subsection ss
+        inner join section_designation sd on ss.id = sd.section_subsection_id
+        where sd.employee_pis_code = #{pisCode}
+    </select>
+    <select id="getSectionSubsectionCount" resultType="java.lang.Integer">
+        select count(*)
+
+        from section_subsection ss
+                 inner join section_designation sd on ss.id = sd.section_subsection_id and sd.disabled is not true
+        where sd.section_subsection_id = #{sectionId}
+    </select>
+    <select id="getSectionSubsectionByParentWithDarbandiOrdered"
+            resultMap="sectionPojoWithDarbandiHierarchy">
+        select ss.name_en,
+               ss.name_np,
+               ss.id,
+               ss.parent_id,
+               ss.office_code,
+
+
+               fd.name_en      as functional_designation_name_en,
+               fd.name_np      as functional_designation_name_np,
+               fd.code         as functional_designation_code,
+               case  when fd.designation_type = 'SPECIAL_DESIGNATION' then 0
+                     else 1
+                   end                                                             as designation_order,
+
+               e.pis_code      as employee_code,
+               case
+                   when e.middle_name_en IS NOT NULL then concat(e.first_name_en, ' ', e.middle_name_en, ' ', e.last_name_en)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_en, ' ', e.last_name_en) end as employee_name_en,
+               case
+                   when e.middle_name_np IS NOT NULL then concat(e.first_name_np, ' ', e.middle_name_np, ' ', e.last_name_np)
+                   when e.pis_code is null then null
+                   else concat(e.first_name_np, ' ', e.last_name_np) end as employee_name_np,
+               e.office_code   as employee_office_code,
+
+               sd.id as section_designation_id,
+               sd.functional_designation_code as functional_designation_code,
+               sd.position_id as position_id,
+               sd.service_id as service_id,
+               sd.is_on_transfer_process as is_on_transfer_process,
+               case
+                   when e.employee_service_status_code = '01' then 0
+                   when (e.employee_service_status_code = '04') then 2
+                   when (e.employee_service_status_code = '08') then 3
+                   when (e.employee_service_status_code = '09') then 4 else 0
+                   end as e_order,
+            ss.order_no,
+               case when e.pis_code is null then 1
+                    else 0 end as vacant_order
+
+        from section_subsection ss
+                 left join section_designation sd on ss.id = sd.section_subsection_id and sd.disabled is not true
+                 left join functional_designation fd on sd.functional_designation_code = fd.code
+                 left join employee e on sd.employee_pis_code = e.pis_code
+                 left join position p on e.position_code = p.code
+                 inner join office o on o.code = ss.office_code
+        where
+            ss.parent_id = #{parentId}
+          and ss.is_active = true
+        order by
+                 ss.order_no,ss.created_date, designation_order,fd.order_no, p.order_no,  e_order, vacant_order,e.current_position_app_date_bs,employee_name_en
+
+
+    </select>
+</mapper>

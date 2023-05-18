@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous"/>
+<head>
+    <meta charset="utf-8" http-equiv="Content-Type" content="text/html" />
+    <meta name="viewport" content="width=device-width"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="x-apple-disable-message-reformatting"/>
+    <title>Saruwa Letter</title>
+    <style type="text/css">
+
+
+        body{
+            font-family: 'Hindi';
+            font-size: 12px;
+        }
+        .header{
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .container{
+            /*height:3508px;*/
+            margin-left: 200px;
+            margin-right: 300px;
+            width: 21cm;
+            height: 29.7cm;
+        }
+
+        .detail-info{
+            padding-left: 60px;
+        }
+
+        .letter_info{
+            padding-left: 175px;
+            padding-right: 150px;
+            word-spacing: 5px;
+        }
+
+        .column{
+            float: left;
+            /*width:50%;*/
+
+        }
+        .letter-ending{
+            border-top: 2px solid  black;
+            margin-top: 28cm;
+            padding-top: 10px;
+            color:black;
+            width:500px;
+        }
+        .dottedUnderline{
+            border-bottom: 1px dotted;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-align: center;
+        }
+        footer{
+            border-top: 4px solid  black;
+            color:black;
+            padding-top: 10px;
+            /*font-size: 40px;*/
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h3><u>निजामती सेवा नियमावली , २०५० (बाह्रौ संशोधन,२०७२ सहित)</u></h3>
+        <br/>
+        <span>अनुसूची–११क.</span><br/>
+        <span>(नियम ३८ को उपनियम (२) को खण्ड (ख) सँग  सम्बन्धित)</span><br/>
+        <br/>
+        <span><u>सरुवापत्रको नमूना</u></span><br/>
+        <br/>
+
+
+    </div>
+
+
+
+    <div class="letter_info">
+        <span>महाशय,</span><br/>
+
+        <span class="detail-info">नेपाल सरकार /</span>
+        <span class="dottedUnderline" th:text="${saruwa.department}"></span><span>को मिति</span>
+        <span class="dottedUnderline" th:text="${saruwa.date}"></span>
+        <span>को निर्णयानुसार तपाईलाई सरुवा</span><br/>
+
+
+
+        <span>भएको मन्त्रालय/ सचिवालय/ आयोग/ कार्यालयबाटै अवधि तोक्ने गरी वा</span>
+        <span class="dottedUnderline" th:text="${saruwa.duration}"></span> <u><span>अवधिसम्मको </span>
+        <br/>
+
+        लागि देहाय बमोजिम सरुवा गरिएको छ ।
+    </u>
+
+        <br/>
+        <br/>
+
+
+        <div class="column">
+            <u><span>साविक पद र कार्यालय</span></u><br/>
+
+            <span>नेपाल</span>
+            <span class="dottedUnderline" th:text="${saruwa.sabikDetail.service}"></span>
+            <span> सेवा</span>
+            <span class="dottedUnderline" th:text="${saruwa.sabikDetail.group}"></span>
+            <span> समूह</span><br/>
+
+            <span>राजपत्राङ्कित/ राजपत्र अनङ्कित</span><span class="dottedUnderline" th:text="${saruwa.sabikDetail.rajPatraNo}"></span><br/>
+            <span>श्रेणी</span><span class="dottedUnderline" th:text="${saruwa.sabikDetail.category}"></span>
+            <br/>
+            <br/>
+
+        </div>
+
+        <div class="column">
+            <u><span>सरुवा भएको पद र कार्यालय</span></u><br/>
+
+            <span>नेपाल</span>
+            <span class="dottedUnderline" th:text="${saruwa.saruwaDetail.service}"></span>
+            <span> सेवा</span>
+            <span class="dottedUnderline" th:text="${saruwa.saruwaDetail.group}"></span>
+            <span> समूह</span><br/>
+
+            <span>राजपत्राङ्कित/ राजपत्र अनङ्कित</span><span class="dottedUnderline" th:text="${saruwa.saruwaDetail.rajPatraNo}"></span><br/>
+            <span>श्रेणी</span><span class="dottedUnderline" th:text="${saruwa.saruwaDetail.category}"></span>
+            <br/>
+            <br/>
+        </div>
+
+
+
+        <span>श्री </span>
+        <span class="dottedUnderline" th:text="${saruwa.employeeDetail.employeeName}"></span>
+        <span> कर्मचारी सङ्केत नं.</span>
+        <span class="dottedUnderline" th:text="${saruwa.employeeDetail.employeeCode}"></span>
+        <br/>
+        <br/>
+        <div class="column">
+            <u><span>वोधार्थ तथा कार्यार्थ ः</span></u><br/>
+            <span>लोक सेवा आयोग ।</span><br/>
+            <span>निजामती किताबखाना ।</span><br/>
+            <span>कर्मचारी संचय कोष ।</span>
+        </div>
+
+
+
+        <div class="letter-ending">
+            <span>दोस्रो संशोधनद्वारा थप ।</span><br/>
+            <span>सातौं संशोधनद्वारा थप ।</span>
+        </div>
+        <footer class="d-flex justify-content-left">
+            <span>८१ </span>
+        </footer>
+    </div>
+
+
+
+
+</div>
+</body>
+</html>
+
+

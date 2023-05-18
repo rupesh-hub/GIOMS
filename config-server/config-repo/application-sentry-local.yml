@@ -1,0 +1,12 @@
+sentry:
+  dsn: "http://418f351b29a14181919e4653f2b342c6:5a7cfc6ad3f54b75a0d58cc974e65af2@103.69.127.56:9000/1"
+  #  in-app-includes: "*"
+  exception-resolver-order: -2147483648
+  max-breadcrumbs: 150
+  logging:
+    minimum-event-level: info
+    minimum-breadcrumb-level: debug
+  enable-tracing: true
+  traces-sample-rate: 1.0
+  attach-stacktrace: true
+  debug: true

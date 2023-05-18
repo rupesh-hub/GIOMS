@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  custom.keycloak.CustomMain
+org.springframework.context.ApplicationListener=custom.keycloak.auth.support.support.PopulateKeycloakPropertiesApplicationListener
